@@ -1,3 +1,27 @@
+# 6moku-narabe
+
+## 概要
+
+このプロジェクトは、六目並べをプレイできるWebアプリを実現するためのものです。
+コンピューター対戦が可能です。
+
+## インストール
+
+1. ???
+
+## 使い方
+
+1. ???
+
+## 運用
+
+1. ???
+
+## 更新履歴
+
+* 2026/07/11: 作成
+
+
 This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 
 ## Getting Started
