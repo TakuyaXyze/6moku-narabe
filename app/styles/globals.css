@@ -12,6 +12,16 @@
   --font-mono: var(--font-geist-mono);
 }
 
+/*
+"@theme inline{*}"と記述すると以下のアラートが出た
+Unknown at rule @theme
+
+VSCodeのsetting.jsonの末尾に以下を追記で解決
+"css.lint.unknownAtRules": "ignore"
+
+【参照】https://qiita.com/P-man_Brown/items/bf05437afecde268ec15
+*/
+
 @media (prefers-color-scheme: dark) {
   :root {
     --background: #0a0a0a;
