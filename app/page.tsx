@@ -1,7 +1,11 @@
-import Image from "next/image";
+import styles from "./styles/Home.module.css"
+import { Title } from "./components/Title"
 
 export default function Home() {
   return (
-    <h1>六目並べ</h1>
+    <div>
+      <Title />
+
+    </div>
   );
 }
