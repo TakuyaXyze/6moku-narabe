@@ -1,9 +1,14 @@
 @import "tailwindcss";
 
+/*
 :root {
   --background: #ffffff;
   --foreground: #171717;
 }
+よくわからないけど、効いていなかったから消した。
+必要なら復元して。
+*/
+
 
 @theme inline {
   --color-background: var(--background);
@@ -24,8 +29,8 @@ VSCodeのsetting.jsonの末尾に以下を追記で解決
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+    --background: #0a0a0b;
+    --foreground: #fafafa;
   }
 }
 
