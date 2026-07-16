@@ -49,25 +49,3 @@ body {
   margin-top: 0;
   height: 100%;
 }
-
-.title {
-  padding: 6px 0 0 6px;
-  font-size: 1.5rem;
-  font-weight: bold;
-}
-
-.playGround {
-  display: flex;
-  justify-content: center;
-  position: relative;
-  margin: 0;
-  height: 100%;
-  width: 100%;
-}
-
-.gameBoard {
-  background: #cf993a;
-  margin-top: 10%;
-  height: 80%;
-  aspect-ratio: 1/1;
-}
