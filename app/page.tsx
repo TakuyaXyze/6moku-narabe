@@ -1,10 +1,11 @@
-import styles from "./styles/Home.module.css"
 import { Title } from "../components/Title"
+import { PlayGround } from "../components/PlayGround";
 
 export default function Home() {
   return (
-    <div>
+    <div className="page">
       <Title />
+      <PlayGround />
     </div>
   );
 }
