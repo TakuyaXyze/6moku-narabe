@@ -1,8 +1,8 @@
 import "../styles/GameBoard.css"
 import { ReactNode } from "react";
 
-export const row = 19;
-export const column = 19;
+export const ROW = 19;
+export const COLUMN = 19;
 
 export function GameBoard() {
 
@@ -27,7 +27,7 @@ export function GameBoard() {
             //1行ずつを描画
             //行番号が並ぶ配列。配列の長さ=列数
             const rowNos: number[] = [];
-            for (let i: number = 0; i < column; i++) {
+            for (let i: number = 0; i < COLUMN; i++) {
                 rowNos.push(i);
             }
             //1行ごとに<td>のブロックの塊を描画。
@@ -40,7 +40,7 @@ export function GameBoard() {
             //全体を描画
             //列番号が並ぶ配列。配列の長さ=行数
             const columnNos: number[] = [];
-            for (let i: number = 0; i < row; i++) {
+            for (let i: number = 0; i < ROW; i++) {
                 columnNos.push(i);
             }
             //1行ごとに<td>のブロックの塊を描画。
