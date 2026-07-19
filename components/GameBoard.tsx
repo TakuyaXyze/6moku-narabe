@@ -1,27 +1,10 @@
 import "../styles/GameBoard.css"
 import { ReactNode } from "react";
 
+export const row = 19;
+export const column = 19;
+
 export function GameBoard() {
-
-    const row = 19;
-    const column = 19;
-
-    type BoxesStatus = {
-        rowNo: number,
-        columnNo: number,
-        status: string
-    }
-
-    const boxesMap = new Map<number, BoxesStatus>();
-    let count: number = 0;
-    while (count < row * column) {
-        for (let i: number = 0; i < row; i++) {
-            for (let j: number = 0; j < column; j++) {
-                boxesMap.set(count, { rowNo: i + 1, columnNo: j + 1, status: "void" })
-                count++;
-            }
-        }
-    }
 
     const printBoxesTable = (): ReactNode => {
         //マス目の集合・碁盤を作成
@@ -29,9 +12,15 @@ export function GameBoard() {
             //1マス1マスを描画
             //[1,1]→countNo=1, [2,19]→countNo=38, [5,15]→countNo=90,
             const countNo: number = (rowNo - 1) * 19 + (columnNo - 1);
-            console.log("rowNo:" + rowNo + ",columnNo:" + columnNo);
-            //タグのkeyにboxesMapのkeyを。座標を表示
-            return <td key={countNo}>{rowNo}-{columnNo}</td>;
+
+            //タグのkeyにboxesMapのkeyを。circleで碁石を呼び出し。座標を表示。
+            return (
+                <div key={countNo} className="box">
+                    <div className="circle">
+                        {rowNo}-{columnNo}
+                    </div>
+                </div>
+            );
         }
 
         const printTr = (rowNo: number): ReactNode => {
@@ -41,11 +30,10 @@ export function GameBoard() {
             for (let i: number = 0; i < column; i++) {
                 rowNos.push(i);
             }
-            console.log("rowNos:" + rowNos);
             //1行ごとに<td>のブロックの塊を描画。
-            return <tr>{
+            return <div key={rowNo} className="row">{
                 rowNos.map((columnNo: number) => printTd(rowNo, columnNo + 1))
-            }</tr>
+            }</div>
         }
 
         const printTbody = (): ReactNode => {
@@ -55,14 +43,18 @@ export function GameBoard() {
             for (let i: number = 0; i < row; i++) {
                 columnNos.push(i);
             }
-            console.log("columnNos:" + columnNos);
             //1行ごとに<td>のブロックの塊を描画。
-            return <tr>{
+            return <div className="tbody">{
                 columnNos.map((rowNo: number) => printTr(rowNo + 1))
-            }</tr>
+            }</div>
         }
 
-        return <table className="myTable">{printTbody()}</table>
+        return (
+            <div className="table">
+                <div className="thead"></div>
+                {printTbody()}
+            </div>
+        )
     };
 
     return (
