@@ -1,4 +1,4 @@
-import { row, column } from "./GameBoard"
+import { row, column } from "../components/GameBoard"
 
 type BoxesStatus = {
     rowNo: number,
