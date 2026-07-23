@@ -30,12 +30,20 @@
     width: calc(100%/19);
 }
 
-.circle {
+.stone {
     height: 85%;
     width: 85%;
-    background-color: #ffffff;
+    background-color: hsla(0, 0%, 100%, 0);
     border-radius: 50%;
     font-size: 5px;
     padding-left: 15%;
     padding-top: 15%;
+}
+
+.white {
+    background-color: #ffffff;
+}
+
+.black {
+    background-color: #000000;
 }
