@@ -10,11 +10,7 @@
     width: 100%;
 }
 
-.thead {
-    height: 0;
-}
-
-.tbody {
+.body {
     height: 100%;
     width: 100%;
 }
