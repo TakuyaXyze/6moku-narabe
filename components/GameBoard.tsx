@@ -2,6 +2,7 @@
 
 import "../styles/GameBoard.css"
 import { PrintRow } from "./PrintRow";
+import { calculateWinner } from "./PlayGround";
 
 type Props = {
     blackIsNext: boolean;
@@ -12,9 +13,7 @@ type Props = {
 export function GameBoard({ blackIsNext, boxes, onPlay }: Props) {
 
     function handleClick(rowNo: number, columnNo: number): void {
-        console.log("row:" + rowNo + " column:" + columnNo)
-        console.log("boxes:" + boxes);
-        if (boxes[rowNo][columnNo]) {//空白のときのみ配置可能
+        if (calculateWinner(boxes) || boxes[rowNo][columnNo]) {//空白のときのみ配置可能
             return;
         }
         handleColor(rowNo, columnNo);

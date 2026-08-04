@@ -85,21 +85,36 @@ export function PlayGround() {
     );
 }
 
-function calculateWinner(boxes: string[][]) {
-    const lines = [
-        [0, 1, 2],
-        [3, 4, 5],
-        [6, 7, 8],
-        [0, 3, 6],
-        [1, 4, 7],
-        [2, 5, 8],
-        [0, 4, 8],
-        [2, 4, 6]
-    ];
-    for (let i = 0; i < lines.length; i++) {
-        const [a, b, c] = lines[i];
-        if (boxes[a] && boxes[a] === boxes[b] && boxes[a] === boxes[c]) {
-            return boxes[a];
+export function calculateWinner(boxes: string[][]) {
+    for (let i = 0; i < 19; i++) { //横1列
+        const row = boxes[i];
+        for (let j = 0; j < 19; j++) {
+            if (row[j] && row[j] === row[j + 1] && row[j] === row[j + 2] && row[j] === row[j + 3] && row[j] === row[j + 4] && row[j] === row[j + 5]) {
+                return row[j];
+            }
+        }
+    }
+    const transpose = (boxes: string[][]) => boxes[0].map((_, c) => boxes.map(r => r[c]));//転置
+    for (let i = 0; i < 19; i++) { //縦1列
+        const column = transpose(boxes)[i];
+        for (let j = 0; j < 19; j++) {
+            if (column[j] && column[j] === column[j + 1] && column[j] === column[j + 2] && column[j] === column[j + 3] && column[j] === column[j + 4] && column[j] === column[j + 5]) {
+                return column[j];
+            }
+        }
+    }
+    for (let i = 0; i < 14; i++) { //左上右下斜め1列
+        for (let j = 0; j < 14; j++) {
+            if (boxes[i][j] && boxes[i][j] === boxes[i + 1][j + 1] && boxes[i][j] === boxes[i + 2][j + 2] && boxes[i][j] === boxes[i + 3][j + 3] && boxes[i][j] === boxes[i + 4][j + 4] && boxes[i][j] === boxes[i + 5][j + 5]) {
+                return boxes[i][j];
+            }
+        }
+    }
+    for (let i = 5; i < 19; i++) { //左下右上斜め1列
+        for (let j = 0; j < 14; j++) {
+            if (boxes[i][j] && boxes[i][j] === boxes[i - 1][j + 1] && boxes[i][j] === boxes[i - 2][j + 2] && boxes[i][j] === boxes[i - 3][j + 3] && boxes[i][j] === boxes[i - 4][j + 4] && boxes[i][j] === boxes[i - 5][j + 5]) {
+                return boxes[i][j];
+            }
         }
     }
     return null;
