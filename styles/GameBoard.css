@@ -1,18 +1,8 @@
-.gameBoard {
+.game-board {
     background: #cf993a;
     align-items: center;
     height: 90%;
     aspect-ratio: 1/1;
-}
-
-.table {
-    height: 100%;
-    width: 100%;
-}
-
-.body {
-    height: 100%;
-    width: 100%;
 }
 
 .row {
@@ -21,20 +11,22 @@
     width: 100%;
 }
 
-.box {
+.stone {
     height: 100%;
     width: calc(100%/19);
+    border-radius: 50%;
+    display: flex;
+    position: relative;
+    font-size: 30px;
 }
 
-.stone {
-    height: 85%;
-    width: 85%;
+.box {
+    height: 100%;
+    width: 100%;
+    position: absolute;
     background-color: hsla(0, 0%, 100%, 0);
-    border-radius: 50%;
-    font-size: 5px;
     user-select: none;
-    padding-left: 15%;
-    padding-top: 15%;
+    font-size: 8px;
 }
 
 .white {
