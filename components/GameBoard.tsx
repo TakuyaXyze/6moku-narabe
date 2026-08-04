@@ -29,6 +29,7 @@ export function GameBoard({ blackIsNext, boxes, onPlay }: Props) {
         }
         onPlay(nextBoxes);
     }
+
     return (
         <div className="game-board">
             <PrintRow rowNo={0} boxes={boxes} handleClick={handleClick} />
