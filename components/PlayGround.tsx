@@ -3,7 +3,7 @@
 import { GameBoard } from "./GameBoard";
 import "../styles/PlayGround.css"
 import "../styles/GameBoard.css"
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 export function PlayGround() {
 
@@ -17,8 +17,6 @@ export function PlayGround() {
     function checkBlackIsNext(currentMove: number): boolean {
         if (currentMove === 0) {
             return false;
-        } else if (currentMove === 1) {
-            return true;
         } else if (currentMove % 4 === 1 || currentMove % 4 === 2) {
             return true;
         } else {
@@ -33,11 +31,54 @@ export function PlayGround() {
         //checkBlackIsNext(currentMove);
         const booleanBlackIsNext = checkBlackIsNext(currentMove);
         setBlackIsNext(booleanBlackIsNext);
+        //CPUPutLogic(blackIsNext);
+    }
+
+    function handleClick(rowNo: number, columnNo: number): void {
+        if (calculateWinner(currentBoxes) || currentBoxes[rowNo][columnNo] || !blackIsNext) {//空白のときのみ配置可能
+            return;
+        }
+        handleColor(rowNo, columnNo);
+    }
+
+    function handleColor(rowNo: number, columnNo: number) {
+        const nextBoxes = currentBoxes.slice();
+        if (blackIsNext) {//2手ずつ進むように変更するために後程変更予定
+            nextBoxes[rowNo][columnNo] = "X";
+        } else {
+            nextBoxes[rowNo][columnNo] = "O";
+        }
+        handlePlay(nextBoxes);
+    }
+
+    useEffect(() => {
+        if (!blackIsNext) {
+            console.log("computerTurn");
+            computerTurn();
+        }
+        return
+    }, [currentBoxes])
+
+    //処理時間の計測
+    //const [computingStartTime, setComputingStartTime] = useState(Date.now)
+    //const [computingTime, setComputingTime] = useState(0)
+
+    function computerTurn(): void {
+        //setComputingStartTime(Date.now);
+        //将来的に難易度選択とかがあったらここに書く
+        computerTurnRandom();
+    }
+
+    function computerTurnRandom() {
+        console.log("computerTurnRandom")
+        //setComputingTime(Date.now() - computingStartTime);
+        const randomRowNo = Math.floor(Math.random() * 19.0);
+        const randomColumnNo = Math.floor(Math.random() * 19.0);
+        handleColor(randomRowNo, randomColumnNo);
     }
 
     function jumpTo(nextMove: number) {
         setCurrentMove(nextMove);
-        //checkBlackIsNext(currentMove);
     }
 
     const moves = history.map((boxes: string[][], move: number) => {
@@ -76,7 +117,7 @@ export function PlayGround() {
     return (
         <div className="play-ground">
             <div>
-                <GameBoard blackIsNext={blackIsNext} boxes={currentBoxes} onPlay={handlePlay} />
+                <GameBoard blackIsNext={blackIsNext} boxes={currentBoxes} handleClick={handleClick} />
             </div>
             <div className="game-info">
                 <div className="status">{status}</div>

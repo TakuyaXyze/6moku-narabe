@@ -1,33 +1,22 @@
 "use client";
 
+//import React, { forwardRef, useImperativeHandle } from "react";
 import "../styles/GameBoard.css"
 import { PrintRow } from "./PrintRow";
-import { calculateWinner } from "./PlayGround";
+//import { calculateWinner } from "./PlayGround";
 
 type Props = {
     blackIsNext: boolean;
     boxes: string[][];
-    onPlay: (nextBoxes: string[][]) => void;
+    //onPlay: (nextBoxes: string[][]) => void;
+    handleClick: (rowNo: number, columnNo: number) => void;
 }
 
-export function GameBoard({ blackIsNext, boxes, onPlay }: Props) {
+export interface ChildHandles {
+    getAlert(): void;
+}
 
-    function handleClick(rowNo: number, columnNo: number): void {
-        if (calculateWinner(boxes) || boxes[rowNo][columnNo]) {//空白のときのみ配置可能
-            return;
-        }
-        handleColor(rowNo, columnNo);
-    }
-
-    function handleColor(rowNo: number, columnNo: number) {
-        const nextBoxes = boxes.slice();
-        if (blackIsNext) {//2手ずつ進むように変更するために後程変更予定
-            nextBoxes[rowNo][columnNo] = "X";
-        } else {
-            nextBoxes[rowNo][columnNo] = "O";
-        }
-        onPlay(nextBoxes);
-    }
+export function GameBoard({ blackIsNext, boxes, handleClick }: Props) {
 
     return (
         <div className="game-board">
@@ -52,4 +41,4 @@ export function GameBoard({ blackIsNext, boxes, onPlay }: Props) {
             <PrintRow rowNo={18} boxes={boxes} handleClick={handleClick} />
         </div>
     );
-}
+};
