@@ -72,8 +72,12 @@ export function PlayGround() {
     function computerTurnRandom() {
         console.log("computerTurnRandom")
         //setComputingTime(Date.now() - computingStartTime);
-        const randomRowNo = Math.floor(Math.random() * 19.0);
-        const randomColumnNo = Math.floor(Math.random() * 19.0);
+        let randomRowNo: number;
+        let randomColumnNo: number;
+        do {
+            randomRowNo = Math.floor(Math.random() * 19.0);
+            randomColumnNo = Math.floor(Math.random() * 19.0);
+        } while (currentBoxes[randomRowNo][randomColumnNo])
         handleColor(randomRowNo, randomColumnNo);
     }
 
