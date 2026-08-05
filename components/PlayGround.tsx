@@ -4,6 +4,8 @@ import { GameBoard } from "./GameBoard";
 import "../styles/PlayGround.css"
 import "../styles/GameBoard.css"
 import { useState, useEffect } from "react";
+import { PutCoordinate } from "../computers/ComputerResult"
+import { computerTurnRandom } from "../computers/PutRandom";
 
 export function PlayGround() {
 
@@ -65,20 +67,14 @@ export function PlayGround() {
 
     function computerTurn(): void {
         //setComputingStartTime(Date.now);
-        //将来的に難易度選択とかがあったらここに書く
-        computerTurnRandom();
+        //将来的に難易度選択・モード選択とかがあったらここに書く
+        computerTurnWithResult(computerTurnRandom(currentBoxes));
+        //computerTurnWithResult({/*computerNormal*/});
     }
 
-    function computerTurnRandom() {
-        console.log("computerTurnRandom")
-        //setComputingTime(Date.now() - computingStartTime);
-        let randomRowNo: number;
-        let randomColumnNo: number;
-        do {
-            randomRowNo = Math.floor(Math.random() * 19.0);
-            randomColumnNo = Math.floor(Math.random() * 19.0);
-        } while (currentBoxes[randomRowNo][randomColumnNo])
-        handleColor(randomRowNo, randomColumnNo);
+    function computerTurnWithResult(result: PutCoordinate) {
+        console.log("computerTurnRandom");
+        handleColor(result.rowNo, result.columnNo);
     }
 
     function jumpTo(nextMove: number) {
