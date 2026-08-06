@@ -1,7 +1,7 @@
 import { BoardTrail } from "./BoardTrail";
 import { Move, State, TrailStack } from "./Evaluate"
 import { MoveCoordinate } from "./MoveCoordinate";
-import { ROWS, COLUMNS, checkBlackIsNext } from "../components/PlayGround"
+import { ROWS, COLUMNS, checkBlackIsNext, calculate6, calculate5, calculate4 } from "../components/PlayGround"
 
 export class BoardState extends State {
 
@@ -39,6 +39,9 @@ export class BoardState extends State {
     }
     eval(): number {
         let sum = 0;
+        if (typeof calculate6(this.state) === "string") sum += 100;
+        if (typeof calculate5(this.state) === "string") sum += 10;
+        if (typeof calculate4(this.state) === "string") sum += 5;
         return sum;
     }
 }

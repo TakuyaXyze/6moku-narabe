@@ -128,7 +128,7 @@ export function checkBlackIsNext(currentMove: number): boolean {
     }
 }
 
-export function calculate6(boxes: string[][]) {
+export function calculate6(boxes: (string | null)[][]) {
     for (let i = 0; i < 19; i++) { //横1列
         const row = boxes[i];
         for (let j = 0; j < 19; j++) {
@@ -137,7 +137,7 @@ export function calculate6(boxes: string[][]) {
             }
         }
     }
-    const transpose = (boxes: string[][]) => boxes[0].map((_, c) => boxes.map(r => r[c]));//転置
+    const transpose = (boxes: (string | null)[][]) => boxes[0].map((_, c) => boxes.map(r => r[c]));//転置
     for (let i = 0; i < 19; i++) { //縦1列
         const column = transpose(boxes)[i];
         for (let j = 0; j < 19; j++) {
@@ -163,34 +163,69 @@ export function calculate6(boxes: string[][]) {
     return null;
 }
 
-export function calculate5(boxes: string[][]) {
+export function calculate5(boxes: (string | null)[][]) {
     for (let i = 0; i < 19; i++) { //横1列
         const row = boxes[i];
-        for (let j = 0; j < 19; j++) {
+        for (let j = 0; j < 15; j++) {
             if (row[j] && row[j] === row[j + 1] && row[j] === row[j + 2] && row[j] === row[j + 3] && row[j] === row[j + 4]) {
                 return row[j];
             }
         }
     }
-    const transpose = (boxes: string[][]) => boxes[0].map((_, c) => boxes.map(r => r[c]));//転置
+    const transpose = (boxes: (string | null)[][]) => boxes[0].map((_, c) => boxes.map(r => r[c]));//転置
     for (let i = 0; i < 19; i++) { //縦1列
         const column = transpose(boxes)[i];
-        for (let j = 0; j < 19; j++) {
-            if (column[j] && column[j] === column[j + 1] && column[j] === column[j + 2] && column[j] === column[j + 3] && column[j] === column[j + 4] && column[j] === column[j + 5]) {
+        for (let j = 0; j < 15; j++) {
+            if (column[j] && column[j] === column[j + 1] && column[j] === column[j + 2] && column[j] === column[j + 3] && column[j] === column[j + 4]) {
                 return column[j];
             }
         }
     }
-    for (let i = 0; i < 14; i++) { //左上右下斜め1列
-        for (let j = 0; j < 14; j++) {
-            if (boxes[i][j] && boxes[i][j] === boxes[i + 1][j + 1] && boxes[i][j] === boxes[i + 2][j + 2] && boxes[i][j] === boxes[i + 3][j + 3] && boxes[i][j] === boxes[i + 4][j + 4] && boxes[i][j] === boxes[i + 5][j + 5]) {
+    for (let i = 0; i < 15; i++) { //左上右下斜め1列
+        for (let j = 0; j < 15; j++) {
+            if (boxes[i][j] && boxes[i][j] === boxes[i + 1][j + 1] && boxes[i][j] === boxes[i + 2][j + 2] && boxes[i][j] === boxes[i + 3][j + 3] && boxes[i][j] === boxes[i + 4][j + 4]) {
                 return boxes[i][j];
             }
         }
     }
-    for (let i = 5; i < 19; i++) { //左下右上斜め1列
-        for (let j = 0; j < 14; j++) {
-            if (boxes[i][j] && boxes[i][j] === boxes[i - 1][j + 1] && boxes[i][j] === boxes[i - 2][j + 2] && boxes[i][j] === boxes[i - 3][j + 3] && boxes[i][j] === boxes[i - 4][j + 4] && boxes[i][j] === boxes[i - 5][j + 5]) {
+    for (let i = 4; i < 19; i++) { //左下右上斜め1列
+        for (let j = 0; j < 15; j++) {
+            if (boxes[i][j] && boxes[i][j] === boxes[i - 1][j + 1] && boxes[i][j] === boxes[i - 2][j + 2] && boxes[i][j] === boxes[i - 3][j + 3] && boxes[i][j] === boxes[i - 4][j + 4]) {
+                return boxes[i][j];
+            }
+        }
+    }
+    return null;
+}
+
+export function calculate4(boxes: (string | null)[][]) {
+    for (let i = 0; i < 19; i++) { //横1列
+        const row = boxes[i];
+        for (let j = 0; j < 16; j++) {
+            if (row[j] && row[j] === row[j + 1] && row[j] === row[j + 2] && row[j] === row[j + 3] && row[j] === row[j + 4]) {
+                return row[j];
+            }
+        }
+    }
+    const transpose = (boxes: (string | null)[][]) => boxes[0].map((_, c) => boxes.map(r => r[c]));//転置
+    for (let i = 0; i < 19; i++) { //縦1列
+        const column = transpose(boxes)[i];
+        for (let j = 0; j < 16; j++) {
+            if (column[j] && column[j] === column[j + 1] && column[j] === column[j + 2] && column[j] === column[j + 3] && column[j] === column[j + 4]) {
+                return column[j];
+            }
+        }
+    }
+    for (let i = 0; i < 16; i++) { //左上右下斜め1列
+        for (let j = 0; j < 16; j++) {
+            if (boxes[i][j] && boxes[i][j] === boxes[i + 1][j + 1] && boxes[i][j] === boxes[i + 2][j + 2] && boxes[i][j] === boxes[i + 3][j + 3] && boxes[i][j] === boxes[i + 4][j + 4]) {
+                return boxes[i][j];
+            }
+        }
+    }
+    for (let i = 3; i < 19; i++) { //左下右上斜め1列
+        for (let j = 0; j < 16; j++) {
+            if (boxes[i][j] && boxes[i][j] === boxes[i - 1][j + 1] && boxes[i][j] === boxes[i - 2][j + 2] && boxes[i][j] === boxes[i - 3][j + 3] && boxes[i][j] === boxes[i - 4][j + 4]) {
                 return boxes[i][j];
             }
         }
