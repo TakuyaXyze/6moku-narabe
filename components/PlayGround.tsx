@@ -4,27 +4,19 @@ import { GameBoard } from "./GameBoard";
 import "../styles/PlayGround.css"
 import "../styles/GameBoard.css"
 import { useState, useEffect } from "react";
-import { PutCoordinate } from "../computers/ComputerResult"
+import { MoveCoordinate } from "../computers/MoveCoordinate"
 import { computerTurnRandom } from "../computers/PutRandom";
+
+
+export const ROWS = 19;
+export const COLUMNS = 19;
 
 export function PlayGround() {
 
-    const ROWS = 19;
-    const COLUMNS = 19;
     const [history, setHistory] = useState([Array(ROWS).fill(null).map(() => Array(COLUMNS).fill(null))]);
     const [currentMove, setCurrentMove] = useState(0);
     const currentBoxes: string[][] = history[currentMove];
     const [blackIsNext, setBlackIsNext] = useState(true);
-
-    function checkBlackIsNext(currentMove: number): boolean {
-        if (currentMove === 0) {
-            return false;
-        } else if (currentMove % 4 === 1 || currentMove % 4 === 2) {
-            return true;
-        } else {
-            return false;
-        }
-    }
 
     function handlePlay(nextBoxes: string[][]): void {
         const nextHistory = [...history.slice(0, currentMove + 1), nextBoxes];
@@ -37,7 +29,7 @@ export function PlayGround() {
     }
 
     function handleClick(rowNo: number, columnNo: number): void {
-        if (calculateWinner(currentBoxes) || currentBoxes[rowNo][columnNo] || !blackIsNext) {//空白のときのみ配置可能
+        if (calculate6(currentBoxes) || currentBoxes[rowNo][columnNo] || !blackIsNext) {//空白のときのみ配置可能
             return;
         }
         handleColor(rowNo, columnNo);
@@ -46,9 +38,9 @@ export function PlayGround() {
     function handleColor(rowNo: number, columnNo: number) {
         const nextBoxes = currentBoxes.slice();
         if (blackIsNext) {//2手ずつ進むように変更するために後程変更予定
-            nextBoxes[rowNo][columnNo] = "X";
+            nextBoxes[rowNo][columnNo] = "b";
         } else {
-            nextBoxes[rowNo][columnNo] = "O";
+            nextBoxes[rowNo][columnNo] = "w";
         }
         handlePlay(nextBoxes);
     }
@@ -72,7 +64,7 @@ export function PlayGround() {
         //computerTurnWithResult({/*computerNormal*/});
     }
 
-    function computerTurnWithResult(result: PutCoordinate) {
+    function computerTurnWithResult(result: MoveCoordinate) {
         console.log("computerTurnRandom");
         handleColor(result.rowNo, result.columnNo);
     }
@@ -95,7 +87,7 @@ export function PlayGround() {
         );
     });
 
-    const winner = calculateWinner(currentBoxes);
+    const winner = calculate6(currentBoxes);
     let status;
     if (winner) {
         status = 'Winner: ' + winner;
@@ -126,11 +118,56 @@ export function PlayGround() {
     );
 }
 
-export function calculateWinner(boxes: string[][]) {
+export function checkBlackIsNext(currentMove: number): boolean {
+    if (currentMove === 0) {
+        return false;
+    } else if (currentMove % 4 === 1 || currentMove % 4 === 2) {
+        return true;
+    } else {
+        return false;
+    }
+}
+
+export function calculate6(boxes: string[][]) {
     for (let i = 0; i < 19; i++) { //横1列
         const row = boxes[i];
         for (let j = 0; j < 19; j++) {
             if (row[j] && row[j] === row[j + 1] && row[j] === row[j + 2] && row[j] === row[j + 3] && row[j] === row[j + 4] && row[j] === row[j + 5]) {
+                return row[j];
+            }
+        }
+    }
+    const transpose = (boxes: string[][]) => boxes[0].map((_, c) => boxes.map(r => r[c]));//転置
+    for (let i = 0; i < 19; i++) { //縦1列
+        const column = transpose(boxes)[i];
+        for (let j = 0; j < 19; j++) {
+            if (column[j] && column[j] === column[j + 1] && column[j] === column[j + 2] && column[j] === column[j + 3] && column[j] === column[j + 4] && column[j] === column[j + 5]) {
+                return column[j];
+            }
+        }
+    }
+    for (let i = 0; i < 14; i++) { //左上右下斜め1列
+        for (let j = 0; j < 14; j++) {
+            if (boxes[i][j] && boxes[i][j] === boxes[i + 1][j + 1] && boxes[i][j] === boxes[i + 2][j + 2] && boxes[i][j] === boxes[i + 3][j + 3] && boxes[i][j] === boxes[i + 4][j + 4] && boxes[i][j] === boxes[i + 5][j + 5]) {
+                return boxes[i][j];
+            }
+        }
+    }
+    for (let i = 5; i < 19; i++) { //左下右上斜め1列
+        for (let j = 0; j < 14; j++) {
+            if (boxes[i][j] && boxes[i][j] === boxes[i - 1][j + 1] && boxes[i][j] === boxes[i - 2][j + 2] && boxes[i][j] === boxes[i - 3][j + 3] && boxes[i][j] === boxes[i - 4][j + 4] && boxes[i][j] === boxes[i - 5][j + 5]) {
+                return boxes[i][j];
+            }
+        }
+    }
+    return null;
+}
+
+export function calculate5(boxes: string[][]) {
+    for (let i = 0; i < 19; i++) { //横1列
+        const row = boxes[i];
+        for (let j = 0; j < 19; j++) {
+            if (row[j] && row[j] === row[j + 1] && row[j] === row[j + 2] && row[j] === row[j + 3] && row[j] === row[j + 4]) {
                 return row[j];
             }
         }
