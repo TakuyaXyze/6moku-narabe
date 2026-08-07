@@ -6,6 +6,8 @@ import "../styles/GameBoard.css"
 import { useState, useEffect } from "react";
 import { MoveCoordinate } from "../computers/MoveCoordinate"
 import { computerTurnRandom } from "../computers/PutRandom";
+import { computerTurnDepth1Search } from "../computers/PutDepth1Search";
+import { computerTurnMinMaxSearch } from "../computers/PutMinMax";
 
 
 export const ROWS = 19;
@@ -61,10 +63,15 @@ export function PlayGround() {
         //setComputingStartTime(Date.now);
         //将来的に難易度選択・モード選択とかがあったらここに書く
         //computerTurnWithResult(computerTurnRandom(currentBoxes));
-        computerTurnWithResult(computerTurnRandom(currentBoxes));
+        //computerTurnWithResult(computerTurnDepth1Search(currentBoxes, blackIsNext, currentMove));
+        computerTurnWithResult(computerTurnMinMaxSearch(currentBoxes, blackIsNext, currentMove));
     }
 
-    function computerTurnWithResult(result: MoveCoordinate) {
+    function computerTurnWithResult(result: (MoveCoordinate | null)) {
+        if (result == null) {
+            console.log("computerTurnMinMaxSearch()からの戻り値がnull")
+            return;
+        };
         handleColor(result.rowNo, result.columnNo);
     }
 
