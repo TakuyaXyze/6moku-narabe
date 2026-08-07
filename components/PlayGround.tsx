@@ -64,7 +64,7 @@ export function PlayGround() {
         //将来的に難易度選択・モード選択とかがあったらここに書く
         //computerTurnWithResult(computerTurnRandom(currentBoxes));
         //computerTurnWithResult(computerTurnDepth1Search(currentBoxes, blackIsNext, currentMove));
-        computerTurnWithResult(computerTurnMinMaxSearch(currentBoxes, blackIsNext, currentMove));
+        computerTurnWithResult(computerTurnMinMaxSearch(currentBoxes, blackIsNext, currentMove, 3));
     }
 
     function computerTurnWithResult(result: (MoveCoordinate | null)) {
