@@ -3,9 +3,10 @@
 //
 import { BoardState } from "./BoardState";
 import { Move, State, Search, TrailStack } from "./Evaluate"
+import { MoveCoordinate } from "./MoveCoordinate";
 
 export class Depth1Search extends Search {
-    bestMove(boxes: (string | null)[][], blackIsNext: boolean, currentMove: number): (Move | null) {
+    bestMove(boxes: (string | null)[][], blackIsNext: boolean, currentMove: number): (MoveCoordinate | null) {
         const bstate = new BoardState(boxes, blackIsNext, currentMove);
         // 可能な手を全部生成する
         const moves = bstate.legalMoves(boxes);
@@ -23,9 +24,12 @@ export class Depth1Search extends Search {
             //trailに保存
             const trail = bstate.doMove(move);
             // 評価値を計算
-            // 1手進んだ時(相手の番)の評価値なので符号を入れ替える.ここ、2手ずつのときは要修正。
+            /*// 1手進んだ時(相手の番)の評価値なので符号を入れ替える.ここ、2手ずつのときは要修正。
             const moveVal: number = -bstate.eval();
-            move.value = moveVal;
+            move.value = moveVal;*/
+            let moveVal: number;
+            if (blackIsNext) moveVal = bstate.eval();
+            else moveVal = -bstate.eval();
             //trailから戻す
             bstate.undoMove(trail);
             // 評価値がこれまでのbestを超えた時

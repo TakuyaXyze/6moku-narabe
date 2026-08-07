@@ -10,6 +10,6 @@ export function computerTurnRandom(boxes: string[][]) {
         randomRowNo = Math.floor(Math.random() * 19.0);
         randomColumnNo = Math.floor(Math.random() * 19.0);
     } while (boxes[randomRowNo][randomColumnNo])
-    let coordinate = new MoveCoordinate(randomRowNo, randomColumnNo, value);
+    const coordinate = new MoveCoordinate(randomRowNo, randomColumnNo, value);
     return coordinate;
 }

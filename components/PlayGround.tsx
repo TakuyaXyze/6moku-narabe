@@ -60,12 +60,11 @@ export function PlayGround() {
     function computerTurn(): void {
         //setComputingStartTime(Date.now);
         //将来的に難易度選択・モード選択とかがあったらここに書く
+        //computerTurnWithResult(computerTurnRandom(currentBoxes));
         computerTurnWithResult(computerTurnRandom(currentBoxes));
-        //computerTurnWithResult({/*computerNormal*/});
     }
 
     function computerTurnWithResult(result: MoveCoordinate) {
-        console.log("computerTurnRandom");
         handleColor(result.rowNo, result.columnNo);
     }
 

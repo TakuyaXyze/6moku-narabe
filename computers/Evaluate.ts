@@ -66,5 +66,5 @@ export abstract class State {
 export abstract class Search {
     // 次の手を返す
     //abstract bestMove(this: Search, state: State, level?: number): (Move | null);
-    abstract bestMove(boxes: (string | null)[][], blackIsNext: boolean, currentMove: number, level?: number): (Move | null);
+    abstract bestMove(boxes: (string | null)[][], blackIsNext: boolean, currentMove: number, level?: number): (MoveCoordinate | null);
 }
