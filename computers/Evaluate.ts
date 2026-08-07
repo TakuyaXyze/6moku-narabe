@@ -4,20 +4,18 @@ import { MoveCoordinate } from "./MoveCoordinate";
 // 手とその評価値を表す抽象クラス
 export abstract class Move {
     // 評価値は doubleで表す
-    private _value?: number;
+    private _value: number;
     //private _rowNo: number;
     //private _columnNo: number;
 
     //public constructor(value: number, rowNo: number, columnNo: number) {
-    public constructor(value: number | null) {
-        if (typeof value === "number") {
-            this._value = value;
-        }
+    public constructor(value: number) {
+        this._value = value;
         //this._rowNo = rowNo;
         //this._columnNo = columnNo;
     }
-    get value(): number {
-        return this.value;
+    get value(): (number | null) {
+        return this._value;
     };
     set value(value: number) {
         this._value = value;
