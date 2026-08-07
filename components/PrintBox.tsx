@@ -10,7 +10,7 @@ export function PrintBox({ rowNo, columnNo, value, onBoxClick }: Props) {
     const countNum: number = (rowNo) * 100 + (columnNo);
 
     return (
-        <div key={countNum} className={`stone ${value === "X" ? 'black' : ''}${value === "O" ? 'white' : ''}`}>
+        <div key={countNum} className={`stone ${value === "b" ? 'black' : ''}${value === "w" ? 'white' : ''}`}>
             <div onClick={onBoxClick}
                 className="box">
                 {rowNo + 1}-{columnNo + 1}
