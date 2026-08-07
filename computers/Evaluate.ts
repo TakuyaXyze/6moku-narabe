@@ -14,7 +14,7 @@ export abstract class Move {
         //this._rowNo = rowNo;
         //this._columnNo = columnNo;
     }
-    get value(): (number | null) {
+    get value(): (number) {
         return this._value;
     };
     set value(value: number) {

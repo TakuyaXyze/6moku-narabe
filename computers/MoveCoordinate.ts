@@ -4,7 +4,7 @@ export class MoveCoordinate extends Move {
     //const position: number[][] = ; //引用元には int position; があったので一応メモ
     private _rowNo: number;
     private _columnNo: number;
-    public constructor(rowNo: number, columnNo: number, value: number) {
+    public constructor(rowNo: number, columnNo: number, value: number = 0.0) {
         super(value)
         this._rowNo = rowNo;
         this._columnNo = columnNo
