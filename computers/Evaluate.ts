@@ -42,11 +42,9 @@ export abstract class TrailStack {
 export abstract class State {
 
     public state: (string | null)[][];
-    public blackIsNext: boolean;
     public currentMove: number;
-    public constructor(boxes: (string | null)[][], blackIsNext: boolean, currentMove: number) {
+    public constructor(boxes: (string | null)[][], currentMove: number) {
         this.state = boxes;
-        this.blackIsNext = blackIsNext;
         this.currentMove = currentMove;
     }
     // 次の可能手の Moveの配列を返す
@@ -64,5 +62,5 @@ export abstract class State {
 export abstract class Search {
     // 次の手を返す
     //abstract bestMove(this: Search, state: State, level?: number): (Move | null);
-    abstract bestMove(boxes: (string | null)[][], blackIsNext: boolean, currentMove: number, level?: number, alpha?: number, beta?: number): (MoveCoordinate | null);
+    abstract bestMove(boxes: (string | null)[][], currentMove: number, level?: number, alpha?: number, beta?: number): (MoveCoordinate | null);
 }

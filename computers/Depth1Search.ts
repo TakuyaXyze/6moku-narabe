@@ -4,10 +4,11 @@
 import { BoardState } from "./BoardState";
 import { Move, State, Search, TrailStack } from "./Evaluate"
 import { MoveCoordinate } from "./MoveCoordinate";
+import { checkBlackIsNext } from "../components/PlayGround";
 
 export class Depth1Search extends Search {
-    bestMove(boxes: (string | null)[][], blackIsNext: boolean, currentMove: number): (MoveCoordinate | null) {
-        const bstate = new BoardState(boxes, blackIsNext, currentMove);
+    bestMove(boxes: (string | null)[][], currentMove: number): (MoveCoordinate | null) {
+        const bstate = new BoardState(boxes, currentMove);
         // 可能な手を全部生成する
         const moves = bstate.legalMoves(boxes);
         let size: number = 0;
@@ -28,6 +29,7 @@ export class Depth1Search extends Search {
             const moveVal: number = -bstate.eval();
             move.value = moveVal;*/
             let moveVal: number;
+            let blackIsNext = checkBlackIsNext(currentMove);
             if (!blackIsNext) moveVal = bstate.eval();
             else moveVal = -bstate.eval();
             //trailから戻す
