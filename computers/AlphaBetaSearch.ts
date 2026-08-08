@@ -5,15 +5,15 @@ import { MoveCoordinate } from "./MoveCoordinate";
 
 export class AlphaBetaSearch extends Search {
     // どの深さまで読むか?
-    private maxLevel: number = 1; //初期値は深さ1
+    private maxLevel: number;
     // インスタンス生成時にレベルを設定
-    AlphaBetaSearch(maxLevel: number) {
+    constructor(maxLevel: number) {
+        super()
         this.maxLevel = maxLevel;
     }
-    //alpha
     eval(boxes: (string | null)[][], blackIsNext: boolean, currentMove: number, bstate: BoardState, level: number, alpha: number, beta: number): number {
         // 末端のレベルでは局面の評価値。Randomではlevel==undefined
-        if (level == 0 || level == undefined) return bstate.eval();
+        if (level == 0) return bstate.eval();
         else {
             // そうでない時はベストの手の時の評価値
             const best = this.bestMove(boxes, blackIsNext, currentMove, level, alpha, beta);
