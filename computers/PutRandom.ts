@@ -1,3 +1,4 @@
+import { ROWS, COLUMNS } from "@/components/PlayGround";
 import { MoveCoordinate } from "./MoveCoordinate";
 
 export function computerTurnRandom(boxes: string[][]) {
@@ -7,8 +8,8 @@ export function computerTurnRandom(boxes: string[][]) {
     let randomRowNo: number;
     let randomColumnNo: number;
     do {
-        randomRowNo = Math.floor(Math.random() * 19.0);
-        randomColumnNo = Math.floor(Math.random() * 19.0);
+        randomRowNo = Math.floor(Math.random() * ROWS);
+        randomColumnNo = Math.floor(Math.random() * COLUMNS);
     } while (boxes[randomRowNo][randomColumnNo])
     const coordinate = new MoveCoordinate(randomRowNo, randomColumnNo, value);
     return coordinate;

@@ -3,21 +3,24 @@
     align-items: center;
     height: 90%;
     aspect-ratio: 1/1;
+    display: flex;
+    flex-direction: column;
 }
 
 .row {
     display: flex;
-    height: calc(100%/19);
+    /*height: calc(100%/19);*/
+    height: 100%;
     width: 100%;
 }
 
 .stone {
+    flex-grow: 1;
     height: 100%;
-    width: calc(100%/19);
+    /*width: calc(100%/19);*/
+    width: 100%;
     border-radius: 50%;
-    display: flex;
     position: relative;
-    font-size: 30px;
 }
 
 .box {
