@@ -28,10 +28,11 @@ export class Depth1Search extends Search {
             const moveVal: number = -bstate.eval();
             move.value = moveVal;*/
             let moveVal: number;
-            if (blackIsNext) moveVal = bstate.eval();
+            if (!blackIsNext) moveVal = bstate.eval();
             else moveVal = -bstate.eval();
             //trailから戻す
             bstate.undoMove(trail);
+            console.log("Depth1Search-moveVal:" + moveVal);
             // 評価値がこれまでのbestを超えた時
             if (bestVal < moveVal) {
                 bestVal = moveVal;
@@ -43,6 +44,7 @@ export class Depth1Search extends Search {
                 bestMoves.push(move);
             }
         }
+        //console.log("Depth1Search-bestMoves" + bestMoves);
         // bestの中から乱数で選択
         const bestSize: number = bestMoves.length;
         const selected: number = Math.floor(Math.random() * bestSize);

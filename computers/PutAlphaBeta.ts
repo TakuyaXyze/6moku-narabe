@@ -1,7 +1,7 @@
 import { AlphaBetaSearch } from "./AlphaBetaSearch";
 import { MoveCoordinate } from "./MoveCoordinate";
 
-export function computerTurnMAlphaBetaSearch(boxes: string[][], blackIsNext: boolean, currentMove: number, depth: number) {
+export function computerTurnAlphaBetaSearch(boxes: string[][], blackIsNext: boolean, currentMove: number, depth: number) {
     console.log("computerTurnMinMaxSearch-start");
     //setComputingTime(Date.now() - computingStartTime);
     const move = new AlphaBetaSearch;
