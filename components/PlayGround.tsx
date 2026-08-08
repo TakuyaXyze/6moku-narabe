@@ -38,7 +38,8 @@ export function PlayGround() {
     }
 
     function handleColor(rowNo: number, columnNo: number) {
-        if (calculate6(currentBoxes)) return;
+        //if (calculate6(currentBoxes)) return;
+        if (typeof detectSequence(currentBoxes, 6) == "string") return;
         const nextBoxes = currentBoxes.slice();
         if (blackIsNext) {//2手ずつ進むように変更するために後程変更予定
             nextBoxes[rowNo][columnNo] = "b";
@@ -116,10 +117,10 @@ export function PlayGround() {
             case 5:
                 computerTurnWithResult(computerTurnAlphaBetaSearch(currentBoxes, blackIsNext, currentMove, 6));
         }*/
-        //computerTurnWithResult(computerTurnRandom(currentBoxes));
+        computerTurnWithResult(computerTurnRandom(currentBoxes));
         //computerTurnWithResult(computerTurnDepth1Search(currentBoxes, blackIsNext, currentMove));
-        //computerTurnWithResult(computerTurnMinMaxSearch(currentBoxes, blackIsNext, currentMove, 3));
-        computerTurnWithResult(computerTurnAlphaBetaSearch(currentBoxes, blackIsNext, currentMove, 3));
+        //computerTurnWithResult(computerTurnMinMaxSearch(currentBoxes, blackIsNext, currentMove, 2));
+        //computerTurnWithResult(computerTurnAlphaBetaSearch(currentBoxes, blackIsNext, currentMove, 3));
     }
 
     function computerTurnWithResult(result: (MoveCoordinate | null)) {
@@ -148,9 +149,10 @@ export function PlayGround() {
         );
     });
 
-    const winner = calculate6(currentBoxes);
+    //const winner = calculate6(currentBoxes);
+    const winner = detectSequence(currentBoxes, 6);
     let status;
-    if (winner) {
+    if (typeof winner == "string") {
         status = 'Winner: ' + winner;
     } else {
         status = 'Next player: ' + (blackIsNext ? 'black' : 'white');
@@ -191,10 +193,10 @@ export function checkBlackIsNext(currentMove: number): boolean {
     }
 }
 
-export function calculate6(boxes: (string | null)[][]) {
+/*export function calculate6(boxes: (string | null)[][]) {
     for (let i = 0; i < 19; i++) { //横1列
         const row = boxes[i];
-        for (let j = 0; j < 19; j++) {
+        for (let j = 0; j < 14; j++) {
             if (row[j] && row[j] === row[j + 1] && row[j] === row[j + 2] && row[j] === row[j + 3] && row[j] === row[j + 4] && row[j] === row[j + 5]) {
                 return row[j];
             }
@@ -203,7 +205,7 @@ export function calculate6(boxes: (string | null)[][]) {
     const transpose = (boxes: (string | null)[][]) => boxes[0].map((_, c) => boxes.map(r => r[c]));//転置
     for (let i = 0; i < 19; i++) { //縦1列
         const column = transpose(boxes)[i];
-        for (let j = 0; j < 19; j++) {
+        for (let j = 0; j < 14; j++) {
             if (column[j] && column[j] === column[j + 1] && column[j] === column[j + 2] && column[j] === column[j + 3] && column[j] === column[j + 4] && column[j] === column[j + 5]) {
                 return column[j];
             }
@@ -359,6 +361,62 @@ export function calculate2(boxes: (string | null)[][]) {
     for (let i = 1; i < 19; i++) { //左下右上斜め1列
         for (let j = 0; j < 18; j++) {
             if (boxes[i][j] && boxes[i][j] === boxes[i - 1][j + 1]) {
+                return boxes[i][j];
+            }
+        }
+    }
+    return null;
+}*/
+
+export function detectSequence(boxes: (string | null)[][], length: number) {
+    for (let i = 0; i < ROWS; i++) {
+        for (let j = 0; j < COLUMNS - length + 1; j++) {
+            let count = 0;
+            for (let k = 1; k < length; k++) {
+                if (boxes[i][j] && boxes[i][j] == boxes[i][j + k]) {
+                    count++;
+                }
+            }
+            if (count >= length - 1) {
+                return boxes[i][j];
+            };
+        }
+    }
+    for (let i = 0; i < ROWS - length + 1; i++) {
+        for (let j = 0; j < COLUMNS; j++) {
+            let count = 0;
+            for (let k = 1; k < length; k++) {
+                if (boxes[i][j] && boxes[i][j] == boxes[i + k][j]) {
+                    count++;
+                }
+            }
+            if (count >= length - 1) {
+                return boxes[i][j];
+            }
+        }
+    }
+    for (let i = 0; i < ROWS - length + 1; i++) {
+        for (let j = 0; j < COLUMNS - length + 1; j++) {
+            let count = 0;
+            for (let k = 1; k < length; k++) {
+                if (boxes[i][j] && boxes[i][j] == boxes[i + k][j + k]) {
+                    count++;
+                }
+            }
+            if (count >= length - 1) {
+                return boxes[i][j];
+            }
+        }
+    }
+    for (let i = 0; i < ROWS - length + 1; i++) {
+        for (let j = length - 1; j < COLUMNS; j++) {
+            let count = 0;
+            for (let k = 1; k < length; k++) {
+                if (boxes[i][j] && boxes[i][j] == boxes[i + k][j - k]) {
+                    count++;
+                }
+            }
+            if (count >= length - 1) {
                 return boxes[i][j];
             }
         }
