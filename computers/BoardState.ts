@@ -2,12 +2,12 @@ import { BoardTrail } from "./BoardTrail";
 import { Move, State, TrailStack } from "./Evaluate"
 import { MoveCoordinate } from "./MoveCoordinate";
 //import { ROWS, COLUMNS, checkBlackIsNext, calculate6, calculate5, calculate4, calculate3, calculate2 } from "../components/PlayGround"
-import { ROWS, COLUMNS, checkBlackIsNext, detectSequence } from "../components/PlayGround"
+import { ROWS, COLUMNS, checkBlackIsNext, detectSequence, SEQUENCE_LENGTH } from "../components/PlayGround"
 
 export class BoardState extends State {
 
-    public constructor(boxes: (string | null)[][], blackIsNext: boolean, currentMove: number) {
-        super(boxes, blackIsNext, currentMove)
+    public constructor(boxes: (string | null)[][], currentMove: number) {
+        super(boxes, currentMove)
     }
     legalMoves(boxes: (string | null)[][]): (Array<MoveCoordinate> | null) {
         const ret = new Array<MoveCoordinate>;
@@ -23,12 +23,12 @@ export class BoardState extends State {
         const rowNo = move.rowNo;
         const columnNo = move.columnNo;
         const trail = new BoardTrail(rowNo, columnNo);
-        if (this.blackIsNext) {
+        const blackIsNext = checkBlackIsNext(this.currentMove);
+        if (blackIsNext) {
             this.state[rowNo][columnNo] = "b"
         } else {
             this.state[rowNo][columnNo] = "w"
         }
-        this.blackIsNext = checkBlackIsNext(this.currentMove);
         this.currentMove++;
         return trail;
     }
@@ -36,15 +36,19 @@ export class BoardState extends State {
         const trail: BoardTrail = boardStack;
         this.state[trail._rowNo][trail._columnNo] = null;
         this.currentMove--;
-        this.blackIsNext = checkBlackIsNext(this.currentMove);
     }
     eval(): number {
         let sum = 0;
-        if (typeof detectSequence(this.state, 6) === "string") sum += 100;
-        if (typeof detectSequence(this.state, 5) === "string") sum += 15;
-        if (typeof detectSequence(this.state, 4) === "string") sum += 10;
-        if (typeof detectSequence(this.state, 3) === "string") sum += 5;
-        if (typeof detectSequence(this.state, 2) === "string") sum += 1;
+        const six = Math.max(SEQUENCE_LENGTH, 6);
+        const five = Math.max(SEQUENCE_LENGTH, 5);
+        const four = Math.max(SEQUENCE_LENGTH, 4);
+        const three = Math.max(SEQUENCE_LENGTH, 3);
+        const two = Math.max(SEQUENCE_LENGTH, 2);
+        if (typeof detectSequence(this.state, six) === "string") sum += 100;
+        if (typeof detectSequence(this.state, five) === "string") sum += 15;
+        if (typeof detectSequence(this.state, four) === "string") sum += 10;
+        if (typeof detectSequence(this.state, three) === "string") sum += 5;
+        if (typeof detectSequence(this.state, two) === "string") sum += 1;
         return sum;
     }
 }

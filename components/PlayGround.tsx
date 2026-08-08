@@ -11,8 +11,8 @@ import { computerTurnDepth1Search } from "../computers/PutDepth1Search";
 import { computerTurnMinMaxSearch } from "../computers/PutMinMax";
 import { computerTurnAlphaBetaSearch } from "../computers/PutAlphaBeta"
 
-export const ROWS = 8;
-export const COLUMNS = 8;
+export const ROWS = 6;
+export const COLUMNS = ROWS;
 export let rowNos = new Array<number>;
 for (let i = 0; i < ROWS; i++) {
     rowNos.push(i);
@@ -21,6 +21,7 @@ export let columnNos = new Array<number>;
 for (let i = 0; i < COLUMNS; i++) {
     columnNos.push(i);
 }
+export const SEQUENCE_LENGTH = 6;
 
 export function PlayGround() {
 
@@ -47,7 +48,7 @@ export function PlayGround() {
 
     function handleColor(rowNo: number, columnNo: number) {
         //if (calculate6(currentBoxes)) return;
-        if (typeof detectSequence(currentBoxes, 6) == "string") return;
+        if (typeof detectSequence(currentBoxes, SEQUENCE_LENGTH) == "string") return;
         const nextBoxes = currentBoxes.slice();
         if (blackIsNext) {//2手ずつ進むように変更するために後程変更予定
             nextBoxes[rowNo][columnNo] = "b";
@@ -125,10 +126,10 @@ export function PlayGround() {
             case 5:
                 computerTurnWithResult(computerTurnAlphaBetaSearch(currentBoxes, blackIsNext, currentMove, 6));
         }*/
-        computerTurnWithResult(computerTurnRandom(currentBoxes));
+        //computerTurnWithResult(computerTurnRandom(currentBoxes));
         //computerTurnWithResult(computerTurnDepth1Search(currentBoxes, blackIsNext, currentMove));
         //computerTurnWithResult(computerTurnMinMaxSearch(currentBoxes, blackIsNext, currentMove, 2));
-        //computerTurnWithResult(computerTurnAlphaBetaSearch(currentBoxes, blackIsNext, currentMove, 3));
+        computerTurnWithResult(computerTurnAlphaBetaSearch(currentBoxes, blackIsNext, currentMove, 3));
     }
 
     function computerTurnWithResult(result: (MoveCoordinate | null)) {
@@ -158,7 +159,7 @@ export function PlayGround() {
     });
 
     //const winner = calculate6(currentBoxes);
-    const winner = detectSequence(currentBoxes, 6);
+    const winner = detectSequence(currentBoxes, SEQUENCE_LENGTH);
     let status;
     if (typeof winner == "string") {
         status = 'Winner: ' + winner;
