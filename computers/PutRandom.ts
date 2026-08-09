@@ -1,7 +1,7 @@
 import { ROWS, COLUMNS } from "@/components/PlayGround";
 import { MoveCoordinate } from "./MoveCoordinate";
 
-export function computerTurnRandom(boxes: string[][]) {
+export function computerTurnRandom(boxes: (string | null)[][]) {
     console.log("computerTurnRandom");
     //setComputingTime(Date.now() - computingStartTime);
     const value: number = 0;

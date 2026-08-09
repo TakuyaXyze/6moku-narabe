@@ -1,7 +1,7 @@
 import { Depth1Search } from "./Depth1Search";
 import { MoveCoordinate } from "./MoveCoordinate";
 
-export function computerTurnDepth1Search(boxes: string[][], blackIsNext: boolean, currentMove: number) {
+export function computerTurnDepth1Search(boxes: (string | null)[][], currentMove: number) {
     console.log("computerTurnDepth1Search");
     //setComputingTime(Date.now() - computingStartTime);
     const move = new Depth1Search;

@@ -1,7 +1,7 @@
 import { MinMaxSearch } from "./MinMaxSearch";
 import { MoveCoordinate } from "./MoveCoordinate";
 
-export function computerTurnMinMaxSearch(boxes: string[][], currentMove: number, depth: number) {
+export function computerTurnMinMaxSearch(boxes: (string | null)[][], currentMove: number, depth: number) {
     console.log("computerTurnMinMaxSearch-start");
     //setComputingTime(Date.now() - computingStartTime);
     const move = new MinMaxSearch(depth);

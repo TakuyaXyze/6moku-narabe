@@ -1,7 +1,7 @@
 type Props = {
     rowNo: number;
     columnNo: number;
-    value: string;
+    value: (string | null);
     onBoxClick: () => void;
 }
 

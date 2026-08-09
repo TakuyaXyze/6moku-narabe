@@ -6,7 +6,7 @@ import { rowNos } from "./PlayGround";
 
 type Props = {
     //blackIsNext: boolean;
-    boxes: string[][];
+    boxes: (string | null)[][];
     handleClick: (rowNo: number, columnNo: number) => void;
 }
 /*
@@ -23,7 +23,7 @@ export function GameBoard({ boxes, handleClick }: Props) {
     )
 };
 
-function printRows(boxes: string[][], handleClick: (rowNo: number, columnNo: number) => void, rowNo: number) {
+function printRows(boxes: (string | null)[][], handleClick: (rowNo: number, columnNo: number) => void, rowNo: number) {
     const key: string = "row-" + rowNo;
     return (
         <PrintRow key={key} rowNo={rowNo} boxes={boxes} handleClick={handleClick} />
