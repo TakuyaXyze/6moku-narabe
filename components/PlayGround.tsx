@@ -66,12 +66,16 @@ export function PlayGround() {
     }
 
     useEffect(() => {
+        detectComputerTurn();
+        return
+    }, [history])
+
+    function detectComputerTurn() {
         if (!blackIsNext) {
             console.log("computerTurn");
             computerTurn();
         }
-        return
-    }, [history])
+    }
 
     function handleGameMode(i: number) {
         setCurrentModeNumber(i);
@@ -132,11 +136,11 @@ export function PlayGround() {
             case 5:
                 computerTurnWithResult(computerTurnAlphaBetaSearch(history[currentMove],  currentMove, 6));
         }*/
-        computerTurnWithResult(computerTurnRandom(history[currentMove]));
+        //computerTurnWithResult(computerTurnRandom(history[currentMove]));
         //computerTurnWithResult(computerTurnDepth1Search(history[currentMove],  currentMove));
         //computerTurnWithResult(computerTurnMinMaxSearch(history[currentMove],  currentMove, 2));
         //computerTurnWithResult(computerTurnAlphaBetaSearch(history[currentMove],  currentMove, 1));
-        //computerTurnWithResult(computerTurnAlphaBetaSearch(history[currentMove], currentMove, 2));
+        computerTurnWithResult(computerTurnAlphaBetaSearch(history[currentMove], currentMove, 2));
         //computerTurnWithResult(computerTurnAlphaBetaSearch(history[currentMove],  currentMove, 3));
     }
 
@@ -150,6 +154,8 @@ export function PlayGround() {
 
     function jumpTo(nextMove: number) {
         setCurrentMove(nextMove);
+        setBlackIsNext(checkBlackIsNext(nextMove));
+        detectComputerTurn();
     }
 
     const moves = history.map((boxes: (string | null)[][], move: number) => {
