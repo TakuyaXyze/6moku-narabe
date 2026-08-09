@@ -8,7 +8,7 @@ import { checkBlackIsNext } from "../components/PlayGround";
 
 export class Depth1Search extends Search {
     bestMove(boxes: (string | null)[][], currentMove: number): (MoveCoordinate | null) {
-        const bstate = new BoardState(boxes, currentMove);
+        const bstate = new BoardState(boxes, currentMove, 1);//depth=1
         // 可能な手を全部生成する
         const moves = bstate.legalMoves(boxes);
         let size: number = 0;
