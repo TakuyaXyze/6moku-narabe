@@ -11,7 +11,7 @@ import { computerTurnDepth1Search } from "../computers/PutDepth1Search";
 import { computerTurnMinMaxSearch } from "../computers/PutMinMax";
 import { computerTurnAlphaBetaSearch } from "../computers/PutAlphaBeta"
 
-export const ROWS = 6;
+export const ROWS = 8;
 export const COLUMNS = ROWS;
 export let rowNos = new Array<number>;
 for (let i = 0; i < ROWS; i++) {
@@ -25,37 +25,43 @@ export const SEQUENCE_LENGTH = 6;
 
 export function PlayGround() {
 
-    const [history, setHistory] = useState([Array(ROWS).fill(null).map(() => Array(COLUMNS).fill(null))]);
+    const [history, setHistory] = useState([Array(ROWS).fill(null).map(() => Array<(string | null)>(COLUMNS).fill(null))]);
     const [currentMove, setCurrentMove] = useState(0);
-    const currentBoxes: string[][] = history[currentMove];
     const [blackIsNext, setBlackIsNext] = useState(true);
     const [currentModeNumber, setCurrentModeNumber] = useState(0);
 
-    function handlePlay(nextBoxes: string[][]): void {
+    function handlePlay(nextBoxes: (string | null)[][]): void {
         const nextHistory = [...history.slice(0, currentMove + 1), nextBoxes];
         setHistory(nextHistory);
         setCurrentMove(nextHistory.length - 1);
-        const booleanBlackIsNext = checkBlackIsNext(currentMove);
+        const booleanBlackIsNext = checkBlackIsNext(currentMove + 1);
+        /*console.log("nextHistory.length - 1:" + (nextHistory.length - 1));
+        console.log("currentMove:" + currentMove);
+        const booleanBlackIsNext = checkBlackIsNext(currentMove);*/
+        //useStateの呼び出しのタイミングの問題?(おそらく)で、currentMove+1としないと上手く動かない。
+        //currentMoveにはsetCurrentMove(nextHistory.length - 1);する前の値が入ってくる。
         setBlackIsNext(booleanBlackIsNext);
     }
 
     function handleClick(rowNo: number, columnNo: number): void {
-        if (currentBoxes[rowNo][columnNo] || !blackIsNext) {//空白のときのみ配置可能
+        if (history[currentMove][rowNo][columnNo] || !blackIsNext) {//空白のときのみ配置可能
             return;
         }
         handleColor(rowNo, columnNo);
     }
 
     function handleColor(rowNo: number, columnNo: number) {
-        //if (calculate6(currentBoxes)) return;
-        if (typeof detectSequence(currentBoxes, SEQUENCE_LENGTH) == "string") return;
-        const nextBoxes = currentBoxes.slice();
-        if (blackIsNext) {//2手ずつ進むように変更するために後程変更予定
+        if (typeof detectSequence(history[currentMove], SEQUENCE_LENGTH) == "string") return;
+        //const nextBoxes = history[currentMove].slice();
+        //参考コードだと1次元行列だったのでシャローコピーでよかったが、ここでは2次元のためディープコピー
+        const nextBoxes: Array<(string | null)[]> = JSON.parse(JSON.stringify(history[currentMove]));
+        if (blackIsNext) {
             nextBoxes[rowNo][columnNo] = "b";
         } else {
             nextBoxes[rowNo][columnNo] = "w";
         }
-        console.log(nextBoxes);
+        console.log("handleColor-history:" + history);
+        console.log("handleColor-nextBoxes:" + nextBoxes);
         handlePlay(nextBoxes);
     }
 
@@ -65,7 +71,7 @@ export function PlayGround() {
             computerTurn();
         }
         return
-    }, [currentBoxes])
+    }, [history])
 
     function handleGameMode(i: number) {
         setCurrentModeNumber(i);
@@ -114,22 +120,24 @@ export function PlayGround() {
         //将来的に難易度選択・モード選択とかがあったらここに書く
         /*switch (currentModeNumber) {
             case 0:
-                computerTurnWithResult(computerTurnRandom(currentBoxes));
+                computerTurnWithResult(computerTurnRandom(history[currentMove]));
             case 1:
-                computerTurnWithResult(computerTurnDepth1Search(currentBoxes, blackIsNext, currentMove));
+                computerTurnWithResult(computerTurnDepth1Search(history[currentMove],  currentMove));
             case 2:
-                computerTurnWithResult(computerTurnMinMaxSearch(currentBoxes, blackIsNext, currentMove, 3));
+                computerTurnWithResult(computerTurnMinMaxSearch(history[currentMove],  currentMove, 3));
             case 3:
-                computerTurnWithResult(computerTurnMinMaxSearch(currentBoxes, blackIsNext, currentMove, 6));
+                computerTurnWithResult(computerTurnMinMaxSearch(history[currentMove],  currentMove, 6));
             case 4:
-                computerTurnWithResult(computerTurnAlphaBetaSearch(currentBoxes, blackIsNext, currentMove, 3));
+                computerTurnWithResult(computerTurnAlphaBetaSearch(history[currentMove],  currentMove, 3));
             case 5:
-                computerTurnWithResult(computerTurnAlphaBetaSearch(currentBoxes, blackIsNext, currentMove, 6));
+                computerTurnWithResult(computerTurnAlphaBetaSearch(history[currentMove],  currentMove, 6));
         }*/
-        //computerTurnWithResult(computerTurnRandom(currentBoxes));
-        //computerTurnWithResult(computerTurnDepth1Search(currentBoxes, blackIsNext, currentMove));
-        //computerTurnWithResult(computerTurnMinMaxSearch(currentBoxes, blackIsNext, currentMove, 2));
-        computerTurnWithResult(computerTurnAlphaBetaSearch(currentBoxes, blackIsNext, currentMove, 3));
+        computerTurnWithResult(computerTurnRandom(history[currentMove]));
+        //computerTurnWithResult(computerTurnDepth1Search(history[currentMove],  currentMove));
+        //computerTurnWithResult(computerTurnMinMaxSearch(history[currentMove],  currentMove, 2));
+        //computerTurnWithResult(computerTurnAlphaBetaSearch(history[currentMove],  currentMove, 1));
+        //computerTurnWithResult(computerTurnAlphaBetaSearch(history[currentMove], currentMove, 2));
+        //computerTurnWithResult(computerTurnAlphaBetaSearch(history[currentMove],  currentMove, 3));
     }
 
     function computerTurnWithResult(result: (MoveCoordinate | null)) {
@@ -144,7 +152,7 @@ export function PlayGround() {
         setCurrentMove(nextMove);
     }
 
-    const moves = history.map((boxes: string[][], move: number) => {
+    const moves = history.map((boxes: (string | null)[][], move: number) => {
         let description;
         if (move > 0) {
             description = 'Go to move #' + move;
@@ -158,8 +166,7 @@ export function PlayGround() {
         );
     });
 
-    //const winner = calculate6(currentBoxes);
-    const winner = detectSequence(currentBoxes, SEQUENCE_LENGTH);
+    const winner = detectSequence(history[currentMove], SEQUENCE_LENGTH);
     let status;
     if (typeof winner == "string") {
         status = 'Winner: ' + winner;
@@ -167,36 +174,14 @@ export function PlayGround() {
         status = 'Next player: ' + (blackIsNext ? 'black' : 'white');
     }
 
-    /*return (
+    return (
         <div className="play-ground">
             <div>
-                <GameBoard blackIsNext={blackIsNext} boxes={currentBoxes} onPlay={handlePlay} />
+                <GameBoard boxes={history[currentMove]} handleClick={handleClick} />
             </div>
             <div className="game-info">
                 <div className="status">{status}</div>
                 <ol>{moves}</ol>
-            </div>
-        </div>
-    );*/
-    /*return (
-        <div className="play-ground">
-            <div>
-                <GameBoard blackIsNext={blackIsNext} boxes={currentBoxes} handleClick={handleClick} />
-            </div>
-            <div className="game-info">
-                <div className="status">{status}</div>
-                <div>Mode:{currentGameMode}</div>
-                <SelectGameMode handleGameMode={handleGameMode} />
-            </div>
-        </div>
-    );*/
-    return (
-        <div className="play-ground">
-            <div>
-                <GameBoard boxes={currentBoxes} handleClick={handleClick} />
-            </div>
-            <div className="game-info">
-                <div className="status">{status}</div>
                 <div>Mode:{currentGameMode}</div>
                 <SelectGameMode handleGameMode={handleGameMode} />
             </div>
@@ -205,16 +190,28 @@ export function PlayGround() {
 }
 
 export function checkBlackIsNext(currentMove: number): boolean {
+    /*
+    0 void  next black true
+    1 black next white false
+    2 white next black true
+    3 black next black true
+    4 black next white false
+    5 white next white false
+    6 white next black true
+    7 black next black true
+    8 black next white false
+    9 white next white false
+    */
     if (currentMove === 0) {
-        return false;
-    } else if (currentMove % 4 === 1 || currentMove % 4 === 2) {
+        return true;
+    } else if (currentMove % 4 === 2 || currentMove % 4 === 3) {
         return true;
     } else {
         return false;
     }
 }
 
-export function detectSequence(boxes: (string | null)[][], length: number) {
+export function detectSequence(boxes: (string | null)[][], length: number): (string | null) {
     for (let i = 0; i < ROWS; i++) {
         for (let j = 0; j < COLUMNS - length + 1; j++) {
             let count = 0;
