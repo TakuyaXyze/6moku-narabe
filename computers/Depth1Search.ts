@@ -1,13 +1,12 @@
-// Depth1Search
-// 可能手を全部生成して,その盤面の評価値で最良のものを選択する
-//
+import { checkBlackIsNext } from "../components/PlayGround";
 import { BoardState } from "./BoardState";
+import { BoardTrail } from "./BoardTrail";
 import { Move, State, Search, TrailStack } from "./Evaluate"
 import { MoveCoordinate } from "./MoveCoordinate";
-import { checkBlackIsNext } from "../components/PlayGround";
 
 export class Depth1Search extends Search {
     bestMove(boxes: (string | null)[][], currentMove: number): (MoveCoordinate | null) {
+        console.log("Depth1Search-bestMove:start");
         const bstate = new BoardState(boxes, currentMove, 1);//depth=1
         // 可能な手を全部生成する
         const moves = bstate.legalMoves(boxes);
@@ -16,20 +15,18 @@ export class Depth1Search extends Search {
         else size = moves.length;
         // 最良の手が複数あるのでそれを管理する
         let bestMoves = new Array;
-        //const best: Move = null; //nullだとダメ。なんで引用元はnullを当てているんだ? そもそも宣言だけして使っていないし...
         // 最良の手の値を負の無限大に設定しておく
         let bestVal: number = Number.NEGATIVE_INFINITY;
         for (let i = 0; i < size; i++) {
+            console.log("for文の内側開始:" + (i + 1) + "回目");
             const move = moves[i];
             // 1手進めてみる
             //trailに保存
             const trail = bstate.doMove(move);
             // 評価値を計算
-            /*// 1手進んだ時(相手の番)の評価値なので符号を入れ替える.ここ、2手ずつのときは要修正。
-            const moveVal: number = -bstate.eval();
-            move.value = moveVal;*/
             let moveVal: number;
-            let blackIsNext = checkBlackIsNext(currentMove);
+            let blackIsNext = checkBlackIsNext(bstate.currentMove);
+            console.log("AfterdoMove-boxes: currentMove:" + bstate.currentMove + " blackIsNext:" + blackIsNext);
             if (!blackIsNext) moveVal = bstate.eval();
             else moveVal = -bstate.eval();
             //trailから戻す
@@ -46,7 +43,6 @@ export class Depth1Search extends Search {
                 bestMoves.push(move);
             }
         }
-        //console.log("Depth1Search-bestMoves" + bestMoves);
         // bestの中から乱数で選択
         const bestSize: number = bestMoves.length;
         const selected: number = Math.floor(Math.random() * bestSize);
