@@ -28,7 +28,7 @@ export function PlayGround() {
     const [history, setHistory] = useState([Array(ROWS).fill(null).map(() => Array<(string | null)>(COLUMNS).fill(null))]);
     const [currentMove, setCurrentMove] = useState(0);
     const [blackIsNext, setBlackIsNext] = useState(true);
-    const [currentModeNumber, setCurrentModeNumber] = useState(0);
+    const [currentGameMode, setcurrentGameMode] = useState("Random");
 
     function handlePlay(nextBoxes: (string | null)[][]): void {
         const nextHistory = [...history.slice(0, currentMove + 1), nextBoxes];
@@ -71,50 +71,6 @@ export function PlayGround() {
         computerTurn();
     }
 
-    function handleGameMode(i: number) {
-        setCurrentModeNumber(i);
-        console.log("handleGameMode-currentModeNumber:" + currentModeNumber);
-    }
-
-    let currentGameMode: string = "Random";
-
-    function switchDisplayGameMode(i: number): string {
-        const imputNo = i;
-        let word;
-        switch (imputNo) {
-            case 0:
-                word = "Random";
-                break;
-            case 1:
-                word = "Depth1Search";
-                break;
-            case 2:
-                word = "MinMax-depth3";
-                break;
-            case 3:
-                word = "MinMax-depth6";
-                break;
-            case 4:
-                word = "AlphaBeta3";
-                break;
-            case 5:
-                word = "AlphaBeta6";
-                break;
-            case 6:
-                word = "AlphaBeta2";
-                break;
-            default:
-                word = "Random";
-                break;
-        }
-        return word;
-    }
-
-    useEffect(() => {
-        currentGameMode = switchDisplayGameMode(currentModeNumber);
-        console.log("switchDisplayGameMode to " + currentGameMode);
-    }, [currentModeNumber]);
-
     //処理時間の計測
     //const [computingStartTime, setComputingStartTime] = useState(Date.now)
     //const [computingTime, setComputingTime] = useState(0)
@@ -122,33 +78,46 @@ export function PlayGround() {
     function computerTurn(): void {
         //setComputingStartTime(Date.now);
         //将来的に難易度選択・モード選択とかがあったらここに書く
-        /*switch (currentModeNumber) {
-            case 0:
+        switch (currentGameMode) {
+            case "Random":
                 computerTurnWithResult(computerTurnRandom(history[currentMove]));
-            case 1:
-                computerTurnWithResult(computerTurnDepth1Search(history[currentMove],  currentMove));
-            case 2:
-                computerTurnWithResult(computerTurnMinMaxSearch(history[currentMove],  currentMove, 3));
-            case 3:
-                computerTurnWithResult(computerTurnMinMaxSearch(history[currentMove],  currentMove, 6));
-            case 4:
-                computerTurnWithResult(computerTurnAlphaBetaSearch(history[currentMove],  currentMove, 3));
-            case 5:
-                computerTurnWithResult(computerTurnAlphaBetaSearch(history[currentMove],  currentMove, 6));
-            case 6:
-                computerTurnWithResult(computerTurnAlphaBetaSearch(history[currentMove],  currentMove, 2));
-        }*/
+                break;
+            case "Depth1Search":
+                computerTurnWithResult(computerTurnDepth1Search(history[currentMove], currentMove));
+                break;
+            case "MinMax3":
+                computerTurnWithResult(computerTurnMinMaxSearch(history[currentMove], currentMove, 3));
+                break;
+            case "MinMax6":
+                computerTurnWithResult(computerTurnMinMaxSearch(history[currentMove], currentMove, 6));
+                break;
+            case "AlphaBeta2":
+                computerTurnWithResult(computerTurnAlphaBetaSearch(history[currentMove], currentMove, 2));
+                break;
+            case "AlphaBeta3":
+                computerTurnWithResult(computerTurnAlphaBetaSearch(history[currentMove], currentMove, 3));
+                break;
+            case "AlphaBeta6":
+                computerTurnWithResult(computerTurnAlphaBetaSearch(history[currentMove], currentMove, 6));
+                break;
+            default:
+                throw new Error("GameModeが指定されていません");
+        }
         //computerTurnWithResult(computerTurnRandom(history[currentMove]));
         //computerTurnWithResult(computerTurnDepth1Search(history[currentMove],  currentMove));
         //computerTurnWithResult(computerTurnMinMaxSearch(history[currentMove],  currentMove, 2));
         //computerTurnWithResult(computerTurnAlphaBetaSearch(history[currentMove],  currentMove, 1));
-        computerTurnWithResult(computerTurnAlphaBetaSearch(history[currentMove], currentMove, 2));
+        //computerTurnWithResult(computerTurnAlphaBetaSearch(history[currentMove], currentMove, 2));
         //computerTurnWithResult(computerTurnAlphaBetaSearch(history[currentMove],  currentMove, 3));
+    }
+
+    function handleGameMode(gameMode: string) {
+        setcurrentGameMode(gameMode);
     }
 
     function computerTurnWithResult(result: (MoveCoordinate | null)) {
         if (result == null) {
-            console.log("computerTurnMinMaxSearch()からの戻り値がnull")
+            console.log("computerTurnSearch()からの戻り値がnull")
             return;
         };
         handleColor(result.rowNo, result.columnNo);
@@ -170,9 +139,7 @@ export function PlayGround() {
             description = 'Go to game start';
         }
         return (
-            <li key={move}>
-                <button onClick={() => jumpTo(move)}>{description}</button>
-            </li>
+            <button key={move} onClick={() => jumpTo(move)}>{description}</button>
         );
     });
 
