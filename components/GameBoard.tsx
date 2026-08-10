@@ -5,16 +5,10 @@ import { PrintRow } from "./PrintRow";
 import { rowNos } from "./PlayGround";
 
 type Props = {
-    //blackIsNext: boolean;
     boxes: (string | null)[][];
     handleClick: (rowNo: number, columnNo: number) => void;
 }
-/*
-export interface ChildHandles {
-    getAlert(): void;
-}*/
 
-//export function GameBoard({ blackIsNext, boxes, handleClick }: Props) {
 export function GameBoard({ boxes, handleClick }: Props) {
     return (
         <div className="game-board">
