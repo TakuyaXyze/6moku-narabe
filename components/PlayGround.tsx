@@ -35,11 +35,6 @@ export function PlayGround() {
         setHistory(nextHistory);
         setCurrentMove(nextHistory.length - 1);
         const booleanBlackIsNext = checkBlackIsNext(currentMove + 1);
-        /*console.log("nextHistory.length - 1:" + (nextHistory.length - 1));
-        console.log("currentMove:" + currentMove);
-        const booleanBlackIsNext = checkBlackIsNext(currentMove);*/
-        //useStateの呼び出しのタイミングの問題?(おそらく)で、currentMove+1としないと上手く動かない。
-        //currentMoveにはsetCurrentMove(nextHistory.length - 1);する前の値が入ってくる。
         setBlackIsNext(booleanBlackIsNext);
     }
 
@@ -66,15 +61,14 @@ export function PlayGround() {
     }
 
     useEffect(() => {
-        detectComputerTurn();
-        return
+        if (blackIsNext) return;
+        if (typeof detectSequence(history[currentMove], SEQUENCE_LENGTH) == "string") return;
+        const timeoutId = setTimeout(() => { executeComputerTurn() }, 10)
     }, [history])
 
-    function detectComputerTurn() {
-        if (!blackIsNext) {
-            console.log("computerTurn");
-            computerTurn();
-        }
+    function executeComputerTurn() {
+        console.log("computerTurn");
+        computerTurn();
     }
 
     function handleGameMode(i: number) {
@@ -100,9 +94,15 @@ export function PlayGround() {
             case 3:
                 word = "MinMax-depth6";
                 break;
-            /*case 4:
-                word = "AlphaBeta";
-                break;*/
+            case 4:
+                word = "AlphaBeta3";
+                break;
+            case 5:
+                word = "AlphaBeta6";
+                break;
+            case 6:
+                word = "AlphaBeta2";
+                break;
             default:
                 word = "Random";
                 break;
@@ -135,6 +135,8 @@ export function PlayGround() {
                 computerTurnWithResult(computerTurnAlphaBetaSearch(history[currentMove],  currentMove, 3));
             case 5:
                 computerTurnWithResult(computerTurnAlphaBetaSearch(history[currentMove],  currentMove, 6));
+            case 6:
+                computerTurnWithResult(computerTurnAlphaBetaSearch(history[currentMove],  currentMove, 2));
         }*/
         //computerTurnWithResult(computerTurnRandom(history[currentMove]));
         //computerTurnWithResult(computerTurnDepth1Search(history[currentMove],  currentMove));
@@ -155,7 +157,9 @@ export function PlayGround() {
     function jumpTo(nextMove: number) {
         setCurrentMove(nextMove);
         setBlackIsNext(checkBlackIsNext(nextMove));
-        detectComputerTurn();
+        if (blackIsNext) return;
+        if (typeof detectSequence(history[currentMove], SEQUENCE_LENGTH) == "string") return;
+        executeComputerTurn();
     }
 
     const moves = history.map((boxes: (string | null)[][], move: number) => {
