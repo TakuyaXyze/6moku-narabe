@@ -1,5 +1,17 @@
 .game-info {
-    width: 30%;
+    height: 90%;
+    width: 200px;
+    margin-left: 10px;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+.move-info {
+    height: 200px;
+    display: flex;
+    flex-direction: column;
+    overflow: auto;
 }
 
 .status {
