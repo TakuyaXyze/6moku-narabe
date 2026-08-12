@@ -1,15 +1,15 @@
 import { checkBlackIsNext } from "../components/PlayGround";
 import { BoardState } from "./BoardState";
 import { BoardTrail } from "./BoardTrail";
-import { Move, State, Search, TrailStack } from "./Evaluate"
-import { MoveCoordinate } from "./MoveCoordinate";
+import { Search } from "./Evaluate"
+import { MoveCoordinate } from "./Evaluate";
 
 export class Depth1Search extends Search {
     bestMove(boxes: (string | null)[][], currentMove: number): (MoveCoordinate | null) {
         console.log("Depth1Search-bestMove:start");
         const bstate = new BoardState(boxes, currentMove, 1);//depth=1
         // 可能な手を全部生成する
-        const moves = bstate.legalMoves(boxes);
+        const moves = bstate.legalMoves(bstate.state);
         let size: number = 0;
         if (moves == null) return null;
         else size = moves.length;

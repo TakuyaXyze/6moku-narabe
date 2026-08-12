@@ -1,10 +1,10 @@
 import { ROWS, COLUMNS } from "@/components/PlayGround";
-import { MoveCoordinate } from "./MoveCoordinate";
+import { MoveCoordinate } from "./Evaluate";
 
 export function computerTurnRandom(boxes: (string | null)[][]) {
     console.log("computerTurnRandom");
     //setComputingTime(Date.now() - computingStartTime);
-    const value: number = 0;
+    const value = undefined;
     let randomRowNo: number;
     let randomColumnNo: number;
     do {
