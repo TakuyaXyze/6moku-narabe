@@ -1,8 +1,8 @@
+import { checkBlackIsNext } from "../components/PlayGround";
 import { BoardState } from "./BoardState";
 import { BoardTrail } from "./BoardTrail";
-import { Move, Search, State, TrailStack } from "./Evaluate"
-import { MoveCoordinate } from "./MoveCoordinate";
-import { checkBlackIsNext } from "../components/PlayGround";
+import { Search } from "./Evaluate"
+import { MoveCoordinate } from "./Evaluate";
 
 export class MinMaxSearch extends Search {
     // どの深さまで読むか?
@@ -14,67 +14,97 @@ export class MinMaxSearch extends Search {
     }
     eval(boxes: (string | null)[][], currentMove: number, bstate: BoardState, level: number): number {
         // 末端のレベルでは局面の評価値。Randomではlevel==undefined
-        console.log("start-evaluation");
+        console.log("start-evaluation:level=" + level);
         if (level == 0) return bstate.eval();
         else {
             // そうでない時はベストの手の時の評価値
             const best = this.bestMove(boxes, currentMove, level);
-            console.log("end-evaluation");
-            if (best == null) return bstate.eval();
+            if (best == null || best.value == undefined) return bstate.eval();
+            console.log("eval()-end-best.value:" + best.value);
             return best.value;
         }
     }
     bestMove(boxes: (string | null)[][], currentMove: number, level: number = this.maxLevel): (MoveCoordinate | null) {
-        // 可能な手を全部生成する
         console.log("MinMaxSearch-level" + level + "-bestMove:start");
-        const bstate = new BoardState(boxes, currentMove);
-        console.log("boxes:" + bstate.state + " curentMove:" + currentMove);
-        const moves = bstate.legalMoves(boxes);
+        const bstate = new BoardState(boxes, currentMove, level);
+        console.log("boxes:" + bstate.state + " currentMove:" + bstate.currentMove + " blackIsNext:" + checkBlackIsNext(bstate.currentMove));
+        const moves = bstate.legalMoves(bstate.state);
         let size: number = 0;
-        if (moves == undefined) return null;
+        if (moves == null) return null;
         else size = moves.length;
         // 最良の手が複数あるのでそれを管理する
         console.log("size=moves.length:" + size);
         let bestMoves = new Array<MoveCoordinate>;
-        //const best: Move = null; //引用元では未使用で宣言されていた謎変数。しかも=nullはエラーになる。
-        // 最良の手の値を負の無限大に設定しておく
-        let bestVal = Number.NEGATIVE_INFINITY;
+        let bestValue;
         for (let i = 0; i < size; i++) {
-            console.log("for文の内側開始:" + (i + 1) + "回目");
+            console.log("for文の内側開始:" + (i + 1) + "回目" + " bestVal=" + bestValue);
             const move = moves[i];
             // 1手進めてみる
             const trail: BoardTrail = bstate.doMove(move);
             // 評価値を計算
-            /*// 1手進んだ時(相手の番)の評価値なので符号を入れ替える．
-            const moveVal: number = -this.eval(state, level - 1);*/
-            let moveVal: number;
-            let blackIsNext = checkBlackIsNext(currentMove);
-            if (!blackIsNext) moveVal = this.eval(boxes, currentMove, bstate, level - 1);
-            else moveVal = -this.eval(boxes, currentMove, bstate, level - 1);
+            const moveValue = this.eval(bstate.state, bstate.currentMove, bstate, bstate.level);
+            console.log("MinMaxSearch-level=" + bstate.level + " currentMove:" + bstate.currentMove + " moveVal:" + moveValue);
+            move.value = moveValue;
+            const blackIsThisTurn = checkBlackIsNext(bstate.currentMove - 1);
+            if (!blackIsThisTurn) {
+                console.log("currentMove" + bstate.currentMove + "whiteIsThisTurn");
+                if (bestValue == undefined) {
+                    bestValue = Number.NEGATIVE_INFINITY;
+                    console.log("bestValueが更新されました")
+                }
+                // 評価値がこれまでのbestを超えた時
+                if (moveValue > bestValue) {
+                    bestValue = moveValue;
+                    bestMoves = new Array<MoveCoordinate>;
+                    bestMoves.push(move);
+                }
+                // 評価値がこれまでのbestと同じ時
+                else if (bestValue == moveValue) {
+                    bestMoves.push(move);
+                }
+            }
+            else {
+                console.log("currentMove" + bstate.currentMove + "blackIsThisTurn");
+                if (bestValue == undefined) {
+                    bestValue = Number.POSITIVE_INFINITY;
+                    console.log("bestValueが更新されました")
+                }
+                // 評価値がこれまでのbestを下回った時
+                if (moveValue < bestValue) {
+                    bestValue = moveValue;
+                    bestMoves = new Array<MoveCoordinate>;
+                    bestMoves.push(move);
+                }
+                // 評価値がこれまでのbestと同じ時
+                else if (moveValue == bestValue) {
+                    bestMoves.push(move);
+                }
+            }
             // 戻す
             bstate.undoMove(trail);
-            move.value = moveVal;
-            console.log("MinMaxSearch-level" + level + "-moveVal:" + moveVal);
-            // 評価値がこれまでのbestを超えた時
-            if (bestVal < moveVal) {
-                bestVal = moveVal;
-                bestMoves = new Array;
-                bestMoves.push(move);
-            }
-            // 評価値がこれまでのbestと同じ時
-            else if (bestVal == moveVal) {
-                bestMoves.push(move);
-            }
-            console.log("bestMoves:" + bestMoves);
+            console.log("bestValue:" + bestValue);
             console.log("for文の内側終了");
         }
         // bestの中から乱数で選択
         const bestSize = bestMoves.length;
+        console.log("bestSize:" + bestSize);
+        if (bestValue == undefined) throw new Error("bestValが" + (typeof bestValue) + "です");
         if (bestSize > 0) {
             const selected = Math.floor(Math.random() * bestSize);
-            console.log("bestMove終了");
+            console.log("bestMove-end currentMove:" + bstate.currentMove + " value=bestValue:" + bestValue);
+            bestMoves[selected].value = bestValue;
             return bestMoves[selected];
         }
         else return null;
     }
 }
+
+/*
+
+白の塊は正の得点、黒の塊は負の得点をつける  BoardState.eval()
+評価が正のときは白が有利、負のときは黒が有利
+白視点で最善手を探すときは、
+    白の手番のときは評価が最高となる選択肢を選ぶ
+    黒の手番のときは評価が最小となる選択肢を選ぶ
+
+*/

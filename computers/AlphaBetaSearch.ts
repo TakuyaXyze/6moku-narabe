@@ -1,8 +1,8 @@
-import { checkBlackIsNext } from "@/components/PlayGround";
+import { checkBlackIsNext } from "../components/PlayGround";
 import { BoardState } from "./BoardState";
 import { BoardTrail } from "./BoardTrail";
-import { Move, Search, State, TrailStack } from "./Evaluate"
-import { MoveCoordinate } from "./MoveCoordinate";
+import { Search } from "./Evaluate"
+import { MoveCoordinate } from "./Evaluate";
 
 export class AlphaBetaSearch extends Search {
     // どの深さまで読むか?
@@ -12,73 +12,125 @@ export class AlphaBetaSearch extends Search {
         super()
         this.maxLevel = maxLevel;
     }
-    eval(boxes: (string | null)[][], currentMove: number, bstate: BoardState, level: number, alpha: number, beta: number): number {
+    eval(boxes: (string | null)[][], currentMove: number, bstate: BoardState, level: number): number {
         // 末端のレベルでは局面の評価値。Randomではlevel==undefined
-        console.log("start-evaluation");
+        console.log("start-evaluation:level=" + level);
         if (level == 0) return bstate.eval();
         else {
             // そうでない時はベストの手の時の評価値
-            const best = this.bestMove(boxes, currentMove, level, alpha, beta);
-            if (best == null) return bstate.eval();
-            console.log("end-evaluation");
+            const best = this.bestMove(boxes, currentMove, level);
+            if (best == null || best.value == undefined) return bstate.eval();
+            console.log("eval()-end-best.value:" + best.value);
             return best.value;
         }
     }
-    bestMove(boxes: (string | null)[][], currentMove: number, level: number = this.maxLevel, alpha: number, beta: number): (MoveCoordinate | null) {
-        // 可能な手を全部生成する
+    bestMove(boxes: (string | null)[][], currentMove: number, level: number = this.maxLevel, alpha?: number, beta?: number): (MoveCoordinate | null) {
         console.log("AlphaBetaSearch-level" + level + "-bestMove:start");
-        const bstate = new BoardState(boxes, currentMove);
-        console.log("boxes:" + bstate.state + " curentMove:" + currentMove);
-        const moves = bstate.legalMoves(boxes);
+        const bstate = new BoardState(boxes, currentMove, level);
+        console.log("boxes:" + bstate.state + " currentMove:" + bstate.currentMove + " blackIsNext:" + checkBlackIsNext(bstate.currentMove));
+        const moves = bstate.legalMoves(bstate.state);
         let size: number = 0;
-        if (moves == undefined) return null;
+        if (moves == null) return null;
         else size = moves.length;
         console.log("size=moves.length:" + size);
         // 最良の手が複数あるのでそれを管理する
         let bestMoves = new Array<MoveCoordinate>;
-        // 最良の手の値を負の無限大に設定しておく
-        let bestVal = Number.NEGATIVE_INFINITY;
+        let bestValue;
         for (let i = 0; i < size; i++) {
-            console.log("for文の内側開始:" + (i + 1) + "回目");
+            console.log("for文の内側開始-level" + bstate.level + ":" + (i + 1) + "回目");
+            if (alpha == undefined) {
+                alpha = Number.POSITIVE_INFINITY;
+            }
+            if (beta == undefined) {
+                beta = Number.NEGATIVE_INFINITY;
+            }
             const move = moves[i];
             // 1手進めてみる
             const trail: BoardTrail = bstate.doMove(move);
             // 評価値を計算
-            // 1手進んだ時(相手の番)の評価値なので符号を入れ替える．
-            let moveVal: number;
-            let blackIsNext = checkBlackIsNext(currentMove);
-            if (!blackIsNext) moveVal = this.eval(boxes, currentMove + 1, bstate, level - 1, alpha, beta);
-            else moveVal = -this.eval(boxes, currentMove + 1, bstate, level - 1, -alpha, -beta);
+            const moveValue = this.eval(bstate.state, bstate.currentMove, bstate, bstate.level);
+            console.log("AlphaBetaSearch-level=" + bstate.level + " currentMove:" + bstate.currentMove + " moveVal:" + moveValue);
+            move.value = moveValue;
+            const blackIsThisTurn = checkBlackIsNext(bstate.currentMove - 1);
+            const blackIsPreviousTurn = checkBlackIsNext(bstate.currentMove - 2);
+            if (!blackIsThisTurn) {
+                console.log("currentMove=" + bstate.currentMove + " whiteIsThisTurn");
+                if (bestValue == undefined) {
+                    bestValue = Number.NEGATIVE_INFINITY;
+                    console.log("bestValueが" + bestValue + "に更新されました")
+                }
+                if (!blackIsPreviousTurn) {
+                    if (moveValue > bestValue) {
+                        bestValue = moveValue;
+                        bestMoves = new Array<MoveCoordinate>;
+                        bestMoves.push(move);
+                    }
+                    // 評価値がこれまでのbestと同じ時
+                    else if (moveValue == bestValue) {
+                        bestMoves.push(move);
+                    }
+                }
+                else {
+                    if (moveValue > bestValue) {
+                        bestValue = moveValue;
+                        if (bestValue > alpha) {
+                            console.log("αカット");
+                            return move;
+                        }
+                        bestMoves = new Array<MoveCoordinate>;
+                        bestMoves.push(move);
+                    }
+                    // 評価値がこれまでのbestと同じ時
+                    else if (moveValue == bestValue) {
+                        bestMoves.push(move);
+                    }
+                }
+            }
+            else {
+                console.log("currentMove=" + bstate.currentMove + " blackIsThisTurn");
+                if (bestValue == undefined) {
+                    bestValue = Number.POSITIVE_INFINITY;
+                    console.log("bestValueが" + bestValue + "に更新されました")
+                }
+                if (blackIsPreviousTurn) {
+                    if (moveValue < bestValue) {
+                        bestValue = moveValue;
+                        bestMoves = new Array<MoveCoordinate>;
+                        bestMoves.push(move);
+                    }
+                    // 評価値がこれまでのbestと同じ時
+                    else if (moveValue == bestValue) {
+                        bestMoves.push(move);
+                    }
+                } else {
+                    if (moveValue < bestValue) {
+                        bestValue = moveValue;
+                        if (bestValue < beta) {
+                            console.log("βカット");
+                            return move;
+                        }
+                        bestMoves = new Array<MoveCoordinate>;
+                        bestMoves.push(move);
+                    }
+                    // 評価値がこれまでのbestと同じ時
+                    else if (moveValue == bestValue) {
+                        bestMoves.push(move);
+                    }
+                }
+            }
             // 戻す
             bstate.undoMove(trail);
-            move.value = moveVal;
-            console.log("AlphaBetaSearch-level" + level + "-moveVal:" + moveVal);
-            // 評価値がこれまでのbestを超えた時
-            if (bestVal < moveVal) {
-                if (moveVal > beta) {
-                    console.log("!\n\n\n\n\n!!枝切り!!\n\n\n\n\n !");
-                    return move; //枝切り
-                }
-                bestVal = moveVal;
-                if (bestVal > alpha) {
-                    alpha = bestVal;
-                }
-                bestMoves = new Array<MoveCoordinate>;
-                bestMoves.push(move);
-            }
-            // 評価値がこれまでのbestと同じ時
-            else if (bestVal == moveVal) {
-                bestMoves.push(move);
-            }
-            console.log("bestMoves:" + bestMoves);
+            console.log("bestValue:" + bestValue);
             console.log("for文の内側終了");
         }
         // bestの中から乱数で選択
         const bestSize = bestMoves.length;
         console.log("bestSize:" + bestSize);
+        if (bestValue == undefined) throw new Error("bestValが" + (typeof bestValue) + "です");
         if (bestSize > 0) {
             const selected = Math.floor(Math.random() * bestSize);
-            console.log("bestMove終了");
+            console.log("bestMove-end currentMove:" + bstate.currentMove + " value=bestValue:" + bestValue);
+            bestMoves[selected].value = bestValue;
             return bestMoves[selected];
         }
         else return null;
