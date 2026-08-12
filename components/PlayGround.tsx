@@ -4,14 +4,16 @@ import { GameBoard } from "./GameBoard";
 import { SelectGameMode } from "./SelectGameMode"
 import "../styles/PlayGround.css"
 import "../styles/GameBoard.css"
+import "../styles/GameInfo.css"
 import { useState, useEffect } from "react";
-import { MoveCoordinate } from "../computers/MoveCoordinate"
+import { detectSequence } from "../computers/CountSequence";
+import { MoveCoordinate } from "../computers/Evaluate"
 import { computerTurnRandom } from "../computers/PutRandom";
 import { computerTurnDepth1Search } from "../computers/PutDepth1Search";
 import { computerTurnMinMaxSearch } from "../computers/PutMinMax";
 import { computerTurnAlphaBetaSearch } from "../computers/PutAlphaBeta"
 
-export const ROWS = 8;
+export const ROWS = 5;
 export const COLUMNS = ROWS;
 export let rowNos = new Array<number>;
 for (let i = 0; i < ROWS; i++) {
@@ -21,7 +23,7 @@ export let columnNos = new Array<number>;
 for (let i = 0; i < COLUMNS; i++) {
     columnNos.push(i);
 }
-export const SEQUENCE_LENGTH = 6;
+export const SEQUENCE_LENGTH = 4; //MAX6
 
 export function PlayGround() {
 
@@ -46,7 +48,8 @@ export function PlayGround() {
     }
 
     function handleColor(rowNo: number, columnNo: number) {
-        if (typeof detectSequence(history[currentMove], SEQUENCE_LENGTH) == "string") return;
+        if (detectSequence(history[currentMove], "b")[SEQUENCE_LENGTH - 2] > 0) return;
+        if (detectSequence(history[currentMove], "w")[SEQUENCE_LENGTH - 2] > 0) return;
         //const nextBoxes = history[currentMove].slice();
         //参考コードだと1次元行列だったのでシャローコピーでよかったが、ここでは2次元のためディープコピー
         const nextBoxes: Array<(string | null)[]> = JSON.parse(JSON.stringify(history[currentMove]));
@@ -55,14 +58,13 @@ export function PlayGround() {
         } else {
             nextBoxes[rowNo][columnNo] = "w";
         }
-        console.log("handleColor-history:" + history);
-        console.log("handleColor-nextBoxes:" + nextBoxes);
         handlePlay(nextBoxes);
     }
 
     useEffect(() => {
         if (blackIsNext) return;
-        if (typeof detectSequence(history[currentMove], SEQUENCE_LENGTH) == "string") return;
+        if (detectSequence(history[currentMove], "b")[SEQUENCE_LENGTH - 2] > 0) return;
+        if (detectSequence(history[currentMove], "w")[SEQUENCE_LENGTH - 2] > 0) return;
         const timeoutId = setTimeout(() => { executeComputerTurn() }, 10)
     }, [history])
 
@@ -77,7 +79,6 @@ export function PlayGround() {
 
     function computerTurn(): void {
         //setComputingStartTime(Date.now);
-        //将来的に難易度選択・モード選択とかがあったらここに書く
         switch (currentGameMode) {
             case "Random":
                 computerTurnWithResult(computerTurnRandom(history[currentMove]));
@@ -91,9 +92,6 @@ export function PlayGround() {
             case "MinMax6":
                 computerTurnWithResult(computerTurnMinMaxSearch(history[currentMove], currentMove, 6));
                 break;
-            case "AlphaBeta2":
-                computerTurnWithResult(computerTurnAlphaBetaSearch(history[currentMove], currentMove, 2));
-                break;
             case "AlphaBeta3":
                 computerTurnWithResult(computerTurnAlphaBetaSearch(history[currentMove], currentMove, 3));
                 break;
@@ -103,12 +101,6 @@ export function PlayGround() {
             default:
                 throw new Error("GameModeが指定されていません");
         }
-        //computerTurnWithResult(computerTurnRandom(history[currentMove]));
-        //computerTurnWithResult(computerTurnDepth1Search(history[currentMove],  currentMove));
-        //computerTurnWithResult(computerTurnMinMaxSearch(history[currentMove],  currentMove, 2));
-        //computerTurnWithResult(computerTurnAlphaBetaSearch(history[currentMove],  currentMove, 1));
-        //computerTurnWithResult(computerTurnAlphaBetaSearch(history[currentMove], currentMove, 2));
-        //computerTurnWithResult(computerTurnAlphaBetaSearch(history[currentMove],  currentMove, 3));
     }
 
     function handleGameMode(gameMode: string) {
@@ -127,7 +119,8 @@ export function PlayGround() {
         setCurrentMove(nextMove);
         setBlackIsNext(checkBlackIsNext(nextMove));
         if (blackIsNext) return;
-        if (typeof detectSequence(history[currentMove], SEQUENCE_LENGTH) == "string") return;
+        if (detectSequence(history[currentMove], "b")[SEQUENCE_LENGTH - 2] > 0) return;
+        if (detectSequence(history[currentMove], "w")[SEQUENCE_LENGTH - 2] > 0) return;
         executeComputerTurn();
     }
 
@@ -143,26 +136,25 @@ export function PlayGround() {
         );
     });
 
-    const winner = detectSequence(history[currentMove], SEQUENCE_LENGTH);
     let status;
-    if (typeof winner == "string") {
-        status = 'Winner: ' + winner;
+    if (detectSequence(history[currentMove], "b")[SEQUENCE_LENGTH - 2] > 0) {
+        status = 'Winner: black';
+    } else if (detectSequence(history[currentMove], "w")[SEQUENCE_LENGTH - 2] > 0) {
+        status = 'Winner: white';
     } else {
         status = 'Next player: ' + (blackIsNext ? 'black' : 'white');
     }
 
     return (
         <div className="play-ground">
-            <div>
-                <GameBoard boxes={history[currentMove]} handleClick={handleClick} />
-            </div>
+            <GameBoard boxes={history[currentMove]} handleClick={handleClick} />
             <div className="game-info">
                 <div className="status">{status}</div>
-                <ol>{moves}</ol>
+                <ol className="move-info">{moves}</ol>
                 <div>Mode:{currentGameMode}</div>
                 <SelectGameMode handleGameMode={handleGameMode} />
             </div>
-        </div>
+        </div >
     );
 }
 
@@ -186,60 +178,4 @@ export function checkBlackIsNext(currentMove: number): boolean {
     } else {
         return false;
     }
-}
-
-export function detectSequence(boxes: (string | null)[][], length: number): (string | null) {
-    for (let i = 0; i < ROWS; i++) {
-        for (let j = 0; j < COLUMNS - length + 1; j++) {
-            let count = 0;
-            for (let k = 1; k < length; k++) {
-                if (boxes[i][j] && boxes[i][j] == boxes[i][j + k]) {
-                    count++;
-                }
-            }
-            if (count >= length - 1) {
-                return boxes[i][j];
-            };
-        }
-    }
-    for (let i = 0; i < ROWS - length + 1; i++) {
-        for (let j = 0; j < COLUMNS; j++) {
-            let count = 0;
-            for (let k = 1; k < length; k++) {
-                if (boxes[i][j] && boxes[i][j] == boxes[i + k][j]) {
-                    count++;
-                }
-            }
-            if (count >= length - 1) {
-                return boxes[i][j];
-            }
-        }
-    }
-    for (let i = 0; i < ROWS - length + 1; i++) {
-        for (let j = 0; j < COLUMNS - length + 1; j++) {
-            let count = 0;
-            for (let k = 1; k < length; k++) {
-                if (boxes[i][j] && boxes[i][j] == boxes[i + k][j + k]) {
-                    count++;
-                }
-            }
-            if (count >= length - 1) {
-                return boxes[i][j];
-            }
-        }
-    }
-    for (let i = 0; i < ROWS - length + 1; i++) {
-        for (let j = length - 1; j < COLUMNS; j++) {
-            let count = 0;
-            for (let k = 1; k < length; k++) {
-                if (boxes[i][j] && boxes[i][j] == boxes[i + k][j - k]) {
-                    count++;
-                }
-            }
-            if (count >= length - 1) {
-                return boxes[i][j];
-            }
-        }
-    }
-    return null;
 }
