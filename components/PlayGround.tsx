@@ -30,7 +30,7 @@ export function PlayGround() {
     const [history, setHistory] = useState([Array(ROWS).fill(null).map(() => Array<(string | null)>(COLUMNS).fill(null))]);
     const [currentMove, setCurrentMove] = useState(0);
     const [blackIsNext, setBlackIsNext] = useState(true);
-    const [currentGameMode, setcurrentGameMode] = useState("Random");
+    const [currentGameMode, setcurrentGameMode] = useState("AlphaBeta3");
 
     function handlePlay(nextBoxes: (string | null)[][]): void {
         const nextHistory = [...history.slice(0, currentMove + 1), nextBoxes];
