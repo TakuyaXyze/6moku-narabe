@@ -65,7 +65,7 @@ export function PlayGround() {
         if (blackIsNext) return;
         if (detectSequence(history[currentMove], "b")[SEQUENCE_LENGTH - 2] > 0) return;
         if (detectSequence(history[currentMove], "w")[SEQUENCE_LENGTH - 2] > 0) return;
-        const timeoutId = setTimeout(() => { executeComputerTurn() }, 10)
+        const timeoutId = setTimeout(() => { executeComputerTurn() }, 500)
     }, [history])
 
     function executeComputerTurn() {

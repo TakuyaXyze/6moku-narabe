@@ -23,6 +23,10 @@
     position: relative;
 }
 
+.stone:hover {
+    background-color: #c2c2c2;
+}
+
 .box {
     height: 100%;
     width: 100%;
