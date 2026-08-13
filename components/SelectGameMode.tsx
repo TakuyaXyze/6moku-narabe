@@ -19,13 +19,7 @@ export function SelectGameMode({ handleGameMode }: Props) {
                 <button onClick={() => handleGameMode("MinMax3")}>MinMax-depth3</button>
             </li>
             <li>
-                <button onClick={() => handleGameMode("MinMax6")}>MinMax-depth6</button>
-            </li>
-            <li>
                 <button onClick={() => handleGameMode("AlphaBeta3")}>AlphaBeta-depth3</button>
-            </li>
-            <li>
-                <button onClick={() => handleGameMode("AlphaBeta6")}>AlphaBeta-depth6</button>
             </li>
         </ol>
     );
