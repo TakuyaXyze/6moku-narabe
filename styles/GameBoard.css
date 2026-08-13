@@ -27,16 +27,15 @@
     height: 100%;
     width: 100%;
     position: absolute;
-    background-color: hsla(0, 0%, 100%, 0);
     user-select: none;
     font-size: 8px;
 }
 
 .white {
-    background-color: #ffffff;
+    background-color: #fafafa;
 }
 
 .black {
     background-color: #000000;
-    color: #ffffff;
+    color: #fafafa;
 }
