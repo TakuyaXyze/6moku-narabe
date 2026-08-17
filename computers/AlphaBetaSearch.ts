@@ -12,21 +12,23 @@ export class AlphaBetaSearch extends Search {
         super()
         this.maxLevel = maxLevel;
     }
-    eval(boxes: (string | null)[][], currentMove: number, bstate: BoardState, level: number, alpha: number, beta: number): (number | null) {
+    eval(bstate: BoardState, alpha: number, beta: number): (number | null) {
         // 末端のレベルでは局面の評価値。Randomではlevel==undefined
-        console.log("start-evaluation:level=" + level);
-        if (level == 0) return bstate.eval();
+        console.log("start-evaluation:level=" + bstate.level);
+        if (bstate.level == 0) return bstate.eval();
         else {
             // そうでない時はベストの手の時の評価値
-            const best = this.bestMove(boxes, currentMove, level, alpha, beta);
+            //const best = this.bestMove(boxes, currentMove, level, alpha, beta);
+            const best = this.bestMove(bstate, alpha, beta);
             if (best == null) return null;
             if (best.value == undefined) return bstate.eval();
             console.log("eval()-end-best.value:" + best.value);
             return best.value;
         }
     }
-    bestMove(boxes: (string | null)[][], currentMove: number, level: number = this.maxLevel, alpha?: number, beta?: number): (MoveCoordinate | null) {
-        console.log("AlphaBetaSearch-level" + level + "-bestMove:start");
+    //bestMove(boxes: (string | null)[][], currentMove: number, level: number = this.maxLevel, alpha?: number, beta?: number): (MoveCoordinate | null) {
+    bestMove(bstate: BoardState, alpha?: number, beta?: number): (MoveCoordinate | null) {
+        console.log("AlphaBetaSearch-level" + bstate.level + "-bestMove:start");
 
         let _alpha: number;
         if (alpha == undefined) _alpha = Number.POSITIVE_INFINITY;
@@ -36,7 +38,7 @@ export class AlphaBetaSearch extends Search {
         if (beta == undefined) _beta = Number.NEGATIVE_INFINITY;
         else _beta = beta;
         console.log("betaが" + _beta + "に更新されました");
-        const bstate = new BoardState(boxes, currentMove, level);
+        //const bstate = new BoardState(boxes, currentMove, level);
 
         console.log("currentMove:" + bstate.currentMove + " blackIsNext:" + checkBlackIsNext(bstate.currentMove));
         const moves = bstate.legalMoves(bstate.state);
@@ -54,7 +56,7 @@ export class AlphaBetaSearch extends Search {
             // 1手進めてみる
             const trail: BoardTrail = bstate.doMove(move);
             // 評価値を計算
-            const moveValue = this.eval(bstate.state, bstate.currentMove, bstate, bstate.level, _alpha, _beta);
+            const moveValue = this.eval(bstate, _alpha, _beta);
             console.log("AlphaBetaSearch-level=" + bstate.level + " currentMove:" + bstate.currentMove + " moveVal:" + moveValue);
             if (moveValue == null) {
                 console.log("currentMove:" + bstate.currentMove + " level=" + bstate.level + " " + (i + 1) + "回目 continue;")

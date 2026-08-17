@@ -12,21 +12,22 @@ export class MinMaxSearch extends Search {
         super()
         this.maxLevel = maxLevel;
     }
-    eval(boxes: (string | null)[][], currentMove: number, bstate: BoardState, level: number): number {
+    eval(bstate: BoardState): number {
         // 末端のレベルでは局面の評価値。Randomではlevel==undefined
-        console.log("start-evaluation:level=" + level);
-        if (level == 0) return bstate.eval();
+        console.log("start-evaluation:level=" + bstate.level);
+        if (bstate.level == 0) return bstate.eval();
         else {
             // そうでない時はベストの手の時の評価値
-            const best = this.bestMove(boxes, currentMove, level);
+            const best = this.bestMove(bstate);
             if (best == null || best.value == undefined) return bstate.eval();
             console.log("eval()-end-best.value:" + best.value);
             return best.value;
         }
     }
-    bestMove(boxes: (string | null)[][], currentMove: number, level: number = this.maxLevel): (MoveCoordinate | null) {
-        console.log("MinMaxSearch-level" + level + "-bestMove:start");
-        const bstate = new BoardState(boxes, currentMove, level);
+    //bestMove(boxes: (string | null)[][], currentMove: number, level: number = this.maxLevel): (MoveCoordinate | null) {
+    bestMove(bstate: BoardState): (MoveCoordinate | null) {
+        console.log("MinMaxSearch-level" + bstate.level + "-bestMove:start");
+        //const bstate = new BoardState(boxes, currentMove, level);
         console.log("boxes:" + bstate.state + " currentMove:" + bstate.currentMove + " blackIsNext:" + checkBlackIsNext(bstate.currentMove));
         const moves = bstate.legalMoves(bstate.state);
         let size: number = 0;
@@ -42,7 +43,7 @@ export class MinMaxSearch extends Search {
             // 1手進めてみる
             const trail: BoardTrail = bstate.doMove(move);
             // 評価値を計算
-            const moveValue = this.eval(bstate.state, bstate.currentMove, bstate, bstate.level);
+            const moveValue = this.eval(bstate);
             console.log("MinMaxSearch-level=" + bstate.level + " currentMove:" + bstate.currentMove + " moveVal:" + moveValue);
             move.value = moveValue;
             const blackIsThisTurn = checkBlackIsNext(bstate.currentMove - 1);

@@ -5,9 +5,10 @@ import { Search } from "./Evaluate"
 import { MoveCoordinate } from "./Evaluate";
 
 export class Depth1Search extends Search {
-    bestMove(boxes: (string | null)[][], currentMove: number): (MoveCoordinate | null) {
+    //bestMove(boxes: (string | null)[][], currentMove: number): (MoveCoordinate | null) {
+    bestMove(bstate: BoardState): (MoveCoordinate | null) {
         console.log("Depth1Search-bestMove:start");
-        const bstate = new BoardState(boxes, currentMove, 1);//depth=1
+        //const bstate = new BoardState(boxes, currentMove, 1);//depth=1
         // 可能な手を全部生成する
         const moves = bstate.legalMoves(bstate.state);
         let size: number = 0;
@@ -27,8 +28,7 @@ export class Depth1Search extends Search {
             let moveVal: number;
             let blackIsNext = checkBlackIsNext(bstate.currentMove);
             console.log("AfterdoMove-boxes: currentMove:" + bstate.currentMove + " blackIsNext:" + blackIsNext);
-            if (!blackIsNext) moveVal = bstate.eval();
-            else moveVal = -bstate.eval();
+            moveVal = bstate.eval();
             //trailから戻す
             bstate.undoMove(trail);
             console.log("Depth1Search-moveVal:" + moveVal);

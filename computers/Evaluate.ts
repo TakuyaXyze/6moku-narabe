@@ -1,3 +1,4 @@
+import { BoardState } from "./BoardState";
 import { BoardTrail } from "./BoardTrail";
 
 export class MoveCoordinate {
@@ -80,5 +81,6 @@ export abstract class State {
 // 次の手を決めるアルゴリズム
 export abstract class Search {
     // 次の手を返す
-    abstract bestMove(boxes: (string | null)[][], currentMove: number, level?: number, alpha?: number, beta?: number): (MoveCoordinate | null);
+    //abstract bestMove(boxes: (string | null)[][], currentMove: number, level?: number, alpha?: number, beta?: number): (MoveCoordinate | null);
+    abstract bestMove(bstate: BoardState, alpha?: number, beta?: number): (MoveCoordinate | null);
 }

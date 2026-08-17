@@ -1,4 +1,5 @@
 import { AlphaBetaSearch } from "./AlphaBetaSearch";
+import { BoardState } from "./BoardState";
 import { MoveCoordinate } from "./Evaluate";
 import { computerTurnRandom } from "./PutRandom";
 
@@ -10,7 +11,9 @@ export function computerTurnAlphaBetaSearch(boxes: (string | null)[][], currentM
     }
     const value = undefined;
     const move = new AlphaBetaSearch(depth);
-    const data = move.bestMove(boxes, currentMove, depth);
+    //const data = move.bestMove(boxes, currentMove, depth);
+    const bstate = new BoardState(boxes, currentMove, depth);
+    const data = move.bestMove(bstate);
     console.log("computerTurnAlphaBetaSearch-finish");
     if (data === null) throw new Error("AlphaBetaSearchのbestMoveからの戻り値がnull");
     const coordinate = new MoveCoordinate(data.rowNo, data.columnNo, value);
