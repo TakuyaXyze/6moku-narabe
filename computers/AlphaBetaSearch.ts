@@ -5,13 +5,6 @@ import { Search } from "./Evaluate"
 import { MoveCoordinate } from "./Evaluate";
 
 export class AlphaBetaSearch extends Search {
-    // どの深さまで読むか?
-    private maxLevel: number;
-    // インスタンス生成時にレベルを設定
-    constructor(maxLevel: number) {
-        super()
-        this.maxLevel = maxLevel;
-    }
     eval(bstate: BoardState, alpha: number, beta: number): (number | null) {
         // 末端のレベルでは局面の評価値。Randomではlevel==undefined
         console.log("start-evaluation:level=" + bstate.level);

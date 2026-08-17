@@ -6,7 +6,7 @@ export function computerTurnMinMaxSearch(boxes: (string | null)[][], currentMove
     console.log("computerTurnMinMaxSearch-start");
     //setComputingTime(Date.now() - computingStartTime);
     const value = undefined;
-    const move = new MinMaxSearch(depth);
+    const move = new MinMaxSearch();
     //const data = move.bestMove(boxes, currentMove, depth);
     const bstate = new BoardState(boxes, currentMove, depth);
     const data = move.bestMove(bstate);

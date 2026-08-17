@@ -5,13 +5,6 @@ import { Search } from "./Evaluate"
 import { MoveCoordinate } from "./Evaluate";
 
 export class MinMaxSearch extends Search {
-    // どの深さまで読むか?
-    private maxLevel: number;
-    // インスタンス生成時にレベルを設定
-    constructor(maxLevel: number) {
-        super()
-        this.maxLevel = maxLevel;
-    }
     eval(bstate: BoardState): number {
         // 末端のレベルでは局面の評価値。Randomではlevel==undefined
         console.log("start-evaluation:level=" + bstate.level);

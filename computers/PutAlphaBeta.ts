@@ -10,7 +10,7 @@ export function computerTurnAlphaBetaSearch(boxes: (string | null)[][], currentM
         return computerTurnRandom(boxes);
     }
     const value = undefined;
-    const move = new AlphaBetaSearch(depth);
+    const move = new AlphaBetaSearch();
     //const data = move.bestMove(boxes, currentMove, depth);
     const bstate = new BoardState(boxes, currentMove, depth);
     const data = move.bestMove(bstate);
@@ -18,4 +18,4 @@ export function computerTurnAlphaBetaSearch(boxes: (string | null)[][], currentM
     if (data === null) throw new Error("AlphaBetaSearchのbestMoveからの戻り値がnull");
     const coordinate = new MoveCoordinate(data.rowNo, data.columnNo, value);
     return coordinate;
-}   
+}
