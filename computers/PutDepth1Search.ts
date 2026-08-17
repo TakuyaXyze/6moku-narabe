@@ -7,7 +7,7 @@ export function computerTurnDepth1Search(boxes: (string | null)[][], currentMove
     const value = undefined;
     const move = new Depth1Search;
     const data = move.bestMove(boxes, currentMove);
-    if (data === null) return null;
+    if (data === null) throw new Error("Depth1SearchのbestMoveからの戻り値がnull");
     const coordinate = new MoveCoordinate(data.rowNo, data.columnNo, value);
     return coordinate;
 } 

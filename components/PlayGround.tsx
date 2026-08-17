@@ -13,7 +13,7 @@ import { computerTurnDepth1Search } from "../computers/PutDepth1Search";
 import { computerTurnMinMaxSearch } from "../computers/PutMinMax";
 import { computerTurnAlphaBetaSearch } from "../computers/PutAlphaBeta"
 
-export const ROWS = 19;
+export const ROWS = 5;
 export const COLUMNS = ROWS;
 export let rowNos = new Array<number>;
 for (let i = 0; i < ROWS; i++) {
@@ -23,7 +23,7 @@ export let columnNos = new Array<number>;
 for (let i = 0; i < COLUMNS; i++) {
     columnNos.push(i);
 }
-export const SEQUENCE_LENGTH = 6; //MAX6
+export const SEQUENCE_LENGTH = 4; //MAX6
 
 export function PlayGround() {
 
@@ -107,11 +107,7 @@ export function PlayGround() {
         setcurrentGameMode(gameMode);
     }
 
-    function computerTurnWithResult(result: (MoveCoordinate | null)) {
-        if (result == null) {
-            console.log("computerTurnSearch()からの戻り値がnull")
-            return;
-        };
+    function computerTurnWithResult(result: MoveCoordinate) {
         handleColor(result.rowNo, result.columnNo);
     }
 
@@ -141,6 +137,8 @@ export function PlayGround() {
         status = 'Winner: black';
     } else if (detectSequence(history[currentMove], "w")[SEQUENCE_LENGTH - 2] > 0) {
         status = 'Winner: white';
+    } else if (currentMove === ROWS * COLUMNS) {
+        status = "draw";
     } else {
         status = 'Next player: ' + (blackIsNext ? 'black' : 'white');
     }

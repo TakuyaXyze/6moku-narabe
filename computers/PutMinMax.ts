@@ -8,7 +8,7 @@ export function computerTurnMinMaxSearch(boxes: (string | null)[][], currentMove
     const move = new MinMaxSearch(depth);
     const data = move.bestMove(boxes, currentMove, depth);
     console.log("computerTurnMinMaxSearch-finish");
-    if (data === null) return null;
+    if (data === null) throw new Error("MinMaxSearchのbestMoveからの戻り値がnull");
     const coordinate = new MoveCoordinate(data.rowNo, data.columnNo, value);
     return coordinate;
 } 
