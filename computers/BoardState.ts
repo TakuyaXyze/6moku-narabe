@@ -52,8 +52,8 @@ export class BoardState extends State {
         const four = Math.min(SEQUENCE_LENGTH, 4);
         const three = Math.min(SEQUENCE_LENGTH, 3);
         const two = Math.min(SEQUENCE_LENGTH, 2);
-        const whiteCount = detectSequence(this.state, "w");
-        const blackCount = detectSequence(this.state, "b");
+        const whiteCount = detectSequence(this.state, white);
+        const blackCount = detectSequence(this.state, black);
         sum += 100 * whiteCount[six - 2];
         sum += 20 * whiteCount[five - 2];
         sum += 10 * whiteCount[four - 2];
