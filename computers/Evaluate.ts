@@ -31,6 +31,52 @@ export class MoveCoordinate {
     };
 }
 
+export class DoubleMoveCoordinate {
+    private _value: (number | undefined);
+    private _firstRowNo: number;
+    private _firstColumnNo: number;
+    private _secondRowNo?: number;
+    private _secondColumnNo?: number;
+
+    public constructor(value: (number | undefined), firstRowNo: number, firstColumnNo: number, secondRowNo?: number, secondColumnNo?: number) {
+        this._value = value;
+        this._firstRowNo = firstRowNo;
+        this._firstColumnNo = firstColumnNo;
+        this._secondRowNo = secondRowNo;
+        this._secondColumnNo = secondColumnNo;
+    }
+    get value(): (number | undefined) {
+        return this._value;
+    };
+    set value(value: number) {
+        this._value = value;
+    };
+    get firstRowNo(): number {
+        return this._firstRowNo;
+    }
+    set firstRowNo(rowNo: number) {
+        this._firstRowNo = rowNo;
+    }
+    get firstColumnNo(): number {
+        return this._firstColumnNo;
+    }
+    set firstColumnNo(columnNo: number) {
+        this._firstColumnNo = columnNo;
+    }
+    get secondRowNo(): (number | undefined) {
+        return this._secondRowNo;
+    }
+    set secondRowNo(rowNo: number) {
+        this._secondRowNo = rowNo;
+    }
+    get secondColumnNo(): (number | undefined) {
+        return this._secondColumnNo;
+    }
+    set secondColumnNo(columnNo: number) {
+        this._secondColumnNo = columnNo;
+    }
+}
+
 // 動かした盤面を元に戻せるように記憶
 export abstract class TrailStack {
 }

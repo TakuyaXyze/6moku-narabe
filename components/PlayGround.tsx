@@ -7,13 +7,14 @@ import "../styles/GameBoard.css"
 import "../styles/GameInfo.css"
 import { useState, useEffect } from "react";
 import { detectSequence } from "../computers/CountSequence";
-import { MoveCoordinate } from "../computers/Evaluate"
+import { MoveCoordinate, DoubleMoveCoordinate } from "../computers/Evaluate"
 import { computerTurnRandom } from "../computers/PutRandom";
 import { computerTurnDepth1Search } from "../computers/PutDepth1Search";
 import { computerTurnMinMaxSearch } from "../computers/PutMinMax";
 import { computerTurnAlphaBetaSearch } from "../computers/PutAlphaBeta"
+import { computerTurnBeamSearch } from "../computers/PutBeam";
 
-export const ROWS = 5;
+export const ROWS = 6;
 export const COLUMNS = ROWS;
 export let rowNos = new Array<number>;
 for (let i = 0; i < ROWS; i++) {
@@ -23,55 +24,60 @@ export let columnNos = new Array<number>;
 for (let i = 0; i < COLUMNS; i++) {
     columnNos.push(i);
 }
-export const SEQUENCE_LENGTH = 4; //MAX6
+export const SEQUENCE_LENGTH = 5; //MAX6
 
 export function PlayGround() {
 
     const [history, setHistory] = useState([Array(ROWS).fill(null).map(() => Array<(string | null)>(COLUMNS).fill(null))]);
     const [currentMove, setCurrentMove] = useState(0);
-    const [blackIsNext, setBlackIsNext] = useState(true);
-    const [currentGameMode, setcurrentGameMode] = useState("AlphaBeta3");
+    const [currentGameMode, setcurrentGameMode] = useState("Beam");
 
     function handlePlay(nextBoxes: (string | null)[][]): void {
         const nextHistory = [...history.slice(0, currentMove + 1), nextBoxes];
         setHistory(nextHistory);
         setCurrentMove(nextHistory.length - 1);
-        const booleanBlackIsNext = checkBlackIsNext(currentMove + 1);
-        setBlackIsNext(booleanBlackIsNext);
+    }
+
+    function handlePlayDouble(nextBoxes: (string | null)[][]): void {
+        const nextHistory = [...history.slice(0, currentMove + 1), nextBoxes, nextBoxes];
+        setHistory(nextHistory);
+        setCurrentMove(nextHistory.length - 1);
     }
 
     function handleClick(rowNo: number, columnNo: number): void {
+        const blackIsNext = checkBlackIsNext(currentMove);
         if (history[currentMove][rowNo][columnNo] || !blackIsNext) {//空白のときのみ配置可能
             return;
         }
         handleColor(rowNo, columnNo);
     }
 
-    function handleColor(rowNo: number, columnNo: number) {
+    function handleColor(firstRowNo: number, firstColumnNo: number, secondRowNo?: number, secondColumnNo?: number): void {
         if (detectSequence(history[currentMove], "b")[SEQUENCE_LENGTH - 2] > 0) return;
         if (detectSequence(history[currentMove], "w")[SEQUENCE_LENGTH - 2] > 0) return;
         //const nextBoxes = history[currentMove].slice();
         //参考コードだと1次元行列だったのでシャローコピーでよかったが、ここでは2次元のためディープコピー
         const nextBoxes: Array<(string | null)[]> = JSON.parse(JSON.stringify(history[currentMove]));
-        if (blackIsNext) {
-            nextBoxes[rowNo][columnNo] = "b";
-        } else {
-            nextBoxes[rowNo][columnNo] = "w";
+        const blackIsNext = checkBlackIsNext(currentMove);
+        let color: string;
+        if (blackIsNext) color = "b";
+        else color = "w";
+        nextBoxes[firstRowNo][firstColumnNo] = color;
+        if (secondRowNo == undefined || secondColumnNo == undefined) {
+            handlePlay(nextBoxes);
+            return;
         }
-        handlePlay(nextBoxes);
+        nextBoxes[secondRowNo][secondColumnNo] = color;
+        handlePlayDouble(nextBoxes);
     }
 
     useEffect(() => {
+        const blackIsNext = checkBlackIsNext(currentMove);
         if (blackIsNext) return;
         if (detectSequence(history[currentMove], "b")[SEQUENCE_LENGTH - 2] > 0) return;
         if (detectSequence(history[currentMove], "w")[SEQUENCE_LENGTH - 2] > 0) return;
-        const timeoutId = setTimeout(() => { executeComputerTurn() }, 500)
+        setTimeout(() => { computerTurn() }, 100)
     }, [history])
-
-    function executeComputerTurn() {
-        console.log("computerTurn");
-        computerTurn();
-    }
 
     //処理時間の計測
     //const [computingStartTime, setComputingStartTime] = useState(Date.now)
@@ -98,6 +104,9 @@ export function PlayGround() {
             case "AlphaBeta6":
                 computerTurnWithResult(computerTurnAlphaBetaSearch(history[currentMove], currentMove, 6));
                 break;
+            case "Beam":
+                computerTurnWithDoubleResult(computerTurnBeamSearch(history[currentMove], currentMove, 2));
+                break;
             default:
                 throw new Error("GameModeが指定されていません");
         }
@@ -111,13 +120,17 @@ export function PlayGround() {
         handleColor(result.rowNo, result.columnNo);
     }
 
+    function computerTurnWithDoubleResult(result: DoubleMoveCoordinate) {
+        handleColor(result.firstRowNo, result.firstColumnNo, result.secondRowNo, result.secondColumnNo);
+    }
+
     function jumpTo(nextMove: number) {
         setCurrentMove(nextMove);
-        setBlackIsNext(checkBlackIsNext(nextMove));
+        const blackIsNext = checkBlackIsNext(currentMove);
         if (blackIsNext) return;
         if (detectSequence(history[currentMove], "b")[SEQUENCE_LENGTH - 2] > 0) return;
         if (detectSequence(history[currentMove], "w")[SEQUENCE_LENGTH - 2] > 0) return;
-        executeComputerTurn();
+        computerTurn();
     }
 
     const moves = history.map((boxes: (string | null)[][], move: number) => {
@@ -140,7 +153,7 @@ export function PlayGround() {
     } else if (currentMove === ROWS * COLUMNS) {
         status = "draw";
     } else {
-        status = 'Next player: ' + (blackIsNext ? 'black' : 'white');
+        status = 'Next player: ' + (checkBlackIsNext(currentMove) ? 'black' : 'white');
     }
 
     return (
