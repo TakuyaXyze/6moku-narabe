@@ -14,8 +14,20 @@ export class BoardState extends State {
         const value = undefined;
         for (let rowNo = 0; rowNo < ROWS; rowNo++) {
             for (let columnNo = 0; columnNo < COLUMNS; columnNo++) {
-                if (!boxes[rowNo][columnNo])
-                    ret.push(new MoveCoordinate(rowNo, columnNo, value));
+                for (let k = 0; k < SEQUENCE_LENGTH; k++) {
+                    if (!boxes[rowNo][columnNo]
+                        && ((boxes[rowNo - k] && boxes[rowNo - k][columnNo])
+                            || (boxes[rowNo + k] && boxes[rowNo + k][columnNo])
+                            || (boxes[rowNo] && boxes[rowNo][columnNo - k])
+                            || (boxes[rowNo] && boxes[rowNo][columnNo + k])
+                            || (boxes[rowNo - k] && boxes[rowNo - k][columnNo - k])
+                            || (boxes[rowNo - k] && boxes[rowNo - k][columnNo + k])
+                            || (boxes[rowNo + k] && boxes[rowNo + k][columnNo - k])
+                            || (boxes[rowNo + k] && boxes[rowNo + k][columnNo + k])
+                        )
+                    )
+                        ret.push(new MoveCoordinate(rowNo, columnNo, value));
+                }
             }
         }
         return ret;

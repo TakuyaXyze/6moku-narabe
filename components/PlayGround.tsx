@@ -14,7 +14,7 @@ import { computerTurnMinMaxSearch } from "../computers/PutMinMax";
 import { computerTurnAlphaBetaSearch } from "../computers/PutAlphaBeta"
 import { computerTurnBeamSearch } from "../computers/PutBeam";
 
-export const ROWS = 6;
+export const ROWS = 19;
 export const COLUMNS = ROWS;
 export let rowNos = new Array<number>;
 for (let i = 0; i < ROWS; i++) {
@@ -24,7 +24,7 @@ export let columnNos = new Array<number>;
 for (let i = 0; i < COLUMNS; i++) {
     columnNos.push(i);
 }
-export const SEQUENCE_LENGTH = 5; //MAX6
+export const SEQUENCE_LENGTH = 6; //MAX6
 
 export function PlayGround() {
 
@@ -87,7 +87,7 @@ export function PlayGround() {
         //setComputingStartTime(Date.now);
         switch (currentGameMode) {
             case "Random":
-                computerTurnWithResult(computerTurnRandom(history[currentMove]));
+                computerTurnWithResult(computerTurnRandom(history[currentMove], currentMove));
                 break;
             case "Depth1Search":
                 computerTurnWithResult(computerTurnDepth1Search(history[currentMove], currentMove));
@@ -105,7 +105,7 @@ export function PlayGround() {
                 computerTurnWithResult(computerTurnAlphaBetaSearch(history[currentMove], currentMove, 6));
                 break;
             case "Beam":
-                computerTurnWithDoubleResult(computerTurnBeamSearch(history[currentMove], currentMove, 2));
+                computerTurnWithDoubleResult(computerTurnBeamSearch(history[currentMove], currentMove, 4));
                 break;
             default:
                 throw new Error("GameModeが指定されていません");

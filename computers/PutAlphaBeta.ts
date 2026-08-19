@@ -7,7 +7,7 @@ export function computerTurnAlphaBetaSearch(boxes: (string | null)[][], currentM
     console.log("computerTurnAlphaBetaSearch-start");
     //setComputingTime(Date.now() - computingStartTime);
     if (currentMove === 1) {
-        return computerTurnRandom(boxes);
+        return computerTurnRandom(boxes, 1);
     }
     const value = undefined;
     const move = new AlphaBetaSearch();
