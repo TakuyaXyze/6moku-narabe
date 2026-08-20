@@ -70,13 +70,13 @@ export class BoardState extends State {
         const blackCount = detectSequence(this.state, black);
         sum += 100 * whiteCount[six - 2];
         sum += 20 * whiteCount[five - 2];
-        sum += 10 * whiteCount[four - 2];
-        sum += 5 * whiteCount[three - 2];
+        sum += 13 * whiteCount[four - 2];
+        sum += 3 * whiteCount[three - 2];
         sum += 1 * whiteCount[two - 2];
         sum -= 100 * blackCount[six - 2];
         sum -= 20 * blackCount[five - 2];
-        sum -= 10 * blackCount[four - 2];
-        sum -= 5 * blackCount[three - 2];
+        sum -= 13 * blackCount[four - 2];
+        sum -= 3 * blackCount[three - 2];
         sum -= 1 * blackCount[two - 2];
         return sum;
     }
