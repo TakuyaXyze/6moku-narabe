@@ -14,7 +14,7 @@ export class BoardState extends State {
         const value = undefined;
         for (let rowNo = 0; rowNo < ROWS; rowNo++) {
             for (let columnNo = 0; columnNo < COLUMNS; columnNo++) {
-                for (let k = 0; k < SEQUENCE_LENGTH; k++) {
+                for (let k = 0; k < SEQUENCE_LENGTH - 1; k++) {
                     if (!boxes[rowNo][columnNo]
                         && ((boxes[rowNo - k] && boxes[rowNo - k][columnNo])
                             || (boxes[rowNo + k] && boxes[rowNo + k][columnNo])
