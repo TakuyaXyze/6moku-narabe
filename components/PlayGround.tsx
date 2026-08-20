@@ -30,7 +30,7 @@ export function PlayGround() {
 
     const [history, setHistory] = useState([Array(ROWS).fill(null).map(() => Array<(string | null)>(COLUMNS).fill(null))]);
     const [currentMove, setCurrentMove] = useState(0);
-    const [currentGameMode, setcurrentGameMode] = useState("Beam");
+    const [currentGameMode, setcurrentGameMode] = useState("Beam4");
 
     function handlePlay(nextBoxes: (string | null)[][]): void {
         const nextHistory = [...history.slice(0, currentMove + 1), nextBoxes];
@@ -104,9 +104,12 @@ export function PlayGround() {
             case "AlphaBeta6":
                 computerTurnWithResult(computerTurnAlphaBetaSearch(history[currentMove], currentMove, 6));
                 break;
-            case "Beam":
-                computerTurnWithDoubleResult(computerTurnBeamSearch(history[currentMove], currentMove, 4));
-                break;
+            case "Beam4":
+                computerTurnWithDoubleResult(computerTurnBeamSearch(history[currentMove], currentMove, 5, 4));
+                break;//引数_3は、ビームサーチで次の深度に持ち出す場合の数。上位n個のみが次の深度について検証される
+            case "Beam6":
+                computerTurnWithDoubleResult(computerTurnBeamSearch(history[currentMove], currentMove, 8, 6));
+                break;//引数_3は、ビームサーチで次の深度に持ち出す場合の数。上位n個のみが次の深度について検証される
             default:
                 throw new Error("GameModeが指定されていません");
         }

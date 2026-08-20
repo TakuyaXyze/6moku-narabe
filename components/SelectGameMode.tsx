@@ -21,6 +21,12 @@ export function SelectGameMode({ handleGameMode }: Props) {
             <li>
                 <button onClick={() => handleGameMode("AlphaBeta3")}>AlphaBeta-depth3</button>
             </li>
+            <li>
+                <button onClick={() => handleGameMode("Beam4")}>Beam-depth4</button>
+            </li>
+            <li>
+                <button onClick={() => handleGameMode("Beam6")}>Beam-depth6</button>
+            </li>
         </ol>
     );
 };
