@@ -10,8 +10,11 @@ export function computerTurnRandom(boxes: (string | null)[][], currentMove: numb
     const moves = bstate.legalMoves(bstate.state);
     if (moves == null) throw new Error("bstate.legalMoves()がnull");
     const size = moves.length;
+    console.log("size=" + size);
+    for (let i = 0; i < size; i++) {
+        console.log(moves[i].rowNo + "," + moves[i].columnNo);
+    }
     const i = Math.floor(Math.random() * size);
     const randomMove = moves[i];
-    const coordinate = new MoveCoordinate(randomMove.rowNo, randomMove.columnNo, value);
-    return coordinate;
+    return randomMove;
 }
