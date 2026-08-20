@@ -25,8 +25,10 @@ export class BoardState extends State {
                             || (boxes[rowNo + k] && boxes[rowNo + k][columnNo - k])
                             || (boxes[rowNo + k] && boxes[rowNo + k][columnNo + k])
                         )
-                    )
+                    ) {
                         ret.push(new MoveCoordinate(rowNo, columnNo, value));
+                        break;
+                    }
                 }
             }
         }
