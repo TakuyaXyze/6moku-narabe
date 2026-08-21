@@ -30,7 +30,7 @@ export function PlayGround() {
 
     const [history, setHistory] = useState([Array(ROWS).fill(null).map(() => Array<(string | null)>(COLUMNS).fill(null))]);
     const [currentMove, setCurrentMove] = useState(0);
-    const [currentGameMode, setcurrentGameMode] = useState("Beam4");
+    const [currentGameMode, setcurrentGameMode] = useState("Random");
 
     function handlePlay(nextBoxes: (string | null)[][]): void {
         const nextHistory = [...history.slice(0, currentMove + 1), nextBoxes];
@@ -76,7 +76,7 @@ export function PlayGround() {
         if (blackIsNext) return;
         if (detectSequence(history[currentMove], "b")[SEQUENCE_LENGTH - 2] > 0) return;
         if (detectSequence(history[currentMove], "w")[SEQUENCE_LENGTH - 2] > 0) return;
-        setTimeout(() => { computerTurn() }, 100)
+        setTimeout(() => { computerTurn() }, 300)
     }, [history])
 
     //処理時間の計測
@@ -105,7 +105,7 @@ export function PlayGround() {
                 computerTurnWithResult(computerTurnAlphaBetaSearch(history[currentMove], currentMove, 6));
                 break;
             case "Beam4":
-                computerTurnWithDoubleResult(computerTurnBeamSearch(history[currentMove], currentMove, 5, 4));
+                computerTurnWithDoubleResult(computerTurnBeamSearch(history[currentMove], currentMove, 8, 4));
                 break;//引数_3は、ビームサーチで次の深度に持ち出す場合の数。上位n個のみが次の深度について検証される
             case "Beam6":
                 computerTurnWithDoubleResult(computerTurnBeamSearch(history[currentMove], currentMove, 8, 6));
@@ -163,10 +163,10 @@ export function PlayGround() {
         <div className="play-ground">
             <GameBoard boxes={history[currentMove]} handleClick={handleClick} />
             <div className="game-info">
-                <div className="status">{status}</div>
-                <ol className="move-info">{moves}</ol>
                 <div>Mode:{currentGameMode}</div>
                 <SelectGameMode handleGameMode={handleGameMode} />
+                <div className="status">{status}</div>
+                <ol className="move-info">{moves}</ol>
             </div>
         </div >
     );

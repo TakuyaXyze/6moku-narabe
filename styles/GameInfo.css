@@ -7,13 +7,26 @@
     overflow: hidden;
 }
 
-.move-info {
-    height: 200px;
+.select-game-mode {
     display: flex;
     flex-direction: column;
-    overflow: auto;
+}
+
+.search-info {
+    font-size: small;
+    position: absolute;
+    background-color: rgba(186, 217, 248, 0.85);
+    padding: 2.5px;
+    border-radius: 2px;
 }
 
 .status {
+    margin-top: 20px;
     width: 100%;
+}
+
+.move-info {
+    display: flex;
+    flex-direction: column;
+    overflow: auto;
 }
