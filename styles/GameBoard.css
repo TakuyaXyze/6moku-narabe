@@ -1,10 +1,11 @@
 .game-board {
-    background: #cf993a;
     align-items: center;
     height: 90%;
     aspect-ratio: 1/1;
     display: flex;
     flex-direction: column;
+    background-image: url(../public/goban.png);
+    background-size: 100% 100%;
 }
 
 .row {
@@ -40,6 +41,6 @@
 }
 
 .black {
-    background-color: #000000;
+    background-color: #0a0a0b;
     color: #fafafa;
 }
