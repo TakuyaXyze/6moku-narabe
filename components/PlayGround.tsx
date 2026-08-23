@@ -216,6 +216,11 @@ export function PlayGround() {
 
     const [isInforming, setIsInforming] = useState(false);
 
+    const continueGame: boolean = (
+        (detectSequence(history[currentMove], "b")[SEQUENCE_LENGTH - 2] === 0)
+        && (detectSequence(history[currentMove], "w")[SEQUENCE_LENGTH - 2] === 0)
+    )
+
     return (
         <div className="play-ground">
             <GameBoard boxes={history[currentMove]} handleClick={handleClick} />
@@ -224,7 +229,11 @@ export function PlayGround() {
                 <SelectGameMode handleGameMode={handleGameMode} />
                 <div className="status">
                     {status}
-                    <ClockLoader className="loader" loading={!blackIsNext} size={24} color="#539fed" />
+                    <ClockLoader className="loader"
+                        loading={!blackIsNext && continueGame}
+                        size={24}
+                        color="#539fed"
+                    />
                 </div>
                 <div className="computing-time">
                     <div>処理時間: {printComputingTime} s</div>
