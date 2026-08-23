@@ -94,7 +94,7 @@ export function PlayGround() {
     function computerTurn(): void {
 
         switch (currentGameMode) {
-            case "Random":
+            case "Random"://先ほどのpushでここを誤って"Random-depth"としたら、それ以降修正をpushしてもvercelが更新されない
                 computerTurnWithResult(computerTurnRandom(history[currentMove], currentMove));
                 break;
             case "Depth1Search":
