@@ -62,4 +62,5 @@ ul {
     position: absolute;
     overflow: auto;
     z-index: 0;
+    max-height: 250px;
 }
