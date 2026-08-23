@@ -94,7 +94,7 @@ export function PlayGround() {
     function computerTurn(): void {
 
         switch (currentGameMode) {
-            case "Random-depth":
+            case "Random":
                 computerTurnWithResult(computerTurnRandom(history[currentMove], currentMove));
                 break;
             case "Depth1Search":
