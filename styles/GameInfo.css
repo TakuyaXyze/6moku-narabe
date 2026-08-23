@@ -1,7 +1,7 @@
 .game-info {
     height: 90%;
-    width: 200px;
-    margin-left: 10px;
+    width: 190px;
+    margin-left: 2.3%;
     display: flex;
     flex-direction: column;
     overflow: hidden;
@@ -15,18 +15,51 @@
 .search-info {
     font-size: small;
     position: absolute;
-    background-color: rgba(186, 217, 248, 0.85);
+    background-color: rgba(174, 174, 174, 0.95);
     padding: 2.5px;
     border-radius: 2px;
 }
 
 .status {
-    margin-top: 20px;
+    margin-top: 10px;
     width: 100%;
+    display: flex;
+}
+
+.loader {
+    margin-left: 25px;
+}
+
+.computing-time {
+    margin: 3px;
+    font-size: small;
+}
+
+.moves-button-info {
+    margin-top: 8px;
+    text-align: right;
+}
+
+.information {
+    position: relative;
+    text-align: left;
+    font-size: 10.5px;
+    background-color: rgba(174, 174, 174, 0.95);
+    background-size: 100% 100%;
+    padding: 2.5px;
+    border-radius: 2px;
+    z-index: 5;
+}
+
+ul {
+    padding-left: 15;
 }
 
 .move-info {
+    margin-top: 215px;
     display: flex;
     flex-direction: column;
+    position: absolute;
     overflow: auto;
+    z-index: 0;
 }
