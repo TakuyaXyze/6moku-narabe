@@ -20,14 +20,15 @@ export class BeamSearch {
         return bstate.eval();
     }
     bestMove(bstate: BoardState): (DoubleMoveCoordinate | null) {
-        console.log("BeamSearch-level" + bstate.level + "-bestMove:start");
+        //console.log("BeamSearch-level" + bstate.level + "-bestMove:start");
 
         //console.log("currentMove:" + bstate.currentMove + " blackIsNext:" + checkBlackIsNext(bstate.currentMove));
         const moves = bstate.legalMoves(bstate.state);
         let size: number = 0;
         if (moves == null) return null;
         size = moves.length;
-        console.log("size=moves.length:" + size);
+        if (size < 200) this.beamSize = Math.floor(1600 / size);
+        //console.log("size=moves.length:" + size);
 
         // 最良の手が複数あるのでそれを管理する
         let bestMoves = new Array<[number, DoubleMoveCoordinate]>;
@@ -47,13 +48,13 @@ export class BeamSearch {
                 const moveValue = this.eval(bstate);
                 move.value = moveValue;
                 const blackIsThisTurn = checkBlackIsNext(bstate.currentMove - 1);
-                console.log("currentMove:" + bstate.currentMove + " blackIsThisTurn:" + blackIsThisTurn);
+                //console.log("currentMove:" + bstate.currentMove + " blackIsThisTurn:" + blackIsThisTurn);
                 for (let m = 0; m < this.beamSize; m++) {
                     //console.log("for文 m=" + m);
                     if (bestMoves[m] == undefined) {
                         bestMoves[m] = [moveValue, move];
                         const bm = bestMoves[m][1];
-                        console.log("新規追加 bestMove (" + bm.firstRowNo + "," + bm.firstColumnNo + "),(" + bm.secondRowNo + "," + bm.secondColumnNo + ") value=" + bm.value);
+                        //console.log("新規追加 bestMove (" + bm.firstRowNo + "," + bm.firstColumnNo + "),(" + bm.secondRowNo + "," + bm.secondColumnNo + ") value=" + bm.value);
                         break;
                     }
                     if ((blackIsThisTurn && (moveValue < bestMoves[m][0]))//blackIsThisTurnでは評価値は低いほどbest
@@ -63,7 +64,7 @@ export class BeamSearch {
                         bestMoves.splice(m, 0, [moveValue, move]);
                         if (bestMoves.length > this._beamSize) bestMoves.pop();
                         const bm = bestMoves[m][1];
-                        console.log("更新追加 bestMove (" + bm.firstRowNo + "," + bm.firstColumnNo + "),(" + bm.secondRowNo + "," + bm.secondColumnNo + ") value=" + bm.value);
+                        //console.log("更新追加 bestMove (" + bm.firstRowNo + "," + bm.firstColumnNo + "),(" + bm.secondRowNo + "," + bm.secondColumnNo + ") value=" + bm.value);
                         break;
                     }
                 }
@@ -76,11 +77,11 @@ export class BeamSearch {
         if (bstate.level <= 2) return bestMoves[0][1];
         const nextBestMoves = new Array<[number, DoubleMoveCoordinate, DoubleMoveCoordinate]>;
         for (let i = 0; i < this.beamSize; i++) {
-            console.log("for文第n段階開始" + (i + 1) + "回目 level=" + bstate.level);
+            //console.log("for文第n段階開始" + (i + 1) + "回目 level=" + bstate.level);
             const bestMove = bestMoves[i][1];
             if (bestMove.secondRowNo == undefined || bestMove.secondColumnNo == undefined)
                 throw new Error("secondRowNoまたはsecondColumnNoが指定されていません");
-            console.log("bestMove:(" + bestMove.firstRowNo + "," + bestMove.firstColumnNo + "),(" + bestMove.secondRowNo + "," + bestMove.secondColumnNo + ")");
+            //console.log("bestMove:(" + bestMove.firstRowNo + "," + bestMove.firstColumnNo + "),(" + bestMove.secondRowNo + "," + bestMove.secondColumnNo + ")");
             const bestValue = bestMoves[i][0];
             const moveI = new MoveCoordinate(bestMove.firstRowNo, bestMove.firstColumnNo, bestValue);
             const moveJ = new MoveCoordinate(bestMove.secondRowNo, bestMove.secondColumnNo, bestValue);
@@ -95,7 +96,7 @@ export class BeamSearch {
                 ) {
                     nextBestMoves[j] = [nextBestMove.value, bestMove, nextBestMove];
                     const nbm = nextBestMoves[j][2];
-                    console.log("新規追加 nextBestMove (" + nbm.firstRowNo + "," + nbm.firstColumnNo + "),(" + nbm.secondRowNo + "," + nbm.secondColumnNo + ") value=" + nbm.value);
+                    //console.log("新規追加 nextBestMove (" + nbm.firstRowNo + "," + nbm.firstColumnNo + "),(" + nbm.secondRowNo + "," + nbm.secondColumnNo + ") value=" + nbm.value);
                     break;
                 }
                 if (typeof nextBestMove.value === "number"
@@ -105,7 +106,7 @@ export class BeamSearch {
                 ) {
                     nextBestMoves.splice(j, 0, [nextBestMove.value, bestMove, nextBestMove]);
                     const nbm = nextBestMoves[j][2];
-                    console.log("更新追加 nextBestMove (" + nbm.firstRowNo + "," + nbm.firstColumnNo + "),(" + nbm.secondRowNo + "," + nbm.secondColumnNo + ") value=" + nbm.value);
+                    //console.log("更新追加 nextBestMove (" + nbm.firstRowNo + "," + nbm.firstColumnNo + "),(" + nbm.secondRowNo + "," + nbm.secondColumnNo + ") value=" + nbm.value);
                     break;
                 }
             }
