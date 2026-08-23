@@ -27,7 +27,7 @@ export class BeamSearch {
         let size: number = 0;
         if (moves == null) return null;
         size = moves.length;
-        if (size < 200) this.beamSize = Math.floor(1600 / size);
+        if (size < 300) this.beamSize = Math.floor(2500 / size);
         //console.log("size=moves.length:" + size);
 
         // 最良の手が複数あるのでそれを管理する
