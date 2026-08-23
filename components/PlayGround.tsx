@@ -150,7 +150,6 @@ export function PlayGround() {
         status = 'Next player: ' + (checkBlackIsNext(currentMove) ? 'black' : 'white');
     }
 
-
     const blackIsNext = checkBlackIsNext(currentMove);
 
     const moves = history.map((boxes: (string | null)[][], move: number) => {
@@ -258,18 +257,16 @@ export function checkBlackIsNext(currentMove: number): boolean {
     /*
     0 void  next black true
     1 black next white false
-    2 white next black true
-    3 black next black true
-    4 black next white false
-    5 white next white false
-    6 white next black true
-    7 black next black true
-    8 black next white false
-    9 white next white false
+    2 white next white false
+    3 white next black true
+    4 black next black true
+    5 black next white false
+    6 white next white false
+    7 white next black true
+    8 black next black true
+    9 black next white false
     */
-    if (currentMove === 0) {
-        return true;
-    } else if (currentMove % 4 === 2 || currentMove % 4 === 3) {
+    if (currentMove % 4 === 0 || currentMove % 4 === 3) {
         return true;
     } else {
         return false;

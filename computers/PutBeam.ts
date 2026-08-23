@@ -6,11 +6,11 @@ import { computerTurnRandom } from "./PutRandom";
 export function computerTurnBeamSearch(boxes: (string | null)[][], currentMove: number, size: number, depth: number): DoubleMoveCoordinate {
     console.log("computerTurnBeamSearch-start");
     //setComputingTime(Date.now() - computingStartTime);
-    if (currentMove === 1) {
+    /*if (currentMove === 1) {
         const randomMove = computerTurnRandom(boxes, 1);
         const randomCoordinate = new DoubleMoveCoordinate(randomMove.value, randomMove.rowNo, randomMove.columnNo);
         return randomCoordinate;
-    }
+    }*/
     const value = undefined;
     const move = new BeamSearch(size);
     const bstate = new BoardState(boxes, currentMove, depth);
