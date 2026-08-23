@@ -39,7 +39,7 @@ export function SelectGameMode({ handleGameMode }: Props) {
                     Random
                 </button>
                 {isHoveredOnButton("Random") && (
-                    <div className="search-info">ランダムで配置。軽い</div>
+                    <div className="search-info">ランダムで配置。軽め</div>
                 )}
             </li>
             <li>
@@ -59,7 +59,7 @@ export function SelectGameMode({ handleGameMode }: Props) {
                     Beam-depth6
                 </button>
                 {isHoveredOnButton("Beam6") && (
-                    <div className="search-info">6手先まで探索。重い</div>
+                    <div className="search-info">6手先まで探索。重め</div>
                 )}
             </li>
         </ol>
