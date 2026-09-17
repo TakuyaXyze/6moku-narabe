@@ -1,7 +1,6 @@
 "use client";
 
 import { GameBoard } from "./GameBoard";
-import { SelectGameMode } from "./SelectGameMode"
 import "../styles/PlayGround.css"
 import "../styles/GameBoard.css"
 import "../styles/GameInfo.css"
@@ -32,6 +31,7 @@ export function PlayGround() {
     const [history, setHistory] = useState([Array(ROWS).fill(null).map(() => Array<(string | null)>(COLUMNS).fill(null))]);
     const [currentMove, setCurrentMove] = useState(0);
     const [currentGameMode, setcurrentGameMode] = useState("Beam-depth4");
+    const [currentStage, setCurrentStage] = useState("1-1");
 
     function handlePlay(nextBoxes: (string | null)[][]): void {
         const nextHistory = [...history.slice(0, currentMove + 1), nextBoxes];
@@ -123,10 +123,6 @@ export function PlayGround() {
         }
     }
 
-    function handleGameMode(gameMode: string) {
-        setcurrentGameMode(gameMode);
-    }
-
     function computerTurnWithResult(result: MoveCoordinate) {
         handleColor(result.rowNo, result.columnNo);
     }
@@ -139,18 +135,17 @@ export function PlayGround() {
         setCurrentMove(nextMove);
     }
 
-    let status;
+    let result;
     if (detectSequence(history[currentMove], "b")[SEQUENCE_LENGTH - 2] > 0) {
-        status = 'Winner: black';
+        result = 'Winner: black';
     } else if (detectSequence(history[currentMove], "w")[SEQUENCE_LENGTH - 2] > 0) {
-        status = 'Winner: white';
+        result = 'Winner: white';
     } else if (currentMove === ROWS * COLUMNS) {
-        status = "draw";
-    } else {
-        status = 'Next player: ' + (checkBlackIsNext(currentMove) ? 'black' : 'white');
+        result = "draw";
     }
 
     const blackIsNext = checkBlackIsNext(currentMove);
+
 
     const moves = history.map((boxes: (string | null)[][], move: number) => {
 
@@ -221,14 +216,34 @@ export function PlayGround() {
         && (detectSequence(history[currentMove], "w")[SEQUENCE_LENGTH - 2] === 0)
     )
 
+    const thisTurnColor = (continueGame ? 'Next Player:' + (blackIsNext ? 'black' : 'white') : result);
+
+    let playerIsBlack = true;
+
     return (
         <div className="play-ground">
-            <GameBoard boxes={history[currentMove]} handleClick={handleClick} />
+            <div className="goishi-box-image-com">
+                {(playerIsBlack) &&
+                    <img src="goishi-box-white"
+                        alt="white"
+                        width="32"
+                    />
+                }
+                {(!playerIsBlack) &&
+                    <img src="goishi-box-black"
+                        alt="black"
+                        width="32"
+                    />
+                }
+            </div>
+            <div className="board-area">
+                <div className="turn-display">{thisTurnColor}</div>
+                <GameBoard boxes={history[currentMove]} handleClick={handleClick} />
+            </div>
             <div className="game-info">
+                <div>Stage:{currentStage}</div>
                 <div>GameMode: {currentGameMode}</div>
-                <SelectGameMode handleGameMode={handleGameMode} />
                 <div className="status">
-                    {status}
                     <ClockLoader className="loader"
                         loading={!blackIsNext && continueGame}
                         size={24}
@@ -257,6 +272,20 @@ export function PlayGround() {
                     )}
                 </div>
                 <ol className="move-info">{moves}</ol>
+                <div className="goishi-box-image-player">
+                    {(!playerIsBlack) &&
+                        <img src="goishi-box-white"
+                            alt="white"
+                            width="32"
+                        />
+                    }
+                    {(playerIsBlack) &&
+                        <img src="goishi-box-black"
+                            alt="black"
+                            width="32"
+                        />
+                    }
+                </div>
             </div>
         </div >
     );

@@ -7,6 +7,22 @@
     width: 100%;
 }
 
+.board-area {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    height: 100%;
+}
+
+.turn-display {
+    font-size: 16px;
+    height: 24px;
+}
+
+.goishi-box-image-com {
+    margin-top: 24px;
+}
+
 @media screen and (max-aspect-ratio: 1.1998/1) {
     .play-ground {
         display: flex;
