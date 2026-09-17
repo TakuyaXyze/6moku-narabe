@@ -8,6 +8,16 @@
     background-size: 100% 100%;
 }
 
+.game-board.turn-black .stone.empty:hover {
+    background-color: rgba(0, 0, 0, 0.4);
+    cursor: pointer;
+}
+
+.game-board.turn-white .stone.empty:hover {
+    background-color: rgba(255, 255, 255, 0.4);
+    cursor: pointer;
+}
+
 .row {
     display: flex;
     /*height: calc(100%/19);*/
@@ -22,10 +32,6 @@
     width: 100%;
     border-radius: 50%;
     position: relative;
-}
-
-.stone:hover {
-    background-color: #c2c2c2;
 }
 
 .box {

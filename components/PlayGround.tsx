@@ -216,9 +216,12 @@ export function PlayGround() {
         && (detectSequence(history[currentMove], "w")[SEQUENCE_LENGTH - 2] === 0)
     )
 
+    const playerIsBlack = true;
+
     const thisTurnColor = (continueGame ? 'Next Player:' + (blackIsNext ? 'black' : 'white') : result);
 
-    let playerIsBlack = true;
+    const pointerColor: (string | null)
+        = (continueGame && (playerIsBlack === blackIsNext)) ? (playerIsBlack ? "b" : "w") : null;
 
     return (
         <div className="play-ground">
@@ -238,7 +241,11 @@ export function PlayGround() {
             </div>
             <div className="board-area">
                 <div className="turn-display">{thisTurnColor}</div>
-                <GameBoard boxes={history[currentMove]} handleClick={handleClick} />
+                <GameBoard
+                    boxes={history[currentMove]}
+                    handleClick={handleClick}
+                    pointerColor={pointerColor}
+                />
             </div>
             <div className="game-info">
                 <div>Stage:{currentStage}</div>

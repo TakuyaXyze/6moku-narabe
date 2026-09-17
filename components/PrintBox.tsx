@@ -10,7 +10,14 @@ export function PrintBox({ rowNo, columnNo, value, onBoxClick }: Props) {
     const countNum: number = (rowNo) * 100 + (columnNo);
 
     return (
-        <div key={countNum} className={`stone ${value === "b" ? 'black' : ''}${value === "w" ? 'white' : ''}`}>
+        <div key={countNum}
+            className={`
+                stone
+                ${value === "b" ? 'black' : ''}
+                ${value === "w" ? 'white' : ''}
+                ${value === null ? 'empty' : ''}
+            `}
+        >
             <div onClick={onBoxClick}
                 className="box">
             </div>
