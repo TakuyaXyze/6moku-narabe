@@ -3,9 +3,10 @@ type Props = {
     columnNo: number;
     value: (string | null);
     onBoxClick: () => void;
+    isLastMove: boolean;
 }
 
-export function PrintBox({ rowNo, columnNo, value, onBoxClick }: Props) {
+export function PrintBox({ rowNo, columnNo, value, onBoxClick, isLastMove }: Props) {
     //1マス1マスを描画
     const countNum: number = (rowNo) * 100 + (columnNo);
 
@@ -16,6 +17,7 @@ export function PrintBox({ rowNo, columnNo, value, onBoxClick }: Props) {
                 ${value === "b" ? 'black' : ''}
                 ${value === "w" ? 'white' : ''}
                 ${value === null ? 'empty' : ''}
+                ${isLastMove === true ? 'last-move' : ''}
             `}
         >
             <div onClick={onBoxClick}

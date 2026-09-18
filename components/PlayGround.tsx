@@ -66,10 +66,12 @@ export function PlayGround() {
         nextBoxes[firstRowNo][firstColumnNo] = color;
         if (secondRowNo == undefined || secondColumnNo == undefined) {
             handlePlay(nextBoxes);
+            stonePlaceSound();
             return;
         }
         nextBoxes[secondRowNo][secondColumnNo] = color;
         handlePlayDouble(nextBoxes);
+        stonePlaceSound();
     }
 
 
@@ -146,7 +148,6 @@ export function PlayGround() {
 
     const blackIsNext = checkBlackIsNext(currentMove);
 
-
     const moves = history.map((boxes: (string | null)[][], move: number) => {
 
         const moveBlackIsNext = checkBlackIsNext(move);
@@ -216,12 +217,18 @@ export function PlayGround() {
         && (detectSequence(history[currentMove], "w")[SEQUENCE_LENGTH - 2] === 0)
     )
 
+
     const playerIsBlack = true;
+
+    const playerStoneColor = playerIsBlack ? "b" : "w";
+
+    const lastMoves = getLastMoves(history, currentMove);
+    const markedMoves = lastMoves.filter((move) => history[currentMove][move.rowNo][move.columnNo] !== playerStoneColor);
 
     const thisTurnColor = (continueGame ? 'Next Player:' + (blackIsNext ? 'black' : 'white') : result);
 
     const pointerColor: (string | null)
-        = (continueGame && (playerIsBlack === blackIsNext)) ? (playerIsBlack ? "b" : "w") : null;
+        = (continueGame && (playerIsBlack === blackIsNext)) ? playerStoneColor : null;
 
     return (
         <div className="play-ground">
@@ -245,6 +252,7 @@ export function PlayGround() {
                     boxes={history[currentMove]}
                     handleClick={handleClick}
                     pointerColor={pointerColor}
+                    markedMoves={markedMoves}
                 />
             </div>
             <div className="game-info">
@@ -316,4 +324,34 @@ export function checkBlackIsNext(currentMove: number): boolean {
     } else {
         return false;
     }
+}
+
+function detectStoneChange(before: (string | null)[][], after: (string | null)[][]): MoveCoordinate[] {
+    if (before === after) return [];
+    if (!(before.length === after.length)) throw new Error("beforeとafterの配列の大きさが異なる");
+    const length = before.length;
+    const result: MoveCoordinate[] = [];
+    for (let i = 0; i < length; i++) {
+        for (let j = 0; j < length; j++) {
+            if (before[i][j] === after[i][j]) continue;
+            let difference = new MoveCoordinate(i, j, undefined);
+            result.push(difference);
+        }
+    }
+    if (result.length > 2) throw new Error("変更が多すぎる");
+    return result;
+}
+
+function getLastMoves(history: (string | null)[][][], currentMove: number): MoveCoordinate[] {
+    for (let i = currentMove - 1; i >= 0; i--) {
+        if (history[i] === history[currentMove]) continue;
+        return detectStoneChange(history[i], history[currentMove]);
+    }
+    return [];
+}
+
+function stonePlaceSound(): void {
+    const sound = new Audio("/sounds/place-stone.mp3");
+    sound.volume = 0.8;
+    sound.play().catch((error) => console.log("SE再生に失敗:", error));
 }

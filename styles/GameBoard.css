@@ -34,6 +34,24 @@
     position: relative;
 }
 
+.stone.last-move {
+    animation: stone-blink 0.5s ease-in-out 3;
+}
+
+@keyframes stone-blink {
+    0% {
+        opacity: 1;
+    }
+
+    50% {
+        opacity: 0.3;
+    }
+
+    100% {
+        opacity: 1;
+    }
+}
+
 .box {
     height: 100%;
     width: 100%;

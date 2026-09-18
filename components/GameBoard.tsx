@@ -3,14 +3,16 @@
 import "../styles/GameBoard.css"
 import { PrintRow } from "./PrintRow";
 import { rowNos } from "./PlayGround";
+import { MoveCoordinate } from "../computers/Evaluate";
 
 type Props = {
     boxes: (string | null)[][];
     handleClick: (rowNo: number, columnNo: number) => void;
     pointerColor: (string | null);
+    markedMoves: MoveCoordinate[]
 }
 
-export function GameBoard({ boxes, handleClick, pointerColor }: Props) {
+export function GameBoard({ boxes, handleClick, pointerColor, markedMoves }: Props) {
     return (
         <div className={`
             game-board
@@ -18,14 +20,14 @@ export function GameBoard({ boxes, handleClick, pointerColor }: Props) {
             ${pointerColor === "w" ? "turn-white" : ""}
             `}
         >
-            {rowNos.map((columnNo) => (printRows(boxes, handleClick, columnNo)))}
+            {rowNos.map((rowNo) => (printRows(boxes, handleClick, rowNo, markedMoves)))}
         </div>
     )
 };
 
-function printRows(boxes: (string | null)[][], handleClick: (rowNo: number, columnNo: number) => void, rowNo: number) {
+function printRows(boxes: (string | null)[][], handleClick: (rowNo: number, columnNo: number) => void, rowNo: number, markedMoves: MoveCoordinate[]) {
     const key: string = "row-" + rowNo;
     return (
-        <PrintRow key={key} rowNo={rowNo} boxes={boxes} handleClick={handleClick} />
+        <PrintRow key={key} rowNo={rowNo} boxes={boxes} handleClick={handleClick} markedMoves={markedMoves} />
     )
 }
