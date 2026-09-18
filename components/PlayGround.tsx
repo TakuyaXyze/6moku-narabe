@@ -6,6 +6,7 @@ import "../styles/GameBoard.css"
 import "../styles/GameInfo.css"
 import { useState, useEffect } from "react";
 import { detectSequence } from "../computers/CountSequence";
+import { detectWinLine } from "../computers/DetectWinLine";
 import { MoveCoordinate, DoubleMoveCoordinate } from "../computers/Evaluate"
 import { computerTurnRandom } from "../computers/PutRandom";
 import { computerTurnDepth1Search } from "../computers/PutDepth1Search";
@@ -30,8 +31,17 @@ export function PlayGround() {
 
     const [history, setHistory] = useState([Array(ROWS).fill(null).map(() => Array<(string | null)>(COLUMNS).fill(null))]);
     const [currentMove, setCurrentMove] = useState(0);
-    const [currentGameMode, setcurrentGameMode] = useState("Beam-depth4");
+    //const [currentGameMode, setcurrentGameMode] = useState("Beam-depth4");
+    const [currentGameMode, setcurrentGameMode] = useState("Random");
     const [currentStage, setCurrentStage] = useState("1-1");
+    const blackSequence = detectSequence(history[currentMove], "b");
+    const whiteSequence = detectSequence(history[currentMove], "w");
+    const blackIsWinner = blackSequence[SEQUENCE_LENGTH - 2] > 0;
+    const whiteIsWinner = whiteSequence[SEQUENCE_LENGTH - 2] > 0;
+
+    useEffect(() => {
+        if (blackIsWinner || whiteIsWinner) winSound();
+    }, [blackIsWinner, whiteIsWinner])
 
     function handlePlay(nextBoxes: (string | null)[][]): void {
         const nextHistory = [...history.slice(0, currentMove + 1), nextBoxes];
@@ -54,8 +64,8 @@ export function PlayGround() {
     }
 
     function handleColor(firstRowNo: number, firstColumnNo: number, secondRowNo?: number, secondColumnNo?: number): void {
-        if (detectSequence(history[currentMove], "b")[SEQUENCE_LENGTH - 2] > 0) return;
-        if (detectSequence(history[currentMove], "w")[SEQUENCE_LENGTH - 2] > 0) return;
+        if (blackIsWinner) return;
+        if (whiteIsWinner) return;
         //const nextBoxes = history[currentMove].slice();
         //参考コードだと1次元行列だったのでシャローコピーでよかったが、ここでは2次元のためディープコピー
         const nextBoxes: Array<(string | null)[]> = JSON.parse(JSON.stringify(history[currentMove]));
@@ -82,8 +92,8 @@ export function PlayGround() {
     useEffect(() => {
         const blackIsNext = checkBlackIsNext(currentMove);
         if (blackIsNext) return;
-        if (detectSequence(history[currentMove], "b")[SEQUENCE_LENGTH - 2] > 0) return;
-        if (detectSequence(history[currentMove], "w")[SEQUENCE_LENGTH - 2] > 0) return;
+        if (blackIsWinner) return;
+        if (whiteIsWinner) return;
         setTimeout(() => {
             const computingStartTime = Date.now();
             computerTurn();
@@ -138,9 +148,9 @@ export function PlayGround() {
     }
 
     let result;
-    if (detectSequence(history[currentMove], "b")[SEQUENCE_LENGTH - 2] > 0) {
+    if (blackIsWinner) {
         result = 'Winner: black';
-    } else if (detectSequence(history[currentMove], "w")[SEQUENCE_LENGTH - 2] > 0) {
+    } else if (whiteIsWinner) {
         result = 'Winner: white';
     } else if (currentMove === ROWS * COLUMNS) {
         result = "draw";
@@ -174,10 +184,7 @@ export function PlayGround() {
 
     const [isInforming, setIsInforming] = useState(false);
 
-    const continueGame: boolean = (
-        (detectSequence(history[currentMove], "b")[SEQUENCE_LENGTH - 2] === 0)
-        && (detectSequence(history[currentMove], "w")[SEQUENCE_LENGTH - 2] === 0)
-    )
+    const continueGame: boolean = (!blackIsWinner && !whiteIsWinner)
 
     const playerIsBlack = true;
 
@@ -185,6 +192,7 @@ export function PlayGround() {
 
     const lastMoves = getLastMoves(history, currentMove);
     const markedMoves = lastMoves.filter((move) => history[currentMove][move.rowNo][move.columnNo] !== playerStoneColor);
+    const winMoves = (blackIsWinner || whiteIsWinner) ? detectWinLine(history[currentMove]) : [];
 
     const thisTurnColor = (continueGame ? 'Next Player:' + (blackIsNext ? 'black' : 'white') : result);
 
@@ -214,6 +222,7 @@ export function PlayGround() {
                     handleClick={handleClick}
                     pointerColor={pointerColor}
                     markedMoves={markedMoves}
+                    winMoves={winMoves}
                 />
             </div>
             <div className="game-info">
@@ -302,6 +311,12 @@ function getLastMoves(history: (string | null)[][][], currentMove: number): Move
 
 function stonePlaceSound(): void {
     const sound = new Audio("/sounds/place-stone.mp3");
+    sound.volume = 0.8;
+    sound.play().catch((error) => console.log("SE再生に失敗:", error));
+}
+
+function winSound(): void {
+    const sound = new Audio("/sounds/win.mp3");
     sound.volume = 0.8;
     sound.play().catch((error) => console.log("SE再生に失敗:", error));
 }

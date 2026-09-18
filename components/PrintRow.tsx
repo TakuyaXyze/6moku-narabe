@@ -7,18 +7,26 @@ type Props = {
     boxes: (string | null)[][];
     handleClick: (rowNo: number, columnNo: number) => void;
     markedMoves: MoveCoordinate[];
+    winMoves: MoveCoordinate[];
 }
 
-export function PrintRow({ rowNo, boxes, handleClick, markedMoves }: Props) {
+export function PrintRow({ rowNo, boxes, handleClick, markedMoves, winMoves }: Props) {
     //1行1行を描画
     return (
         <div className="row">
-            {columnNos.map((columnNo: number) => printOneRow(rowNo, boxes, handleClick, columnNo, markedMoves))}
+            {columnNos.map((columnNo: number) => printOneRow(rowNo, boxes, handleClick, columnNo, markedMoves, winMoves))}
         </div>
     )
 }
 
-function printOneRow(rowNo: number, boxes: (string | null)[][], handleClick: (rowNo: number, columnNo: number) => void, columnNo: number, markedMoves: MoveCoordinate[]) {
+function printOneRow(
+    rowNo: number,
+    boxes: (string | null)[][],
+    handleClick: (rowNo: number, columnNo: number) => void,
+    columnNo: number,
+    markedMoves: MoveCoordinate[],
+    winMoves: MoveCoordinate[]
+) {
     const key: string = rowNo + "-" + columnNo;
     return (
         <PrintBox
@@ -28,6 +36,7 @@ function printOneRow(rowNo: number, boxes: (string | null)[][], handleClick: (ro
             value={boxes[rowNo][columnNo]}
             onBoxClick={() => handleClick(rowNo, columnNo)}
             isLastMove={markedMoves.some((move) => rowNo === move.rowNo && columnNo === move.columnNo)}
+            isWinMove={winMoves.some((move) => rowNo === move.rowNo && columnNo === move.columnNo)}
         />
     )
 }
