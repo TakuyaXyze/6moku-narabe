@@ -8,6 +8,10 @@
     overflow: hidden;
 }
 
+.gamemode {
+    font-size: 12px;
+}
+
 .select-game-mode {
     display: flex;
     flex-direction: column;
@@ -50,6 +54,11 @@
     padding: 2.5px;
     border-radius: 2px;
     z-index: 5;
+}
+
+.rewind-button {
+    position: relative;
+    cursor: pointer;
 }
 
 ul {

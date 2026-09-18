@@ -148,44 +148,6 @@ export function PlayGround() {
 
     const blackIsNext = checkBlackIsNext(currentMove);
 
-    const moves = history.map((boxes: (string | null)[][], move: number) => {
-
-        const moveBlackIsNext = checkBlackIsNext(move);
-        const moveBlackIsThisTurn = checkBlackIsNext(move - 1);
-
-        let isHoveredOnButton = false;
-
-        function setIsHoveredOnButton(boolean: boolean) {
-            isHoveredOnButton = boolean;
-        }
-
-        if (move == 0) {
-            return (
-                <button key={move}
-                    onClick={() => jumpTo(move)}
-                    disabled={!blackIsNext}
-                >Go to game start</button>
-            );
-        } else if (move === history.length - 1) return;
-        else if (!moveBlackIsNext && !moveBlackIsThisTurn) {
-            return (
-                <button key={move}
-                    onClick={() => jumpTo(move - 1)}
-                    disabled={!blackIsNext}
-                >Go to move # {move}</button>
-            );
-        }
-        else {
-            return (
-                <button key={move}
-                    onClick={() => jumpTo(move)}
-                    disabled={!blackIsNext}
-                >Go to move # {move}</button>
-            );
-        }
-
-    });
-
     function printTimer(time: number): string {
         let word: string;
         let minute = Math.floor((time * 0.001) / 60);
@@ -217,7 +179,6 @@ export function PlayGround() {
         && (detectSequence(history[currentMove], "w")[SEQUENCE_LENGTH - 2] === 0)
     )
 
-
     const playerIsBlack = true;
 
     const playerStoneColor = playerIsBlack ? "b" : "w";
@@ -234,15 +195,15 @@ export function PlayGround() {
         <div className="play-ground">
             <div className="goishi-box-image-com">
                 {(playerIsBlack) &&
-                    <img src="goishi-box-white"
+                    <img src="goke-white.png"
                         alt="white"
-                        width="32"
+                        width="96"
                     />
                 }
                 {(!playerIsBlack) &&
-                    <img src="goishi-box-black"
+                    <img src="goke-black.png"
                         alt="black"
-                        width="32"
+                        width="96"
                     />
                 }
             </div>
@@ -257,7 +218,7 @@ export function PlayGround() {
             </div>
             <div className="game-info">
                 <div>Stage:{currentStage}</div>
-                <div>GameMode: {currentGameMode}</div>
+                <div className="gamemode">GameMode: {currentGameMode}</div>
                 <div className="status">
                     <ClockLoader className="loader"
                         loading={!blackIsNext && continueGame}
@@ -269,35 +230,24 @@ export function PlayGround() {
                     <div>処理時間: {printComputingTime} s</div>
                     <div>累積時間: {printSumTime} s</div>
                 </div>
-                <div className="moves-button-info">
-                    <img src="information.png"
-                        alt="i"
-                        width="16"
-                        onMouseEnter={() => setIsInforming(true)}
-                        onMouseLeave={() => setIsInforming(false)}
-                    />
-                    {isInforming && (
-                        <div className="information">
-                            <ul>
-                                <li>過去の手番に巻き戻し</li>
-                                <li>自分の手番時 もう一度打ち直し</li>
-                                <li>相手の手番時 2手同時自動打ち直し</li>
-                            </ul>
-                        </div>
-                    )}
+                <div className="rewind-button">
+                    <button onClick={() => jumpTo(lastFirstPlayerTurn(currentMove, playerIsBlack))}
+                        disabled={pointerColor === null || currentMove === 0}
+                    >1つ戻る</button>
+                    <button onClick={() => jumpTo(0)}
+                    >最初に戻る</button>
                 </div>
-                <ol className="move-info">{moves}</ol>
                 <div className="goishi-box-image-player">
                     {(!playerIsBlack) &&
-                        <img src="goishi-box-white"
+                        <img src="goke-white.png"
                             alt="white"
-                            width="32"
+                            width="96"
                         />
                     }
                     {(playerIsBlack) &&
-                        <img src="goishi-box-black"
+                        <img src="goke-black.png"
                             alt="black"
-                            width="32"
+                            width="96"
                         />
                     }
                 </div>
@@ -354,4 +304,20 @@ function stonePlaceSound(): void {
     const sound = new Audio("/sounds/place-stone.mp3");
     sound.volume = 0.8;
     sound.play().catch((error) => console.log("SE再生に失敗:", error));
+}
+
+function isFirstPlayerTurn(move: number, playerIsBlack: boolean): boolean {
+    return (checkBlackIsNext(move) === playerIsBlack)       //その手番の色と自分の色が一致
+        && (                                                //かつ
+            checkBlackIsNext(move - 1) !== playerIsBlack    //直前の色は自分とは別の色
+            || move === 0                                   //または move===0(1手目)
+        );
+}
+
+function lastFirstPlayerTurn(move: number, playerIsBlack: boolean): number {
+    for (let i = 1; i < move; i++) {
+        if (!isFirstPlayerTurn(move - i, playerIsBlack)) continue;
+        return move - i;
+    }
+    return 0;
 }
