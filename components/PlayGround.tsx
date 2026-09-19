@@ -27,20 +27,26 @@ for (let i = 0; i < COLUMNS; i++) {
 }
 export const SEQUENCE_LENGTH = 6; //MAX6
 
-export function PlayGround() {
+type Props = {
+    playerIsBlack: boolean;
+    gameMode: string;
+    stageLabel: string;
+    onGameEnd: (playerWins: boolean) => void;
+}
+
+export function PlayGround({ playerIsBlack, gameMode, stageLabel, onGameEnd }: Props) {
 
     const [history, setHistory] = useState([Array(ROWS).fill(null).map(() => Array<(string | null)>(COLUMNS).fill(null))]);
     const [currentMove, setCurrentMove] = useState(0);
-    //const [currentGameMode, setcurrentGameMode] = useState("Beam-depth4");
-    const [currentGameMode, setcurrentGameMode] = useState("Random");
-    const [currentStage, setCurrentStage] = useState("1-1");
     const blackSequence = detectSequence(history[currentMove], "b");
     const whiteSequence = detectSequence(history[currentMove], "w");
     const blackIsWinner = blackSequence[SEQUENCE_LENGTH - 2] > 0;
     const whiteIsWinner = whiteSequence[SEQUENCE_LENGTH - 2] > 0;
 
     useEffect(() => {
-        if (blackIsWinner || whiteIsWinner) winSound();
+        if (!blackIsWinner && !whiteIsWinner) return;
+        winSound();
+        onGameEnd(blackIsWinner === playerIsBlack);
     }, [blackIsWinner, whiteIsWinner])
 
     function handlePlay(nextBoxes: (string | null)[][]): void {
@@ -57,7 +63,7 @@ export function PlayGround() {
 
     function handleClick(rowNo: number, columnNo: number): void {
         const blackIsNext = checkBlackIsNext(currentMove);
-        if (history[currentMove][rowNo][columnNo] || !blackIsNext) {//空白のときのみ配置可能
+        if (history[currentMove][rowNo][columnNo] || blackIsNext !== playerIsBlack) {//空白のときのみ配置可能
             return;
         }
         handleColor(rowNo, columnNo);
@@ -91,7 +97,7 @@ export function PlayGround() {
 
     useEffect(() => {
         const blackIsNext = checkBlackIsNext(currentMove);
-        if (blackIsNext) return;
+        if (blackIsNext === playerIsBlack) return;
         if (blackIsWinner) return;
         if (whiteIsWinner) return;
         setTimeout(() => {
@@ -105,7 +111,12 @@ export function PlayGround() {
 
     function computerTurn(): void {
 
-        switch (currentGameMode) {
+        if (currentMove === 0) {
+            computerTurnWithResult(computerTurnRandom(history[currentMove], currentMove));
+            return;
+        }
+
+        switch (gameMode) {
             case "Random"://先ほどのpushでここを誤って"Random-depth"としたら、それ以降修正をpushしてもvercelが更新されない
                 computerTurnWithResult(computerTurnRandom(history[currentMove], currentMove));
                 break;
@@ -186,8 +197,6 @@ export function PlayGround() {
 
     const continueGame: boolean = (!blackIsWinner && !whiteIsWinner)
 
-    const playerIsBlack = true;
-
     const playerStoneColor = playerIsBlack ? "b" : "w";
 
     const lastMoves = getLastMoves(history, currentMove);
@@ -226,11 +235,11 @@ export function PlayGround() {
                 />
             </div>
             <div className="game-info">
-                <div>Stage:{currentStage}</div>
-                <div className="gamemode">GameMode: {currentGameMode}</div>
+                <div>Stage:{stageLabel}</div>
+                <div className="gamemode">GameMode: {gameMode}</div>
                 <div className="status">
                     <ClockLoader className="loader"
-                        loading={!blackIsNext && continueGame}
+                        loading={blackIsNext !== playerIsBlack && continueGame}
                         size={24}
                         color="#539fed"
                     />

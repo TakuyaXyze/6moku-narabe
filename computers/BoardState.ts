@@ -4,6 +4,9 @@ import { MoveCoordinate } from "./Evaluate";
 import { ROWS, COLUMNS, checkBlackIsNext, SEQUENCE_LENGTH } from "../components/PlayGround"
 import { detectSequence } from "./CountSequence";
 
+const HOSHI_ROWS: number[] = [3, 9, 15];
+const HOSHI_COLUMNS: number[] = [3, 9, 15];
+
 export class BoardState extends State {
 
     public constructor(boxes: (string | null)[][], currentMove: number, level: number) {
@@ -12,6 +15,14 @@ export class BoardState extends State {
     legalMoves(boxes: (string | null)[][]): (Array<MoveCoordinate> | null) {
         const ret = new Array<MoveCoordinate>;
         const value = undefined;
+        if (this.currentMove === 0) {
+            for (const rowNo of HOSHI_ROWS) {
+                for (const columnNo of HOSHI_COLUMNS) {
+                    ret.push(new MoveCoordinate(rowNo, columnNo, value));
+                }
+            }
+            return ret;
+        }
         for (let rowNo = 0; rowNo < ROWS; rowNo++) {
             for (let columnNo = 0; columnNo < COLUMNS; columnNo++) {
                 for (let k = 0; k < SEQUENCE_LENGTH - 1; k++) {
