@@ -1,0 +1,49 @@
+.stage-screen {
+    height: 92%;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.stage-panel {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 16px;
+}
+
+.stage-number {
+    font-size: 40px;
+    font-weight: bold;
+    letter-spacing: 0.1em;
+}
+
+.stage-message {
+    font-size: 16px;
+}
+
+.stage-choice {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+}
+
+.stage-choice button {
+    width: 160px;
+    padding: 6px 0;
+    font-size: 16px;
+}
+
+.stage-demo-tool {
+    position: fixed;
+    right: 12px;
+    bottom: 12px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 11px;
+    opacity: 0.6;
+}
