@@ -2,7 +2,7 @@ import { ROWS, COLUMNS } from "@/components/PlayGround";
 import { MoveCoordinate } from "./Evaluate";
 import { BoardState } from "./BoardState";
 
-export function computerTurnRandom(boxes: (string | null)[][], currentMove: number) {
+export function computerTurnRandom(boxes: (string | null)[][], currentMove: number): MoveCoordinate {
     console.log("computerTurnRandom");
     //setComputingTime(Date.now() - computingStartTime);
     const bstate = new BoardState(boxes, currentMove, 0); //探索しないのでdepth=0

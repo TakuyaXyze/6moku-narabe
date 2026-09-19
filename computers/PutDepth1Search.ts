@@ -2,7 +2,7 @@ import { BoardState } from "./BoardState";
 import { Depth1Search } from "./Depth1Search";
 import { MoveCoordinate } from "./Evaluate";
 
-export function computerTurnDepth1Search(boxes: (string | null)[][], currentMove: number) {
+export function computerTurnDepth1Search(boxes: (string | null)[][], currentMove: number): MoveCoordinate {
     console.log("computerTurnDepth1Search");
     //setComputingTime(Date.now() - computingStartTime);
     const value = undefined;

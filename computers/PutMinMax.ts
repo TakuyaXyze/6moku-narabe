@@ -2,7 +2,7 @@ import { MinMaxSearch } from "./MinMaxSearch";
 import { MoveCoordinate } from "./Evaluate";
 import { BoardState } from "./BoardState";
 
-export function computerTurnMinMaxSearch(boxes: (string | null)[][], currentMove: number, depth: number) {
+export function computerTurnMinMaxSearch(boxes: (string | null)[][], currentMove: number, depth: number): MoveCoordinate {
     console.log("computerTurnMinMaxSearch-start");
     //setComputingTime(Date.now() - computingStartTime);
     const value = undefined;

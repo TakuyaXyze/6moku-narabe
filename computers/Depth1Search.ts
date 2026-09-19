@@ -7,7 +7,7 @@ import { MoveCoordinate } from "./Evaluate";
 export class Depth1Search extends Search {
     //bestMove(boxes: (string | null)[][], currentMove: number): (MoveCoordinate | null) {
     bestMove(bstate: BoardState): (MoveCoordinate | null) {
-        console.log("Depth1Search-bestMove:start");
+        //console.log("Depth1Search-bestMove:start");
         //const bstate = new BoardState(boxes, currentMove, 1);//depth=1
         // 可能な手を全部生成する
         const moves = bstate.legalMoves(bstate.state);
@@ -19,7 +19,7 @@ export class Depth1Search extends Search {
         // 最良の手の値を負の無限大に設定しておく
         let bestVal: number = Number.NEGATIVE_INFINITY;
         for (let i = 0; i < size; i++) {
-            console.log("for文の内側開始:" + (i + 1) + "回目");
+            //console.log("for文の内側開始:" + (i + 1) + "回目");
             const move = moves[i];
             // 1手進めてみる
             //trailに保存
@@ -27,11 +27,11 @@ export class Depth1Search extends Search {
             // 評価値を計算
             let moveVal: number;
             let blackIsNext = checkBlackIsNext(bstate.currentMove);
-            console.log("AfterdoMove-boxes: currentMove:" + bstate.currentMove + " blackIsNext:" + blackIsNext);
+            //console.log("AfterdoMove-boxes: currentMove:" + bstate.currentMove + " blackIsNext:" + blackIsNext);
             moveVal = bstate.eval();
             //trailから戻す
             bstate.undoMove(trail);
-            console.log("Depth1Search-moveVal:" + moveVal);
+            //console.log("Depth1Search-moveVal:" + moveVal);
             // 評価値がこれまでのbestを超えた時
             if (bestVal < moveVal) {
                 bestVal = moveVal;
