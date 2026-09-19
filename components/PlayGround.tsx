@@ -31,11 +31,13 @@ type Props = {
     playerIsBlack: boolean;
     gameMode: string;
     stageLabel: string;
-    onGameEnd: (playerWins: boolean) => void;
+    initialTime: number;
+    timeIncrement: number;
+    onGameEnd: (playerWins: boolean, restTime: number) => void;
     onNext: () => void;
 }
 
-export function PlayGround({ playerIsBlack, gameMode, stageLabel, onGameEnd, onNext }: Props) {
+export function PlayGround({ playerIsBlack, gameMode, stageLabel, initialTime, timeIncrement, onGameEnd, onNext }: Props) {
 
     const [history, setHistory] = useState([Array(ROWS).fill(null).map(() => Array<(string | null)>(COLUMNS).fill(null))]);
     const [currentMove, setCurrentMove] = useState(0);
@@ -43,14 +45,17 @@ export function PlayGround({ playerIsBlack, gameMode, stageLabel, onGameEnd, onN
     const whiteSequence: number[] = detectSequence(history[currentMove], "w");
     const blackIsWinner: boolean = blackSequence[SEQUENCE_LENGTH - 2] > 0;
     const whiteIsWinner: boolean = whiteSequence[SEQUENCE_LENGTH - 2] > 0;
-    const isDraw: boolean = !blackIsWinner && !whiteIsWinner && currentMove === ROWS * COLUMNS;
-    const continueGame: boolean = !blackIsWinner && !whiteIsWinner && !isDraw;
-    const playerWins: boolean = !isDraw && (blackIsWinner === playerIsBlack);
+    const [remainingTime, setRemainingTime] = useState(initialTime);
+    const hasTimeLimit: boolean = Number.isFinite(initialTime);
+    const timeIsUp: boolean = hasTimeLimit && remainingTime <= 0;
+    const isDraw: boolean = !blackIsWinner && !whiteIsWinner && !timeIsUp && currentMove === ROWS * COLUMNS;
+    const continueGame: boolean = !blackIsWinner && !whiteIsWinner && !isDraw && !timeIsUp;
+    const playerWins: boolean = !isDraw && !timeIsUp && (blackIsWinner === playerIsBlack);
 
     useEffect(() => {
         if (continueGame) return;
-        if (!isDraw) winSound();
-        onGameEnd(playerWins);
+        if (blackIsWinner || whiteIsWinner) winSound();
+        onGameEnd(playerWins, remainingTime);
     }, [continueGame])
 
     function handlePlay(nextBoxes: (string | null)[][]): void {
@@ -67,15 +72,16 @@ export function PlayGround({ playerIsBlack, gameMode, stageLabel, onGameEnd, onN
 
     function handleClick(rowNo: number, columnNo: number): void {
         const blackIsNext = checkBlackIsNext(currentMove);
+        if (!continueGame) return;
         if (history[currentMove][rowNo][columnNo] || blackIsNext !== playerIsBlack) {//空白のときのみ配置可能
             return;
         }
         handleColor(rowNo, columnNo);
+        setRemainingTime((time) => time + timeIncrement);
     }
 
     function handleColor(firstRowNo: number, firstColumnNo: number, secondRowNo?: number, secondColumnNo?: number): void {
-        if (blackIsWinner) return;
-        if (whiteIsWinner) return;
+        if (!continueGame) return;
         //const nextBoxes = history[currentMove].slice();
         //参考コードだと1次元行列だったのでシャローコピーでよかったが、ここでは2次元のためディープコピー
         const nextBoxes: Array<(string | null)[]> = JSON.parse(JSON.stringify(history[currentMove]));
@@ -94,6 +100,18 @@ export function PlayGround({ playerIsBlack, gameMode, stageLabel, onGameEnd, onN
         stonePlaceSound();
     }
 
+
+    const playerIsThinking: boolean = continueGame && hasTimeLimit && (checkBlackIsNext(currentMove) === playerIsBlack);
+
+    useEffect(() => {
+        if (!playerIsThinking) return;
+        const countStartTime = Date.now();
+        const countStartRemaining = remainingTime;
+        const timerId = setInterval(() => {
+            setRemainingTime(Math.max(countStartRemaining - (Date.now() - countStartTime), 0));
+        }, 100);
+        return () => clearInterval(timerId);
+    }, [playerIsThinking, currentMove])
 
     //処理時間の計測
     const [computingTime, setComputingTime] = useState(0);
@@ -166,7 +184,9 @@ export function PlayGround({ playerIsBlack, gameMode, stageLabel, onGameEnd, onN
         result = 'Winner: black';
     } else if (whiteIsWinner) {
         result = 'Winner: white';
-    } else if (currentMove === ROWS * COLUMNS) {
+    } else if (timeIsUp) {
+        result = "time up";
+    } else if (isDraw) {
         result = "draw";
     }
 
@@ -187,7 +207,7 @@ export function PlayGround({ playerIsBlack, gameMode, stageLabel, onGameEnd, onN
         let millisec = time - Math.floor(time * 0.001) * 1000;
         let millisecString
         if (millisec >= 100) millisecString = String(millisec);
-        else if (millisec >= 10) millisecString = "00" + String(millisec);
+        else if (millisec >= 10) millisecString = "0" + String(millisec);
         else if (millisec > 0) millisecString = "0" + String(millisec);
         else millisecString = "000"
         word = minuteString + ":" + secString + "." + millisecString;
@@ -236,7 +256,7 @@ export function PlayGround({ playerIsBlack, gameMode, stageLabel, onGameEnd, onN
                 />
                 {!continueGame &&
                     <div className="game-result">
-                        <div className="game-result-text">{playerWins ? "WIN" : "LOSE"}</div>
+                        <div className="game-result-text">{timeIsUp ? "TIME UP" : (playerWins ? "WIN" : "LOSE")}</div>
                         <button className="game-result-button"
                             onClick={() => onNext()}
                         >{playerWins ? "次へ" : "もう一度"}</button>
@@ -252,6 +272,9 @@ export function PlayGround({ playerIsBlack, gameMode, stageLabel, onGameEnd, onN
                         size={24}
                         color="#539fed"
                     />
+                </div>
+                <div className="remaining-time">
+                    残り時間: {hasTimeLimit ? printTimer(remainingTime) : "無制限"}
                 </div>
                 <div className="computing-time">
                     <div>処理時間: {printComputingTime} s</div>

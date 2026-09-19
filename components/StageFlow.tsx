@@ -10,15 +10,19 @@ type StageInfo = {
     stageNo: number;
     rounds: number;
     computerMode: string;
+    timeLimit: number;
+    timeIncrement: number;
     guide: string;
 };
 
 const stageInfo: StageInfo[] = [
-    { stageNo: 1, rounds: 1, computerMode: "Random", guide: "" },
-    { stageNo: 2, rounds: 2, computerMode: "Random", guide: "" },
-    { stageNo: 3, rounds: 2, computerMode: "Depth1Search", guide: "" },
-    { stageNo: 4, rounds: 2, computerMode: "Beam-depth4", guide: "" },
+    { stageNo: 1, rounds: 1, computerMode: "Random", timeLimit: Number.POSITIVE_INFINITY, timeIncrement: 0, guide: "" },
+    { stageNo: 2, rounds: 2, computerMode: "Random", timeLimit: 20000, timeIncrement: 5000, guide: "" },
+    { stageNo: 3, rounds: 2, computerMode: "Depth1Search", timeLimit: 20000, timeIncrement: 5000, guide: "" },
+    { stageNo: 4, rounds: 2, computerMode: "Beam-depth4", timeLimit: 20000, timeIncrement: 5000, guide: "" },
 ];
+
+const TIME_CARRY_RATE = 0.5;
 
 export function StageFlow() {
 
@@ -28,11 +32,13 @@ export function StageFlow() {
     const [phase, setPhase] = useState<Phase>("eyecatch");
     const [firstRoundIsBlack, setFirstRoundIsBlack] = useState(true);
     const [lastWin, setLastWin] = useState(true);
+    const [carriedTime, setCarriedTime] = useState(0);
 
     const allCleared: boolean = stageNo > stageInfo.length;
     const stage: StageInfo = stageInfo[Math.min(stageNo, stageInfo.length) - 1];
     const playerIsBlack: boolean = (roundNo === 1) ? firstRoundIsBlack : !firstRoundIsBlack;
     const stageLabel: string = stageNo + "-" + roundNo;
+    const initialTime: number = stage.timeLimit + carriedTime;
 
     function startRound(): void {
         if (stage.guide === "") setPhase("playing");
@@ -44,8 +50,9 @@ export function StageFlow() {
         startRound();                   //選択直後に対局自動開始
     }
 
-    function handleGameEnd(playerWins: boolean): void {
+    function handleGameEnd(playerWins: boolean, restTime: number): void {
         setLastWin(playerWins);
+        setCarriedTime((playerWins && Number.isFinite(restTime)) ? Math.floor(restTime * TIME_CARRY_RATE) : 0);
     }
 
     function handleNext(): void {
@@ -71,6 +78,7 @@ export function StageFlow() {
         setStageNo(nextStageNo);
         setRoundNo(1);
         setAttempt(0);
+        setCarriedTime(0);
         setPhase("eyecatch");
     }
 
@@ -81,6 +89,8 @@ export function StageFlow() {
                 playerIsBlack={playerIsBlack}
                 gameMode={stage.computerMode}
                 stageLabel={stageLabel}
+                initialTime={initialTime}
+                timeIncrement={stage.timeIncrement}
                 onGameEnd={handleGameEnd}
                 onNext={handleNext}
             />

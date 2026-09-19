@@ -35,6 +35,12 @@
     margin-left: 25px;
 }
 
+.remaining-time {
+    margin: 3px;
+    font-size: 20px;
+    font-weight: bold;
+}
+
 .computing-time {
     margin: 3px;
     font-size: small;
