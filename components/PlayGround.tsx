@@ -32,22 +32,26 @@ type Props = {
     gameMode: string;
     stageLabel: string;
     onGameEnd: (playerWins: boolean) => void;
+    onNext: () => void;
 }
 
-export function PlayGround({ playerIsBlack, gameMode, stageLabel, onGameEnd }: Props) {
+export function PlayGround({ playerIsBlack, gameMode, stageLabel, onGameEnd, onNext }: Props) {
 
     const [history, setHistory] = useState([Array(ROWS).fill(null).map(() => Array<(string | null)>(COLUMNS).fill(null))]);
     const [currentMove, setCurrentMove] = useState(0);
-    const blackSequence = detectSequence(history[currentMove], "b");
-    const whiteSequence = detectSequence(history[currentMove], "w");
-    const blackIsWinner = blackSequence[SEQUENCE_LENGTH - 2] > 0;
-    const whiteIsWinner = whiteSequence[SEQUENCE_LENGTH - 2] > 0;
+    const blackSequence: number[] = detectSequence(history[currentMove], "b");
+    const whiteSequence: number[] = detectSequence(history[currentMove], "w");
+    const blackIsWinner: boolean = blackSequence[SEQUENCE_LENGTH - 2] > 0;
+    const whiteIsWinner: boolean = whiteSequence[SEQUENCE_LENGTH - 2] > 0;
+    const isDraw: boolean = !blackIsWinner && !whiteIsWinner && currentMove === ROWS * COLUMNS;
+    const continueGame: boolean = !blackIsWinner && !whiteIsWinner && !isDraw;
+    const playerWins: boolean = !isDraw && (blackIsWinner === playerIsBlack);
 
     useEffect(() => {
-        if (!blackIsWinner && !whiteIsWinner) return;
-        winSound();
-        onGameEnd(blackIsWinner === playerIsBlack);
-    }, [blackIsWinner, whiteIsWinner])
+        if (continueGame) return;
+        if (!isDraw) winSound();
+        onGameEnd(playerWins);
+    }, [continueGame])
 
     function handlePlay(nextBoxes: (string | null)[][]): void {
         const nextHistory = [...history.slice(0, currentMove + 1), nextBoxes];
@@ -98,8 +102,7 @@ export function PlayGround({ playerIsBlack, gameMode, stageLabel, onGameEnd }: P
     useEffect(() => {
         const blackIsNext = checkBlackIsNext(currentMove);
         if (blackIsNext === playerIsBlack) return;
-        if (blackIsWinner) return;
-        if (whiteIsWinner) return;
+        if (!continueGame) return;
         setTimeout(() => {
             const computingStartTime = Date.now();
             computerTurn();
@@ -195,8 +198,6 @@ export function PlayGround({ playerIsBlack, gameMode, stageLabel, onGameEnd }: P
 
     const [isInforming, setIsInforming] = useState(false);
 
-    const continueGame: boolean = (!blackIsWinner && !whiteIsWinner)
-
     const playerStoneColor = playerIsBlack ? "b" : "w";
 
     const lastMoves = getLastMoves(history, currentMove);
@@ -233,6 +234,14 @@ export function PlayGround({ playerIsBlack, gameMode, stageLabel, onGameEnd }: P
                     markedMoves={markedMoves}
                     winMoves={winMoves}
                 />
+                {!continueGame &&
+                    <div className="game-result">
+                        <div className="game-result-text">{playerWins ? "WIN" : "LOSE"}</div>
+                        <button className="game-result-button"
+                            onClick={() => onNext()}
+                        >{playerWins ? "次へ" : "もう一度"}</button>
+                    </div>
+                }
             </div>
             <div className="game-info">
                 <div>Stage:{stageLabel}</div>
@@ -253,6 +262,7 @@ export function PlayGround({ playerIsBlack, gameMode, stageLabel, onGameEnd }: P
                         disabled={pointerColor === null || currentMove === 0}
                     >1つ戻る</button>
                     <button onClick={() => jumpTo(0)}
+                        disabled={pointerColor === null || currentMove === 0}
                     >最初に戻る</button>
                 </div>
                 <div className="goishi-box-image-player">

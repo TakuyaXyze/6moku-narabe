@@ -4,7 +4,7 @@ import { useState } from "react";
 import { PlayGround } from "./PlayGround";
 import "../styles/StageFlow.css";
 
-type Phase = "eyecatch" | "guide" | "playing" | "result";
+type Phase = "eyecatch" | "guide" | "playing";
 
 type StageInfo = {
     stageNo: number;
@@ -19,8 +19,6 @@ const stageInfo: StageInfo[] = [
     { stageNo: 3, rounds: 2, computerMode: "Depth1Search", guide: "" },
     { stageNo: 4, rounds: 2, computerMode: "Beam-depth4", guide: "" },
 ];
-
-const RESULT_DELAY = 1800;
 
 export function StageFlow() {
 
@@ -48,7 +46,6 @@ export function StageFlow() {
 
     function handleGameEnd(playerWins: boolean): void {
         setLastWin(playerWins);
-        setTimeout(() => setPhase("result"), RESULT_DELAY);     //時間でリザルト画面に自動遷移
     }
 
     function handleNext(): void {
@@ -85,6 +82,7 @@ export function StageFlow() {
                 gameMode={stage.computerMode}
                 stageLabel={stageLabel}
                 onGameEnd={handleGameEnd}
+                onNext={handleNext}
             />
         );
     }
@@ -124,13 +122,6 @@ export function StageFlow() {
                 <div className="stage-panel">
                     <div className="stage-message">{stage.guide}</div>
                     <button onClick={() => setPhase("playing")}>開始</button>
-                </div>
-            )}
-
-            {phase === "result" && (
-                <div className="stage-panel">
-                    <div className="stage-number">{lastWin ? "WIN" : "LOSE"}</div>
-                    <button onClick={() => handleNext()}>{lastWin ? "次へ" : "もう一度"}</button>
                 </div>
             )}
 
