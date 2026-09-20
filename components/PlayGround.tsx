@@ -4,7 +4,7 @@ import { GameBoard } from "./GameBoard";
 import "../styles/PlayGround.css"
 import "../styles/GameBoard.css"
 import "../styles/GameInfo.css"
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { detectSequence } from "../computers/CountSequence";
 import { detectWinLine } from "../computers/DetectWinLine";
 import { MoveCoordinate, DoubleMoveCoordinate } from "../computers/Evaluate"
@@ -27,17 +27,25 @@ for (let i = 0; i < COLUMNS; i++) {
 }
 export const SEQUENCE_LENGTH = 6; //MAX6
 
+const TIMER_INTERVAL = 100;
+const TIME_BAR_FULL = 60000;
+const TIME_BAR_YELLOW_RATIO = 0.4;
+const TIME_BAR_RED_RATIO = 0.2;
+const COUNTDOWN_TIME = 10000;
+const COUNTDOWN_SECONDS = [10, 5, 4, 3, 2, 1];
+
 type Props = {
     playerIsBlack: boolean;
     gameMode: string;
     stageLabel: string;
     initialTime: number;
     timeIncrement: number;
+    nextLabel: string;
     onGameEnd: (playerWins: boolean, restTime: number) => void;
     onNext: () => void;
 }
 
-export function PlayGround({ playerIsBlack, gameMode, stageLabel, initialTime, timeIncrement, onGameEnd, onNext }: Props) {
+export function PlayGround({ playerIsBlack, gameMode, stageLabel, initialTime, timeIncrement, nextLabel, onGameEnd, onNext }: Props) {
 
     const [history, setHistory] = useState([Array(ROWS).fill(null).map(() => Array<(string | null)>(COLUMNS).fill(null))]);
     const [currentMove, setCurrentMove] = useState(0);
@@ -54,7 +62,8 @@ export function PlayGround({ playerIsBlack, gameMode, stageLabel, initialTime, t
 
     useEffect(() => {
         if (continueGame) return;
-        if (blackIsWinner || whiteIsWinner) winSound();
+        if (timeIsUp) timeupSound();
+        else if (blackIsWinner || whiteIsWinner) winSound();
         onGameEnd(playerWins, remainingTime);
     }, [continueGame])
 
@@ -109,9 +118,22 @@ export function PlayGround({ playerIsBlack, gameMode, stageLabel, initialTime, t
         const countStartRemaining = remainingTime;
         const timerId = setInterval(() => {
             setRemainingTime(Math.max(countStartRemaining - (Date.now() - countStartTime), 0));
-        }, 100);
+        }, TIMER_INTERVAL);
         return () => clearInterval(timerId);
     }, [playerIsThinking, currentMove])
+
+    const lastCountedSecond = useRef(Number.POSITIVE_INFINITY);
+
+    useEffect(() => {
+        if (!hasTimeLimit) return;
+        const second = Math.ceil(remainingTime / 1000);
+        if (second >= lastCountedSecond.current) {      //加算で増えたときは鳴らさず基準だけ更新
+            lastCountedSecond.current = second;
+            return;
+        }
+        lastCountedSecond.current = second;
+        if (COUNTDOWN_SECONDS.includes(second)) warningSound();
+    }, [remainingTime])
 
     //処理時間の計測
     const [computingTime, setComputingTime] = useState(0);
@@ -226,6 +248,12 @@ export function PlayGround({ playerIsBlack, gameMode, stageLabel, initialTime, t
 
     const thisTurnColor = (continueGame ? 'Next Player:' + (blackIsNext ? 'black' : 'white') : result);
 
+    const timeBarRatio: number = Math.min(remainingTime / TIME_BAR_FULL, 1);
+    const timeBarColor: string = (timeBarRatio >= TIME_BAR_YELLOW_RATIO) ? "time-bar-green"
+        : ((timeBarRatio >= TIME_BAR_RED_RATIO) ? "time-bar-yellow" : "time-bar-red");
+    const isHurrying: boolean = remainingTime <= COUNTDOWN_TIME;
+    const timeCount: string = isHurrying ? (remainingTime / 1000).toFixed(1) : String(Math.ceil(remainingTime / 1000));
+
     const pointerColor: (string | null)
         = (continueGame && (playerIsBlack === blackIsNext)) ? playerStoneColor : null;
 
@@ -259,7 +287,7 @@ export function PlayGround({ playerIsBlack, gameMode, stageLabel, initialTime, t
                         <div className="game-result-text">{timeIsUp ? "TIME UP" : (playerWins ? "WIN" : "LOSE")}</div>
                         <button className="game-result-button"
                             onClick={() => onNext()}
-                        >{playerWins ? "次へ" : "もう一度"}</button>
+                        >{nextLabel}</button>
                     </div>
                 }
             </div>
@@ -273,9 +301,16 @@ export function PlayGround({ playerIsBlack, gameMode, stageLabel, initialTime, t
                         color="#539fed"
                     />
                 </div>
-                <div className="remaining-time">
-                    残り時間: {hasTimeLimit ? printTimer(remainingTime) : "無制限"}
-                </div>
+                {hasTimeLimit &&
+                    <div className="remaining-time">
+                        <div className="time-bar">
+                            <div className={"time-bar-fill " + timeBarColor}
+                                style={{ width: (timeBarRatio * 100) + "%" }}
+                            />
+                        </div>
+                        <div className={isHurrying ? "time-count time-count-hurry" : "time-count"}>{timeCount}</div>
+                    </div>
+                }
                 <div className="computing-time">
                     <div>処理時間: {printComputingTime} s</div>
                     <div>累積時間: {printSumTime} s</div>
@@ -357,8 +392,20 @@ function stonePlaceSound(): void {
     sound.play().catch((error) => console.log("SE再生に失敗:", error));
 }
 
+function warningSound(): void {
+    const sound = new Audio("/sounds/warning-single.mp3");
+    sound.volume = 0.8;
+    sound.play().catch((error) => console.log("SE再生に失敗:", error));
+}
+
 function winSound(): void {
     const sound = new Audio("/sounds/win.mp3");
+    sound.volume = 0.8;
+    sound.play().catch((error) => console.log("SE再生に失敗:", error));
+}
+
+function timeupSound(): void {
+    const sound = new Audio("/sounds/timeup.mp3");
     sound.volume = 0.8;
     sound.play().catch((error) => console.log("SE再生に失敗:", error));
 }

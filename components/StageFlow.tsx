@@ -23,6 +23,7 @@ const stageInfo: StageInfo[] = [
 ];
 
 const TIME_CARRY_RATE = 0.5;
+const TIME_PENALTY = 5000;
 
 export function StageFlow() {
 
@@ -33,12 +34,15 @@ export function StageFlow() {
     const [firstRoundIsBlack, setFirstRoundIsBlack] = useState(true);
     const [lastWin, setLastWin] = useState(true);
     const [carriedTime, setCarriedTime] = useState(0);
+    const [timePenalty, setTimePenalty] = useState(0);
 
     const allCleared: boolean = stageNo > stageInfo.length;
     const stage: StageInfo = stageInfo[Math.min(stageNo, stageInfo.length) - 1];
     const playerIsBlack: boolean = (roundNo === 1) ? firstRoundIsBlack : !firstRoundIsBlack;
     const stageLabel: string = stageNo + "-" + roundNo;
-    const initialTime: number = stage.timeLimit + carriedTime;
+    const initialTime: number = stage.timeLimit + carriedTime - timePenalty;
+    const gameOver: boolean = initialTime <= 0;
+    const nextLabel: string = lastWin ? "次へ" : (gameOver ? "ステージ1から" : "もう一度");
 
     function startRound(): void {
         if (stage.guide === "") setPhase("playing");
@@ -53,10 +57,15 @@ export function StageFlow() {
     function handleGameEnd(playerWins: boolean, restTime: number): void {
         setLastWin(playerWins);
         setCarriedTime((playerWins && Number.isFinite(restTime)) ? Math.floor(restTime * TIME_CARRY_RATE) : 0);
+        if (!playerWins && Number.isFinite(stage.timeLimit)) setTimePenalty(timePenalty + TIME_PENALTY);
     }
 
     function handleNext(): void {
         if (!lastWin) {
+            if (gameOver) {
+                jumpToStage(1);
+                return;
+            }
             setAttempt(attempt + 1);
             setPhase("playing");
             return;
@@ -79,6 +88,7 @@ export function StageFlow() {
         setRoundNo(1);
         setAttempt(0);
         setCarriedTime(0);
+        setTimePenalty(0);
         setPhase("eyecatch");
     }
 
@@ -91,6 +101,7 @@ export function StageFlow() {
                 stageLabel={stageLabel}
                 initialTime={initialTime}
                 timeIncrement={stage.timeIncrement}
+                nextLabel={nextLabel}
                 onGameEnd={handleGameEnd}
                 onNext={handleNext}
             />
@@ -110,6 +121,9 @@ export function StageFlow() {
             {phase === "eyecatch" && !allCleared && (
                 <div className="stage-panel">
                     <div className="stage-number">STAGE {stageLabel}</div>
+                    <div className="stage-message">
+                        持ち時間 {Number.isFinite(initialTime) ? Math.floor(initialTime / 1000) + "秒" : "無制限"}
+                    </div>
                     {roundNo === 1 && (
                         <div className="stage-choice">
                             <div className="stage-message">先攻・後攻を選ぶ</div>
