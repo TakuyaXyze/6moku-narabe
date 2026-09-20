@@ -13,7 +13,6 @@ import { computerTurnDepth1Search } from "../computers/PutDepth1Search";
 import { computerTurnMinMaxSearch } from "../computers/PutMinMax";
 import { computerTurnAlphaBetaSearch } from "../computers/PutAlphaBeta"
 import { computerTurnBeamSearch } from "../computers/PutBeam";
-import { ClockLoader } from "react-spinners";
 
 export const ROWS = 19;
 export const COLUMNS = ROWS;
@@ -304,6 +303,9 @@ export function PlayGround({ playerIsBlack, gameMode, stageLabel, initialTime, t
                     markedMoves={markedMoves}
                     winMoves={winMoves}
                 />
+                {blackIsNext !== playerIsBlack && continueGame &&
+                    <div className="computing-message">CPU考え中</div>
+                }
                 {!continueGame &&
                     <div className="game-result">
                         <div className="game-result-text">{timeIsUp ? "TIME UP" : (playerWins ? "WIN" : "LOSE")}</div>
@@ -315,13 +317,6 @@ export function PlayGround({ playerIsBlack, gameMode, stageLabel, initialTime, t
             </div>
             <div className="game-info">
                 <div>Stage:{stageLabel}</div>
-                <div className="status">
-                    <ClockLoader className="loader"
-                        loading={blackIsNext !== playerIsBlack && continueGame}
-                        size={24}
-                        color="#539fed"
-                    />
-                </div>
                 {hasTimeLimit &&
                     <div className="remaining-time">
                         <div className="time-bar">

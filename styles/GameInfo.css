@@ -25,16 +25,6 @@
     border-radius: 2px;
 }
 
-.status {
-    margin-top: 10px;
-    width: 100%;
-    display: flex;
-}
-
-.loader {
-    margin-left: 25px;
-}
-
 .remaining-time {
     margin: 3px;
     display: flex;
