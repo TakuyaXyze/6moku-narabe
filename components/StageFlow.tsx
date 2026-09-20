@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { PlayGround } from "./PlayGround";
+import { Tips } from "./Tips";
 import "../styles/StageFlow.css";
 
 type Phase = "eyecatch" | "guide" | "playing";
@@ -94,17 +95,20 @@ export function StageFlow() {
 
     if (phase === "playing") {
         return (
-            <PlayGround
-                key={stageNo + "-" + roundNo + "-" + attempt}
-                playerIsBlack={playerIsBlack}
-                gameMode={stage.computerMode}
-                stageLabel={stageLabel}
-                initialTime={initialTime}
-                timeIncrement={stage.timeIncrement}
-                nextLabel={nextLabel}
-                onGameEnd={handleGameEnd}
-                onNext={handleNext}
-            />
+            <>
+                <PlayGround
+                    key={stageNo + "-" + roundNo + "-" + attempt}
+                    playerIsBlack={playerIsBlack}
+                    gameMode={stage.computerMode}
+                    stageLabel={stageLabel}
+                    initialTime={initialTime}
+                    timeIncrement={stage.timeIncrement}
+                    nextLabel={nextLabel}
+                    onGameEnd={handleGameEnd}
+                    onNext={handleNext}
+                />
+                <Tips />
+            </>
         );
     }
 

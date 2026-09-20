@@ -5,6 +5,8 @@
     margin: 0;
     height: 92%;
     width: 100%;
+    padding-top: 20px;
+    box-sizing: border-box;
 }
 
 .board-area {
