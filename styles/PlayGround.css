@@ -50,6 +50,12 @@
     margin-top: 24px;
 }
 
+.goishi-box-image-player {
+    margin-top: auto;
+    display: flex;
+    justify-content: flex-end;
+}
+
 @media screen and (max-aspect-ratio: 1.1998/1) {
     .play-ground {
         display: flex;

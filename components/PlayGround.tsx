@@ -136,8 +136,7 @@ export function PlayGround({ playerIsBlack, gameMode, stageLabel, initialTime, t
     }, [remainingTime])
 
     //処理時間の計測
-    const [computingTime, setComputingTime] = useState(0);
-    const [sumTime, setSumTime] = useState(0);
+    const sumTime = useRef(0);
 
     useEffect(() => {
         const blackIsNext = checkBlackIsNext(currentMove);
@@ -147,8 +146,8 @@ export function PlayGround({ playerIsBlack, gameMode, stageLabel, initialTime, t
             const computingStartTime = Date.now();
             computerTurn();
             const time = Date.now() - computingStartTime;
-            setComputingTime(time);
-            setSumTime(a => a + time);
+            sumTime.current += time;
+            console.log("処理時間:" + printTimer(time) + " 累積時間:" + printTimer(sumTime.current));
         }, 300)
     }, [history, currentMove])
 
@@ -235,10 +234,8 @@ export function PlayGround({ playerIsBlack, gameMode, stageLabel, initialTime, t
         word = minuteString + ":" + secString + "." + millisecString;
         return word;
     }
-    let printComputingTime = printTimer(computingTime);
-    let printSumTime = printTimer(sumTime);
-
-    const [isInforming, setIsInforming] = useState(false);
+    const [isMenuOpen, setIsMenuOpen] = useState(false);
+    const [isRuleOpen, setIsRuleOpen] = useState(false);
 
     const playerStoneColor = playerIsBlack ? "b" : "w";
 
@@ -293,7 +290,6 @@ export function PlayGround({ playerIsBlack, gameMode, stageLabel, initialTime, t
             </div>
             <div className="game-info">
                 <div>Stage:{stageLabel}</div>
-                <div className="gamemode">GameMode: {gameMode}</div>
                 <div className="status">
                     <ClockLoader className="loader"
                         loading={blackIsNext !== playerIsBlack && continueGame}
@@ -311,18 +307,6 @@ export function PlayGround({ playerIsBlack, gameMode, stageLabel, initialTime, t
                         <div className={isHurrying ? "time-count time-count-hurry" : "time-count"}>{timeCount}</div>
                     </div>
                 }
-                <div className="computing-time">
-                    <div>処理時間: {printComputingTime} s</div>
-                    <div>累積時間: {printSumTime} s</div>
-                </div>
-                <div className="rewind-button">
-                    <button onClick={() => jumpTo(lastFirstPlayerTurn(currentMove, playerIsBlack))}
-                        disabled={pointerColor === null || currentMove === 0}
-                    >1つ戻る</button>
-                    <button onClick={() => jumpTo(0)}
-                        disabled={pointerColor === null || currentMove === 0}
-                    >最初に戻る</button>
-                </div>
                 <div className="goishi-box-image-player">
                     {(!playerIsBlack) &&
                         <img src="goke-white.png"
@@ -338,6 +322,39 @@ export function PlayGround({ playerIsBlack, gameMode, stageLabel, initialTime, t
                     }
                 </div>
             </div>
+            <div className="menu-area">
+                <button className="menu-button"
+                    onClick={() => setIsMenuOpen(!isMenuOpen)}
+                >☰</button>
+                {isMenuOpen &&
+                    <div className="menu-panel">
+                        <div className="gamemode">GameMode: {gameMode}</div>
+                        <button onClick={() => jumpTo(lastFirstPlayerTurn(currentMove, playerIsBlack))}
+                            disabled={pointerColor === null || currentMove === 0}
+                        >1つ戻る</button>
+                        <button onClick={() => jumpTo(0)}
+                            disabled={pointerColor === null || currentMove === 0}
+                        >最初に戻る</button>
+                        <button onClick={() => setIsRuleOpen(true)}>ルール説明</button>
+                    </div>
+                }
+            </div>
+            {isRuleOpen &&
+                <div className="rule-screen">
+                    <div className="rule-panel">
+                        <div className="rule-title">ルール</div>
+                        <ul>
+                            <li>先に石を6つ直線に並べた方が勝ち。縦・横・斜めのどれでもよい</li>
+                            <li>手番は1手・2手・2手・2手…と進む。最初の1手だけ1つ、それ以降はどちらも2つずつ置く</li>
+                            <li>石は空いている交点ならどこにでも置ける。取ったり動かしたりはしない</li>
+                            <li>持ち時間は自分の手番でだけ減る。相手が考えている間は減らない</li>
+                            <li>石を1つ置くごとに持ち時間が少し増える</li>
+                            <li>持ち時間が尽きたら負け</li>
+                        </ul>
+                        <button onClick={() => setIsRuleOpen(false)}>閉じる</button>
+                    </div>
+                </div>
+            }
         </div >
     );
 }
