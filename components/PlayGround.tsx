@@ -236,6 +236,31 @@ export function PlayGround({ playerIsBlack, gameMode, stageLabel, initialTime, t
     }
     const [isMenuOpen, setIsMenuOpen] = useState(false);
     const [isRuleOpen, setIsRuleOpen] = useState(false);
+    const menuArea = useRef<HTMLDivElement>(null);
+
+    useEffect(() => {
+        function handleEscapeKey(event: KeyboardEvent): void {
+            if (event.key !== "Escape") return;
+            if (isRuleOpen) {
+                setIsRuleOpen(false);
+                return;
+            }
+            setIsMenuOpen((isOpen) => !isOpen);
+        }
+        document.addEventListener("keydown", handleEscapeKey);
+        return () => document.removeEventListener("keydown", handleEscapeKey);
+    }, [isRuleOpen])
+
+    useEffect(() => {
+        if (!isMenuOpen) return;
+        function handleOutsideClick(event: MouseEvent): void {
+            if (menuArea.current && menuArea.current.contains(event.target as Node)) return;
+            event.stopPropagation();
+            setIsMenuOpen(false);
+        }
+        document.addEventListener("click", handleOutsideClick, true);
+        return () => document.removeEventListener("click", handleOutsideClick, true);
+    }, [isMenuOpen])
 
     const playerStoneColor = playerIsBlack ? "b" : "w";
 
@@ -322,7 +347,7 @@ export function PlayGround({ playerIsBlack, gameMode, stageLabel, initialTime, t
                     }
                 </div>
             </div>
-            <div className="menu-area">
+            <div className="menu-area" ref={menuArea}>
                 <button className="menu-button"
                     onClick={() => setIsMenuOpen(!isMenuOpen)}
                 >☰</button>
