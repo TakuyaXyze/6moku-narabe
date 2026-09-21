@@ -10,7 +10,7 @@ export function computerTurnBeamSearch(boxes: (string | null)[][], currentMove: 
     const bstate = new BoardState(boxes, currentMove, setting.depth, setting.sight, setting.defense, computerIsBlack);
     const data = move.bestMove(bstate);
     if (data === null) throw new Error("BeamSearchのbestMoveからの戻り値がnull");
-    console.log("computerTurnBeamSearch-finish (" + data.firstRowNo + "," + data.firstColumnNo + "),(" + data.secondRowNo + "," + data.secondColumnNo + ") 評価回数:" + move.evalCount);
+    console.log("computerTurnBeamSearch-finish (" + data.firstRowNo + "," + data.firstColumnNo + "),(" + data.secondRowNo + "," + data.secondColumnNo + ") 候補数:" + move.rootSize + " beamSize:" + move.rootBeamSize + " 評価回数:" + move.evalCount);
     const coordinate = new DoubleMoveCoordinate(value, data.firstRowNo, data.firstColumnNo, data.secondRowNo, data.secondColumnNo);
     return coordinate;
 }

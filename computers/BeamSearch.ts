@@ -7,14 +7,20 @@ import { DoubleMoveCoordinate, MoveCoordinate } from "./Evaluate";
 export class BeamSearch {
     private _beamSize: number;
     private _maxBeamSize: number;
+    private _budget: number;
     private _blunder: number;
     private _evalCount: number;
+    private _rootSize: number;
+    private _rootBeamSize: number;
     private _isRoot: boolean;
     constructor(setting: ComputerSetting) {
         this._beamSize = setting.beamSize;
         this._maxBeamSize = setting.beamSize;
+        this._budget = setting.budget;
         this._blunder = setting.blunder;
         this._evalCount = 0;
+        this._rootSize = 0;
+        this._rootBeamSize = 0;
         this._isRoot = true;
     }
     private pickIndex(ranking: Array<[number, ...unknown[]]>, isRoot: boolean): number {
@@ -36,6 +42,12 @@ export class BeamSearch {
     get evalCount(): number {
         return this._evalCount;
     }
+    get rootSize(): number {
+        return this._rootSize;
+    }
+    get rootBeamSize(): number {
+        return this._rootBeamSize;
+    }
     eval(bstate: BoardState): number {
         // 末端のレベルでは局面の評価値。
         //console.log("start-evaluation:level=" + bstate.level);
@@ -52,7 +64,13 @@ export class BeamSearch {
         let size: number = 0;
         if (moves == null) return null;
         size = moves.length;
-        this.beamSize = Math.max(Math.min(Math.floor(2500 / size), this._maxBeamSize), 2);
+        const pairs = size * (size - 1) / 2;
+        this.beamSize = Math.max(Math.min(Math.floor(this._budget / pairs), this._maxBeamSize), 2);
+        const fixedBeamSize = this.beamSize;
+        if (isRoot) {
+            this._rootSize = size;
+            this._rootBeamSize = this.beamSize;
+        }
         //console.log("size=moves.length:" + size);
 
         // 最良の手が複数あるのでそれを管理する
@@ -101,7 +119,7 @@ export class BeamSearch {
         }
         if (bstate.level <= 2) return bestMoves[this.pickIndex(bestMoves, isRoot)][1];
         const nextBestMoves = new Array<[number, DoubleMoveCoordinate, DoubleMoveCoordinate]>;
-        for (let i = 0; i < this.beamSize && i < bestMoves.length; i++) {
+        for (let i = 0; i < fixedBeamSize && i < bestMoves.length; i++) {
             //console.log("for文第n段階開始" + (i + 1) + "回目 level=" + bstate.level);
             const bestMove = bestMoves[i][1];
             if (bestMove.secondRowNo == undefined || bestMove.secondColumnNo == undefined)
@@ -115,7 +133,7 @@ export class BeamSearch {
             const blackIsThisTurn = checkBlackIsNext(bstate.currentMove - 1);
             const nextBestMove = this.bestMove(bstate);
             if (nextBestMove == null) throw new Error("best==null");
-            for (let j = 0; j < this.beamSize; j++) {
+            for (let j = 0; j < fixedBeamSize; j++) {
                 if (nextBestMoves[j] == undefined
                     && typeof nextBestMove.value === "number"
                 ) {
