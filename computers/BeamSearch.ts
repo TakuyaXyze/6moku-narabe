@@ -1,17 +1,20 @@
 import { checkBlackIsNext } from "../components/PlayGround";
 import { BoardState } from "./BoardState";
 import { BoardTrail } from "./BoardTrail";
+import { ComputerSetting } from "./ComputerSetting";
 import { DoubleMoveCoordinate, MoveCoordinate } from "./Evaluate";
 
 export class BeamSearch {
     private _beamSize: number;
     private _maxBeamSize: number;
     private _blunder: number;
+    private _evalCount: number;
     private _isRoot: boolean;
-    constructor(size: number, blunder: number = 0) {
-        this._beamSize = size;
-        this._maxBeamSize = size;
-        this._blunder = blunder;
+    constructor(setting: ComputerSetting) {
+        this._beamSize = setting.beamSize;
+        this._maxBeamSize = setting.beamSize;
+        this._blunder = setting.blunder;
+        this._evalCount = 0;
         this._isRoot = true;
     }
     private pickIndex(ranking: Array<[number, ...unknown[]]>, isRoot: boolean): number {
@@ -30,9 +33,13 @@ export class BeamSearch {
     set beamSize(size: number) {
         this._beamSize = size;
     }
+    get evalCount(): number {
+        return this._evalCount;
+    }
     eval(bstate: BoardState): number {
         // 末端のレベルでは局面の評価値。
         //console.log("start-evaluation:level=" + bstate.level);
+        this._evalCount++;
         return bstate.eval();
     }
     bestMove(bstate: BoardState): (DoubleMoveCoordinate | null) {
