@@ -5,8 +5,24 @@ import { DoubleMoveCoordinate, MoveCoordinate } from "./Evaluate";
 
 export class BeamSearch {
     private _beamSize: number;
-    constructor(size: number) {
+    private _maxBeamSize: number;
+    private _blunder: number;
+    private _isRoot: boolean;
+    constructor(size: number, blunder: number = 0) {
         this._beamSize = size;
+        this._maxBeamSize = size;
+        this._blunder = blunder;
+        this._isRoot = true;
+    }
+    private pickIndex(ranking: Array<[number, ...unknown[]]>, isRoot: boolean): number {
+        const length = ranking.length;
+        if (length <= 1) return 0;
+        if (isRoot && Math.random() < this._blunder) {
+            return 1 + Math.floor(Math.random() * (length - 1));
+        }
+        let ties = 1;
+        while (ties < length && ranking[ties][0] === ranking[0][0]) ties++;
+        return Math.floor(Math.random() * ties);
     }
     get beamSize(): number {
         return this._beamSize
@@ -23,11 +39,13 @@ export class BeamSearch {
         //console.log("BeamSearch-level" + bstate.level + "-bestMove:start");
 
         //console.log("currentMove:" + bstate.currentMove + " blackIsNext:" + checkBlackIsNext(bstate.currentMove));
+        const isRoot = this._isRoot;
+        this._isRoot = false;
         const moves = bstate.legalMoves(bstate.state);
         let size: number = 0;
         if (moves == null) return null;
         size = moves.length;
-        if (size < 300) this.beamSize = Math.floor(2500 / size);
+        this.beamSize = Math.max(Math.min(Math.floor(2500 / size), this._maxBeamSize), 2);
         //console.log("size=moves.length:" + size);
 
         // 最良の手が複数あるのでそれを管理する
@@ -74,9 +92,9 @@ export class BeamSearch {
                 //console.log("for文の内側終了" + (count + 1) + "回目");
             }
         }
-        if (bstate.level <= 2) return bestMoves[0][1];
+        if (bstate.level <= 2) return bestMoves[this.pickIndex(bestMoves, isRoot)][1];
         const nextBestMoves = new Array<[number, DoubleMoveCoordinate, DoubleMoveCoordinate]>;
-        for (let i = 0; i < this.beamSize; i++) {
+        for (let i = 0; i < this.beamSize && i < bestMoves.length; i++) {
             //console.log("for文第n段階開始" + (i + 1) + "回目 level=" + bstate.level);
             const bestMove = bestMoves[i][1];
             if (bestMove.secondRowNo == undefined || bestMove.secondColumnNo == undefined)
@@ -113,6 +131,6 @@ export class BeamSearch {
             bstate.undoMove(trailJ);
             bstate.undoMove(trailI);
         }
-        return nextBestMoves[0][1];
+        return nextBestMoves[this.pickIndex(nextBestMoves, isRoot)][1];
     }
 }

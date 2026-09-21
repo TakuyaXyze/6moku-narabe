@@ -8,10 +8,8 @@ import { useState, useEffect, useRef } from "react";
 import { detectSequence } from "../computers/CountSequence";
 import { detectWinLine } from "../computers/DetectWinLine";
 import { MoveCoordinate, DoubleMoveCoordinate } from "../computers/Evaluate"
+import { ComputerSetting } from "../computers/ComputerSetting";
 import { computerTurnRandom } from "../computers/PutRandom";
-import { computerTurnDepth1Search } from "../computers/PutDepth1Search";
-import { computerTurnMinMaxSearch } from "../computers/PutMinMax";
-import { computerTurnAlphaBetaSearch } from "../computers/PutAlphaBeta"
 import { computerTurnBeamSearch } from "../computers/PutBeam";
 
 export const ROWS = 19;
@@ -32,10 +30,12 @@ const TIME_BAR_YELLOW_RATIO = 0.4;
 const TIME_BAR_RED_RATIO = 0.2;
 const COUNTDOWN_TIME = 10000;
 const COUNTDOWN_SECONDS = [10, 5, 4, 3, 2, 1];
+const COMPUTER_START_DELAY = 300;
+const COMPUTER_MIN_TIME = 1500;
 
 type Props = {
     playerIsBlack: boolean;
-    gameMode: string;
+    computer: ComputerSetting;
     stageLabel: string;
     initialTime: number;
     timeIncrement: number;
@@ -44,7 +44,7 @@ type Props = {
     onNext: () => void;
 }
 
-export function PlayGround({ playerIsBlack, gameMode, stageLabel, initialTime, timeIncrement, nextLabel, onGameEnd, onNext }: Props) {
+export function PlayGround({ playerIsBlack, computer, stageLabel, initialTime, timeIncrement, nextLabel, onGameEnd, onNext }: Props) {
 
     const [history, setHistory] = useState([Array(ROWS).fill(null).map(() => Array<(string | null)>(COLUMNS).fill(null))]);
     const [currentMove, setCurrentMove] = useState(0);
@@ -143,56 +143,22 @@ export function PlayGround({ playerIsBlack, gameMode, stageLabel, initialTime, t
         if (!continueGame) return;
         setTimeout(() => {
             const computingStartTime = Date.now();
-            computerTurn();
+            const result = computerTurn();
             const time = Date.now() - computingStartTime;
             sumTime.current += time;
             console.log("処理時間:" + printTimer(time) + " 累積時間:" + printTimer(sumTime.current));
-        }, 300)
+            setTimeout(() => {
+                handleColor(result.firstRowNo, result.firstColumnNo, result.secondRowNo, result.secondColumnNo);
+            }, Math.max(COMPUTER_MIN_TIME - time, 0))
+        }, COMPUTER_START_DELAY)
     }, [history, currentMove])
 
-    function computerTurn(): void {
-
+    function computerTurn(): DoubleMoveCoordinate {
         if (currentMove === 0) {
-            computerTurnWithResult(computerTurnRandom(history[currentMove], currentMove));
-            return;
+            const firstMove = computerTurnRandom(history[currentMove], currentMove);
+            return new DoubleMoveCoordinate(undefined, firstMove.rowNo, firstMove.columnNo);
         }
-
-        switch (gameMode) {
-            case "Random"://先ほどのpushでここを誤って"Random-depth"としたら、それ以降修正をpushしてもvercelが更新されない
-                computerTurnWithResult(computerTurnRandom(history[currentMove], currentMove));
-                break;
-            case "Depth1Search":
-                computerTurnWithResult(computerTurnDepth1Search(history[currentMove], currentMove));
-                break;
-            case "MinMax-depth3":
-                computerTurnWithResult(computerTurnMinMaxSearch(history[currentMove], currentMove, 3));
-                break;
-            case "MinMax-depth6":
-                computerTurnWithResult(computerTurnMinMaxSearch(history[currentMove], currentMove, 6));
-                break;
-            case "AlphaBeta-depth3":
-                computerTurnWithResult(computerTurnAlphaBetaSearch(history[currentMove], currentMove, 3));
-                break;
-            case "AlphaBeta-depth6":
-                computerTurnWithResult(computerTurnAlphaBetaSearch(history[currentMove], currentMove, 6));
-                break;
-            case "Beam-depth4":
-                computerTurnWithDoubleResult(computerTurnBeamSearch(history[currentMove], currentMove, 10, 4));
-                break;//引数_3は、ビームサーチで次の深度に持ち出す場合の数。上位n個のみが次の深度について検証される
-            case "Beam-depth6":
-                computerTurnWithDoubleResult(computerTurnBeamSearch(history[currentMove], currentMove, 10, 6));
-                break;//引数_3は、ビームサーチで次の深度に持ち出す場合の数。上位n個のみが次の深度について検証される
-            default:
-                throw new Error("GameModeが指定されていません");
-        }
-    }
-
-    function computerTurnWithResult(result: MoveCoordinate) {
-        handleColor(result.rowNo, result.columnNo);
-    }
-
-    function computerTurnWithDoubleResult(result: DoubleMoveCoordinate) {
-        handleColor(result.firstRowNo, result.firstColumnNo, result.secondRowNo, result.secondColumnNo);
+        return computerTurnBeamSearch(history[currentMove], currentMove, computer, checkBlackIsNext(currentMove));
     }
 
     function jumpTo(nextMove: number) {
@@ -348,7 +314,7 @@ export function PlayGround({ playerIsBlack, gameMode, stageLabel, initialTime, t
                 >☰</button>
                 {isMenuOpen &&
                     <div className="menu-panel">
-                        <div className="gamemode">GameMode: {gameMode}</div>
+                        <div className="gamemode">相手: {computer.name}</div>
                         <button onClick={() => jumpTo(lastFirstPlayerTurn(currentMove, playerIsBlack))}
                             disabled={pointerColor === null || currentMove === 0}
                         >1つ戻る</button>

@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { PlayGround } from "./PlayGround";
 import { Tips } from "./Tips";
+import { ComputerSetting } from "../computers/ComputerSetting";
 import "../styles/StageFlow.css";
 
 type Phase = "eyecatch" | "guide" | "playing";
@@ -10,17 +11,33 @@ type Phase = "eyecatch" | "guide" | "playing";
 type StageInfo = {
     stageNo: number;
     rounds: number;
-    computerMode: string;
+    computer: ComputerSetting;
     timeLimit: number;
     timeIncrement: number;
     guide: string;
 };
 
 const stageInfo: StageInfo[] = [
-    { stageNo: 1, rounds: 1, computerMode: "Random", timeLimit: Number.POSITIVE_INFINITY, timeIncrement: 0, guide: "" },
-    { stageNo: 2, rounds: 2, computerMode: "Random", timeLimit: 20000, timeIncrement: 5000, guide: "" },
-    { stageNo: 3, rounds: 2, computerMode: "Depth1Search", timeLimit: 20000, timeIncrement: 5000, guide: "" },
-    { stageNo: 4, rounds: 2, computerMode: "Beam-depth4", timeLimit: 20000, timeIncrement: 5000, guide: "" },
+    {
+        stageNo: 1, rounds: 1, timeLimit: Number.POSITIVE_INFINITY, timeIncrement: 0, guide: "",
+        computer: { name: "素人", depth: 2, beamSize: 3, sight: 1, defense: 0, blunder: 0.5 },
+    },
+    {
+        stageNo: 2, rounds: 2, timeLimit: 20000, timeIncrement: 5000, guide: "",
+        computer: { name: "見習い", depth: 2, beamSize: 5, sight: 2, defense: 0.3, blunder: 0.3 },
+    },
+    {
+        stageNo: 3, rounds: 2, timeLimit: 20000, timeIncrement: 5000, guide: "",
+        computer: { name: "門下生", depth: 2, beamSize: 8, sight: 3, defense: 0.7, blunder: 0.15 },
+    },
+    {
+        stageNo: 4, rounds: 2, timeLimit: 20000, timeIncrement: 5000, guide: "",
+        computer: { name: "師範代", depth: 2, beamSize: 10, sight: 4, defense: 1, blunder: 0.05 },
+    },
+    {
+        stageNo: 5, rounds: 2, timeLimit: 20000, timeIncrement: 5000, guide: "",
+        computer: { name: "師範", depth: 4, beamSize: 100, sight: 4, defense: 1, blunder: 0 },
+    },
 ];
 
 const TIME_CARRY_RATE = 0.5;
@@ -99,7 +116,7 @@ export function StageFlow() {
                 <PlayGround
                     key={stageNo + "-" + roundNo + "-" + attempt}
                     playerIsBlack={playerIsBlack}
-                    gameMode={stage.computerMode}
+                    computer={stage.computer}
                     stageLabel={stageLabel}
                     initialTime={initialTime}
                     timeIncrement={stage.timeIncrement}

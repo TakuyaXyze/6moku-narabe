@@ -9,8 +9,16 @@ const HOSHI_COLUMNS: number[] = [3, 9, 15];
 
 export class BoardState extends State {
 
-    public constructor(boxes: (string | null)[][], currentMove: number, level: number) {
+    private _sight: number;
+    private _defense: number;
+    private _computerIsBlack: boolean;
+
+    public constructor(boxes: (string | null)[][], currentMove: number, level: number,
+        sight: number = SEQUENCE_LENGTH - 2, defense: number = 1, computerIsBlack: boolean = true) {
         super(boxes, currentMove, level)
+        this._sight = sight;
+        this._defense = defense;
+        this._computerIsBlack = computerIsBlack;
     }
     legalMoves(boxes: (string | null)[][]): (Array<MoveCoordinate> | null) {
         const ret = new Array<MoveCoordinate>;
@@ -25,7 +33,7 @@ export class BoardState extends State {
         }
         for (let rowNo = 0; rowNo < ROWS; rowNo++) {
             for (let columnNo = 0; columnNo < COLUMNS; columnNo++) {
-                for (let k = 0; k < SEQUENCE_LENGTH - 1; k++) {
+                for (let k = 1; k <= this._sight; k++) {
                     if (!boxes[rowNo][columnNo]
                         && ((boxes[rowNo - k] && boxes[rowNo - k][columnNo])
                             || (boxes[rowNo + k] && boxes[rowNo + k][columnNo])
@@ -79,16 +87,18 @@ export class BoardState extends State {
         const two = Math.min(SEQUENCE_LENGTH, 2);
         const whiteCount = detectSequence(this.state, white);
         const blackCount = detectSequence(this.state, black);
-        sum += 100 * whiteCount[six - 2];
-        sum += 20 * whiteCount[five - 2];
-        sum += 13 * whiteCount[four - 2];
-        sum += 3 * whiteCount[three - 2];
-        sum += 1 * whiteCount[two - 2];
-        sum -= 100 * blackCount[six - 2];
-        sum -= 20 * blackCount[five - 2];
-        sum -= 13 * blackCount[four - 2];
-        sum -= 3 * blackCount[three - 2];
-        sum -= 1 * blackCount[two - 2];
+        const whiteWeight = this._computerIsBlack ? this._defense : 1;
+        const blackWeight = this._computerIsBlack ? 1 : this._defense;
+        sum += whiteWeight * 100 * whiteCount[six - 2];
+        sum += whiteWeight * 20 * whiteCount[five - 2];
+        sum += whiteWeight * 13 * whiteCount[four - 2];
+        sum += whiteWeight * 3 * whiteCount[three - 2];
+        sum += whiteWeight * 1 * whiteCount[two - 2];
+        sum -= blackWeight * 100 * blackCount[six - 2];
+        sum -= blackWeight * 20 * blackCount[five - 2];
+        sum -= blackWeight * 13 * blackCount[four - 2];
+        sum -= blackWeight * 3 * blackCount[three - 2];
+        sum -= blackWeight * 1 * blackCount[two - 2];
         return sum;
     }
 }
