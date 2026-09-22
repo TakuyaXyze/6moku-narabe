@@ -7,13 +7,11 @@ import "../styles/GameInfo.css"
 import { useState, useEffect, useRef } from "react";
 import { detectSequence } from "../computers/CountSequence";
 import { detectWinLine } from "../computers/DetectWinLine";
-import { MoveCoordinate, DoubleMoveCoordinate } from "../computers/Evaluate"
+import { MoveCoordinate } from "../computers/Evaluate"
 import { ComputerSetting } from "../computers/ComputerSetting";
-import { computerTurnRandom } from "../computers/PutRandom";
-import { computerTurnBeamSearch } from "../computers/PutBeam";
+import type { ComputerRequest, ComputerResponse } from "../computers/ComputerWorker";
+import { ROWS, COLUMNS, SEQUENCE_LENGTH, checkBlackIsNext } from "../computers/GameRule";
 
-export const ROWS = 19;
-export const COLUMNS = ROWS;
 export let rowNos = new Array<number>;
 for (let i = 0; i < ROWS; i++) {
     rowNos.push(i);
@@ -22,7 +20,6 @@ export let columnNos = new Array<number>;
 for (let i = 0; i < COLUMNS; i++) {
     columnNos.push(i);
 }
-export const SEQUENCE_LENGTH = 6; //MAX6
 
 const TIMER_INTERVAL = 100;
 const TIME_BAR_FULL = 60000;
@@ -141,25 +138,32 @@ export function PlayGround({ playerIsBlack, computer, stageLabel, initialTime, t
         const blackIsNext = checkBlackIsNext(currentMove);
         if (blackIsNext === playerIsBlack) return;
         if (!continueGame) return;
-        setTimeout(() => {
+        let worker: Worker | null = null;
+        let placeTimerId: ReturnType<typeof setTimeout> | undefined;
+        const startTimerId = setTimeout(() => {
             const computingStartTime = Date.now();
-            const result = computerTurn();
-            const time = Date.now() - computingStartTime;
-            sumTime.current += time;
-            console.log("処理時間:" + printTimer(time) + " 累積時間:" + printTimer(sumTime.current));
-            setTimeout(() => {
-                handleColor(result.firstRowNo, result.firstColumnNo, result.secondRowNo, result.secondColumnNo);
-            }, Math.max(COMPUTER_MIN_TIME - time, 0))
+            worker = new Worker(new URL("../computers/ComputerWorker.ts", import.meta.url));
+            worker.onmessage = (event: MessageEvent<ComputerResponse>) => {
+                const result = event.data;
+                const time = Date.now() - computingStartTime;
+                sumTime.current += time;
+                console.log("処理時間:" + printTimer(time) + " 累積時間:" + printTimer(sumTime.current));
+                placeTimerId = setTimeout(() => {
+                    handleColor(result.firstRowNo, result.firstColumnNo, result.secondRowNo, result.secondColumnNo);
+                }, Math.max(COMPUTER_MIN_TIME - time, 0))
+            };
+            worker.onerror = (event: ErrorEvent) => {
+                console.error("CPU思考中にエラー: " + event.message);
+            };
+            const request: ComputerRequest = { boxes: history[currentMove], currentMove: currentMove, computer: computer };
+            worker.postMessage(request);
         }, COMPUTER_START_DELAY)
+        return () => {
+            clearTimeout(startTimerId);
+            clearTimeout(placeTimerId);
+            worker?.terminate();
+        };
     }, [history, currentMove])
-
-    function computerTurn(): DoubleMoveCoordinate {
-        if (currentMove === 0) {
-            const firstMove = computerTurnRandom(history[currentMove], currentMove);
-            return new DoubleMoveCoordinate(undefined, firstMove.rowNo, firstMove.columnNo);
-        }
-        return computerTurnBeamSearch(history[currentMove], currentMove, computer, checkBlackIsNext(currentMove));
-    }
 
     function jumpTo(nextMove: number) {
         setCurrentMove(nextMove);
@@ -316,10 +320,10 @@ export function PlayGround({ playerIsBlack, computer, stageLabel, initialTime, t
                     <div className="menu-panel">
                         <div className="gamemode">相手: {computer.name}</div>
                         <button onClick={() => jumpTo(lastFirstPlayerTurn(currentMove, playerIsBlack))}
-                            disabled={pointerColor === null || currentMove === 0}
+                            disabled={!continueGame || currentMove === 0}
                         >1つ戻る</button>
                         <button onClick={() => jumpTo(0)}
-                            disabled={pointerColor === null || currentMove === 0}
+                            disabled={!continueGame || currentMove === 0}
                         >最初に戻る</button>
                         <button onClick={() => setIsRuleOpen(true)}>ルール説明</button>
                     </div>
@@ -343,26 +347,6 @@ export function PlayGround({ playerIsBlack, computer, stageLabel, initialTime, t
             }
         </div >
     );
-}
-
-export function checkBlackIsNext(currentMove: number): boolean {
-    /*
-    0 void  next black true
-    1 black next white false
-    2 white next white false
-    3 white next black true
-    4 black next black true
-    5 black next white false
-    6 white next white false
-    7 white next black true
-    8 black next black true
-    9 black next white false
-    */
-    if (currentMove % 4 === 0 || currentMove % 4 === 3) {
-        return true;
-    } else {
-        return false;
-    }
 }
 
 function detectStoneChange(before: (string | null)[][], after: (string | null)[][]): MoveCoordinate[] {

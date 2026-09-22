@@ -1,4 +1,4 @@
-import { ROWS, COLUMNS, SEQUENCE_LENGTH } from "../components/PlayGround";
+import { ROWS, COLUMNS, SEQUENCE_LENGTH } from "./GameRule";
 import { MoveCoordinate } from "./Evaluate";
 
 export function detectWinLine(boxes: (string | null)[][]): MoveCoordinate[] {

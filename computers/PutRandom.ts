@@ -1,4 +1,4 @@
-import { ROWS, COLUMNS } from "@/components/PlayGround";
+import { ROWS, COLUMNS } from "./GameRule";
 import { MoveCoordinate } from "./Evaluate";
 import { BoardState } from "./BoardState";
 

@@ -1,4 +1,4 @@
-import { ROWS, COLUMNS, SEQUENCE_LENGTH } from "../components/PlayGround";
+import { ROWS, COLUMNS, SEQUENCE_LENGTH } from "./GameRule";
 
 export function detectSequence(boxes: (string | null)[][], color: string): number[] {
     if (!(color === "b" || color === "w")) throw new Error(`入力できるcolor:stringは"b"と"w"のいずれか一つです`)

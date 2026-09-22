@@ -1,7 +1,7 @@
 import { BoardTrail } from "./BoardTrail";
 import { State } from "./Evaluate"
 import { MoveCoordinate } from "./Evaluate";
-import { ROWS, COLUMNS, checkBlackIsNext, SEQUENCE_LENGTH } from "../components/PlayGround"
+import { ROWS, COLUMNS, checkBlackIsNext, SEQUENCE_LENGTH } from "./GameRule"
 import { detectSequence } from "./CountSequence";
 
 const HOSHI_ROWS: number[] = [3, 9, 15];

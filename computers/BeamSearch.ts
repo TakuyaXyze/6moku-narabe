@@ -1,4 +1,4 @@
-import { checkBlackIsNext } from "../components/PlayGround";
+import { checkBlackIsNext } from "./GameRule";
 import { BoardState } from "./BoardState";
 import { BoardTrail } from "./BoardTrail";
 import { ComputerSetting } from "./ComputerSetting";
