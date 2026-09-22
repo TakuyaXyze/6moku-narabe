@@ -64,6 +64,7 @@ export class BeamSearch {
         let size: number = 0;
         if (moves == null) return null;
         size = moves.length;
+        if (size < 2) return null;
         const pairs = size * (size - 1) / 2;
         this.beamSize = Math.max(Math.min(Math.floor(this._budget / pairs), this._maxBeamSize), 2);
         const fixedBeamSize = this.beamSize;
@@ -131,8 +132,7 @@ export class BeamSearch {
             const trailI = bstate.doMove(moveI);
             const trailJ = bstate.doMove(moveJ);
             const blackIsThisTurn = checkBlackIsNext(bstate.currentMove - 1);
-            const nextBestMove = this.bestMove(bstate);
-            if (nextBestMove == null) throw new Error("best==null");
+            const nextBestMove = this.bestMove(bstate) ?? bestMove;
             for (let j = 0; j < fixedBeamSize; j++) {
                 if (nextBestMoves[j] == undefined
                     && typeof nextBestMove.value === "number"
