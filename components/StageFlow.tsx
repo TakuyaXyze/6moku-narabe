@@ -27,8 +27,8 @@ const stageInfo: StageInfo[] = [
         computer: { name: "見習い", depth: 2, beamSize: 20, budget: 150000, sight: 2, defense: 0.3, orderDefense: 0.3, blunder: 0.4 },
     },
     {
-        stageNo: 3, rounds: 2, timeLimit: 20000, timeIncrement: 5000, guide: "",
-        computer: { name: "門下生", depth: 2, beamSize: 20, budget: 150000, sight: 3, defense: 1, orderDefense: 0.7, blunder: 0.45 },
+        stageNo: 3, rounds: 2, timeLimit: 11000, timeIncrement: 2500, guide: "",
+        computer: { name: "門下生", depth: 2, beamSize: 20, budget: 150000, sight: 2, defense: 0.3, orderDefense: 0.3, blunder: 0.4 },
     },
     {
         stageNo: 4, rounds: 2, timeLimit: 20000, timeIncrement: 5000, guide: "",
@@ -41,7 +41,7 @@ const stageInfo: StageInfo[] = [
 ];
 
 const TIME_CARRY_RATE = 0.2;
-const TIME_PENALTY = 5000;
+const TIME_PENALTY = 3000;
 
 export function StageFlow() {
 
@@ -97,6 +97,7 @@ export function StageFlow() {
         setStageNo(stageNo + 1);
         setRoundNo(1);
         setAttempt(0);
+        setTimePenalty(0);
         setPhase("eyecatch");
     }
 
