@@ -7,6 +7,7 @@ import "../styles/GameInfo.css"
 import { useState, useEffect, useRef } from "react";
 import { detectSequence } from "../computers/CountSequence";
 import { detectWinLine } from "../computers/DetectWinLine";
+import { detectCross } from "../computers/DetectCross";
 import { MoveCoordinate } from "../computers/Evaluate"
 import { ComputerSetting } from "../computers/ComputerSetting";
 import type { ComputerRequest, ComputerResponse } from "../computers/ComputerWorker";
@@ -29,6 +30,8 @@ const COUNTDOWN_TIME = 10000;
 const COUNTDOWN_SECONDS = [10, 5, 4, 3, 2, 1];
 const COMPUTER_START_DELAY = 300;
 const COMPUTER_MIN_TIME = 1500;
+const CROSS_BONUS = 3000;
+const BONUS_DISPLAY_TIME = 1500;
 
 type Props = {
     playerIsBlack: boolean;
@@ -96,14 +99,33 @@ export function PlayGround({ playerIsBlack, computer, stageLabel, initialTime, t
         else color = "w";
         nextBoxes[firstRowNo][firstColumnNo] = color;
         if (secondRowNo == undefined || secondColumnNo == undefined) {
+            if (blackIsNext === playerIsBlack) rewardCross(nextBoxes, color);
             handlePlay(nextBoxes);
             stonePlaceSound();
             return;
         }
         nextBoxes[secondRowNo][secondColumnNo] = color;
+        if (blackIsNext === playerIsBlack) rewardCross(nextBoxes, color);
         handlePlayDouble(nextBoxes);
         stonePlaceSound();
     }
+
+    const [bonusTime, setBonusTime] = useState(0);
+
+    function rewardCross(nextBoxes: (string | null)[][], color: string): void {
+        if (!hasTimeLimit) return;
+        const count = detectCross(nextBoxes, color).length - detectCross(history[currentMove], color).length;
+        if (count <= 0) return;
+        setRemainingTime((time) => time + CROSS_BONUS * count);
+        setBonusTime(CROSS_BONUS * count);
+        recoveringSound();
+    }
+
+    useEffect(() => {
+        if (bonusTime === 0) return;
+        const timerId = setTimeout(() => setBonusTime(0), BONUS_DISPLAY_TIME);
+        return () => clearTimeout(timerId);
+    }, [bonusTime])
 
 
     const playerIsThinking: boolean = continueGame && hasTimeLimit && (checkBlackIsNext(currentMove) === playerIsBlack);
@@ -295,6 +317,9 @@ export function PlayGround({ playerIsBlack, computer, stageLabel, initialTime, t
                             />
                         </div>
                         <div className={isHurrying ? "time-count time-count-hurry" : "time-count"}>{timeCount}</div>
+                        {bonusTime > 0 &&
+                            <div className="time-bonus">+{bonusTime / 1000}</div>
+                        }
                     </div>
                 }
                 <div className="goishi-box-image-player">
@@ -387,6 +412,12 @@ function warningSound(): void {
 
 function winSound(): void {
     const sound = new Audio("/sounds/win.mp3");
+    sound.volume = 0.8;
+    sound.play().catch((error) => console.log("SE再生に失敗:", error));
+}
+
+function recoveringSound(): void {
+    const sound = new Audio("/sounds/recovering.mp3");
     sound.volume = 0.8;
     sound.play().catch((error) => console.log("SE再生に失敗:", error));
 }

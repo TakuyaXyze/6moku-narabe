@@ -26,6 +26,7 @@
 }
 
 .remaining-time {
+    position: relative;
     margin: 3px;
     display: flex;
     flex-direction: row;
@@ -178,4 +179,36 @@ ul {
     overflow: auto;
     z-index: 0;
     max-height: 250px;
+}
+.time-bonus {
+    position: absolute;
+    right: 0;
+    bottom: 100%;
+    font-size: 18px;
+    font-weight: bold;
+    color: #3fb950;
+    pointer-events: none;
+    animation: time-bonus-rise 1.5s ease-out forwards;
+}
+
+@keyframes time-bonus-rise {
+    0% {
+        opacity: 0;
+        transform: translateY(6px);
+    }
+
+    20% {
+        opacity: 1;
+        transform: translateY(0);
+    }
+
+    70% {
+        opacity: 1;
+        transform: translateY(-6px);
+    }
+
+    100% {
+        opacity: 0;
+        transform: translateY(-14px);
+    }
 }
