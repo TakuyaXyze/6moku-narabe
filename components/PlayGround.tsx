@@ -33,6 +33,7 @@ const COMPUTER_MIN_TIME = 1500;
 const CROSS_BONUS = 3000;
 const BONUS_DISPLAY_TIME = 1500;
 const UNDO_PENALTY = 5000;
+const RULE_TIME_RATE = 0.5;
 
 type UndoKind = "back" | "reset" | null;
 
@@ -132,16 +133,18 @@ export function PlayGround({ playerIsBlack, computer, stageLabel, initialTime, t
 
 
     const playerIsThinking: boolean = continueGame && hasTimeLimit && (checkBlackIsNext(currentMove) === playerIsBlack);
+    const [isRuleOpen, setIsRuleOpen] = useState(false);
 
     useEffect(() => {
         if (!playerIsThinking) return;
         const countStartTime = Date.now();
         const countStartRemaining = remainingTime;
+        const timeRate = isRuleOpen ? RULE_TIME_RATE : 1;
         const timerId = setInterval(() => {
-            setRemainingTime(countStartRemaining - (Date.now() - countStartTime));
+            setRemainingTime(countStartRemaining - (Date.now() - countStartTime) * timeRate);
         }, TIMER_INTERVAL);
         return () => clearInterval(timerId);
-    }, [playerIsThinking, currentMove])
+    }, [playerIsThinking, currentMove, isRuleOpen])
 
     const lastCountedSecond = useRef(Number.POSITIVE_INFINITY);
 
@@ -244,7 +247,6 @@ export function PlayGround({ playerIsBlack, computer, stageLabel, initialTime, t
         return word;
     }
     const [isMenuOpen, setIsMenuOpen] = useState(false);
-    const [isRuleOpen, setIsRuleOpen] = useState(false);
     const menuArea = useRef<HTMLDivElement>(null);
 
     useEffect(() => {
