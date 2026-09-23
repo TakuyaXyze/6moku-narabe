@@ -24,11 +24,11 @@ const stageInfo: StageInfo[] = [
     },
     {
         stageNo: 2, rounds: 2, timeLimit: 10000, timeIncrement: 5000, guide: "",
-        computer: { name: "見習い", depth: 2, beamSize: 20, budget: 150000, sight: 2, defense: 0.3, orderDefense: 0.3, blunder: 0.4 },
+        computer: { name: "見習い", depth: 2, beamSize: 20, budget: 150000, sight: 3, defense: 0.7, orderDefense: 0.7, blunder: 0.45 },
     },
     {
-        stageNo: 3, rounds: 2, timeLimit: 11000, timeIncrement: 2500, guide: "",
-        computer: { name: "門下生", depth: 2, beamSize: 20, budget: 150000, sight: 2, defense: 0.3, orderDefense: 0.3, blunder: 0.4 },
+        stageNo: 3, rounds: 2, timeLimit: 5000, timeIncrement: 2000, guide: "",
+        computer: { name: "門下生", depth: 2, beamSize: 20, budget: 150000, sight: 3, defense: 0.7, orderDefense: 0.7, blunder: 0.45 },
     },
     {
         stageNo: 4, rounds: 2, timeLimit: 20000, timeIncrement: 5000, guide: "",
