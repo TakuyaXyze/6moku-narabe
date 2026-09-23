@@ -32,6 +32,9 @@ const COMPUTER_START_DELAY = 300;
 const COMPUTER_MIN_TIME = 1500;
 const CROSS_BONUS = 3000;
 const BONUS_DISPLAY_TIME = 1500;
+const UNDO_PENALTY = 5000;
+
+type UndoKind = "back" | "reset" | null;
 
 type Props = {
     playerIsBlack: boolean;
@@ -191,6 +194,21 @@ export function PlayGround({ playerIsBlack, computer, stageLabel, initialTime, t
         setCurrentMove(nextMove);
     }
 
+    const [undoConfirm, setUndoConfirm] = useState<UndoKind>(null);
+
+    function openUndoConfirm(kind: UndoKind): void {
+        setIsMenuOpen(false);
+        setUndoConfirm(kind);
+    }
+
+    function runUndo(): void {
+        if (undoConfirm === null) return;
+        const nextMove = (undoConfirm === "reset") ? 0 : lastFirstPlayerTurn(currentMove, playerIsBlack);
+        setRemainingTime((time) => Math.max(time - UNDO_PENALTY, 0));
+        jumpTo(nextMove);
+        setUndoConfirm(null);
+    }
+
     let result;
     if (blackIsWinner) {
         result = 'Winner: black';
@@ -344,10 +362,10 @@ export function PlayGround({ playerIsBlack, computer, stageLabel, initialTime, t
                 {isMenuOpen &&
                     <div className="menu-panel">
                         <div className="gamemode">相手: {computer.name}</div>
-                        <button onClick={() => jumpTo(lastFirstPlayerTurn(currentMove, playerIsBlack))}
+                        <button onClick={() => openUndoConfirm("back")}
                             disabled={!continueGame || currentMove === 0}
                         >1つ戻る</button>
-                        <button onClick={() => jumpTo(0)}
+                        <button onClick={() => openUndoConfirm("reset")}
                             disabled={!continueGame || currentMove === 0}
                         >最初に戻る</button>
                         <button onClick={() => setIsRuleOpen(true)}>ルール説明</button>
@@ -367,6 +385,22 @@ export function PlayGround({ playerIsBlack, computer, stageLabel, initialTime, t
                             <li>持ち時間が尽きたら負け</li>
                         </ul>
                         <button onClick={() => setIsRuleOpen(false)}>閉じる</button>
+                    </div>
+                </div>
+            }
+            {undoConfirm !== null && continueGame &&
+                <div className="rule-screen">
+                    <div className="rule-panel undo-panel">
+                        <div className="undo-message">
+                            {(undoConfirm === "reset") ? "盤面をリセットしますか?" : "1つ前の自分の手番まで戻しますか?"}
+                        </div>
+                        {hasTimeLimit &&
+                            <div className="undo-note">制限時間が5秒減ります</div>
+                        }
+                        <div className="undo-buttons">
+                            <button onClick={() => runUndo()}>戻す</button>
+                            <button onClick={() => setUndoConfirm(null)}>やめる</button>
+                        </div>
                     </div>
                 </div>
             }
