@@ -57,7 +57,7 @@ export function PlayGround({ playerIsBlack, computer, stageLabel, initialTime, t
     const whiteIsWinner: boolean = whiteSequence[SEQUENCE_LENGTH - 2] > 0;
     const [remainingTime, setRemainingTime] = useState(initialTime);
     const hasTimeLimit: boolean = Number.isFinite(initialTime);
-    const timeIsUp: boolean = hasTimeLimit && remainingTime <= 0;
+    const timeIsUp: boolean = hasTimeLimit && remainingTime < 0 && !blackIsWinner && !whiteIsWinner;
     const isDraw: boolean = !blackIsWinner && !whiteIsWinner && !timeIsUp && currentMove === ROWS * COLUMNS;
     const continueGame: boolean = !blackIsWinner && !whiteIsWinner && !isDraw && !timeIsUp;
     const playerWins: boolean = !isDraw && !timeIsUp && (blackIsWinner === playerIsBlack);
@@ -66,7 +66,7 @@ export function PlayGround({ playerIsBlack, computer, stageLabel, initialTime, t
         if (continueGame) return;
         if (timeIsUp) timeupSound();
         else if (blackIsWinner || whiteIsWinner) winSound();
-        onGameEnd(playerWins, remainingTime);
+        onGameEnd(playerWins, Math.max(remainingTime, 0));
     }, [continueGame])
 
     function handlePlay(nextBoxes: (string | null)[][]): void {
@@ -138,7 +138,7 @@ export function PlayGround({ playerIsBlack, computer, stageLabel, initialTime, t
         const countStartTime = Date.now();
         const countStartRemaining = remainingTime;
         const timerId = setInterval(() => {
-            setRemainingTime(Math.max(countStartRemaining - (Date.now() - countStartTime), 0));
+            setRemainingTime(countStartRemaining - (Date.now() - countStartTime));
         }, TIMER_INTERVAL);
         return () => clearInterval(timerId);
     }, [playerIsThinking, currentMove])
@@ -279,11 +279,12 @@ export function PlayGround({ playerIsBlack, computer, stageLabel, initialTime, t
 
     const thisTurnColor = (continueGame ? 'Next Player:' + (blackIsNext ? 'black' : 'white') : result);
 
-    const timeBarRatio: number = Math.min(remainingTime / TIME_BAR_FULL, 1);
+    const shownTime: number = Math.max(remainingTime, 0);
+    const timeBarRatio: number = Math.min(shownTime / TIME_BAR_FULL, 1);
     const timeBarColor: string = (timeBarRatio >= TIME_BAR_YELLOW_RATIO) ? "time-bar-green"
         : ((timeBarRatio >= TIME_BAR_RED_RATIO) ? "time-bar-yellow" : "time-bar-red");
-    const isHurrying: boolean = remainingTime <= COUNTDOWN_TIME;
-    const timeCount: string = isHurrying ? (remainingTime / 1000).toFixed(1) : String(Math.ceil(remainingTime / 1000));
+    const isHurrying: boolean = shownTime <= COUNTDOWN_TIME;
+    const timeCount: string = isHurrying ? (shownTime / 1000).toFixed(1) : String(Math.ceil(shownTime / 1000));
 
     const pointerColor: (string | null)
         = (continueGame && (playerIsBlack === blackIsNext)) ? playerStoneColor : null;
