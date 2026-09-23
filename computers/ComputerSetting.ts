@@ -5,5 +5,6 @@ export type ComputerSetting = {
     budget: number;
     sight: number;
     defense: number;
+    orderDefense: number;
     blunder: number;
 };

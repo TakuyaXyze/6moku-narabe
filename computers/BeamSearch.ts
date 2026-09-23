@@ -9,6 +9,7 @@ export class BeamSearch {
     private _maxBeamSize: number;
     private _budget: number;
     private _blunder: number;
+    private _orderDefense: number;
     private _evalCount: number;
     private _rootSize: number;
     private _rootBeamSize: number;
@@ -18,6 +19,7 @@ export class BeamSearch {
         this._maxBeamSize = setting.beamSize;
         this._budget = setting.budget;
         this._blunder = setting.blunder;
+        this._orderDefense = setting.orderDefense;
         this._evalCount = 0;
         this._rootSize = 0;
         this._rootBeamSize = 0;
@@ -26,12 +28,17 @@ export class BeamSearch {
     private pickIndex(ranking: Array<[number, ...unknown[]]>, isRoot: boolean): number {
         const length = ranking.length;
         if (length <= 1) return 0;
-        if (isRoot && Math.random() < this._blunder) {
-            return 1 + Math.floor(Math.random() * (length - 1));
+        const starts: number[] = [0];
+        for (let i = 1; i < length; i++) {
+            if (ranking[i][0] !== ranking[i - 1][0]) starts.push(i);
         }
-        let ties = 1;
-        while (ties < length && ranking[ties][0] === ranking[0][0]) ties++;
-        return Math.floor(Math.random() * ties);
+        let rank = 0;
+        if (isRoot) {
+            while (rank < starts.length - 1 && Math.random() < this._blunder) rank++;
+        }
+        const from = starts[rank];
+        const to = (rank + 1 < starts.length) ? starts[rank + 1] : length;
+        return from + Math.floor(Math.random() * (to - from));
     }
     get beamSize(): number {
         return this._beamSize
@@ -77,6 +84,8 @@ export class BeamSearch {
         // 最良の手が複数あるのでそれを管理する
         let bestMoves = new Array<[number, DoubleMoveCoordinate]>;
         let count = 0;
+        const evalDefense = bstate.defense;
+        if (bstate.level > 2) bstate.defense = this._orderDefense;
         for (let i = 0; i < size - 1; i++) {
             for (let j = i + 1; j < size; j++) {
                 count++;
@@ -119,6 +128,7 @@ export class BeamSearch {
             }
         }
         if (bstate.level <= 2) return bestMoves[this.pickIndex(bestMoves, isRoot)][1];
+        bstate.defense = evalDefense;
         const nextBestMoves = new Array<[number, DoubleMoveCoordinate, DoubleMoveCoordinate]>;
         for (let i = 0; i < fixedBeamSize && i < bestMoves.length; i++) {
             //console.log("for文第n段階開始" + (i + 1) + "回目 level=" + bstate.level);

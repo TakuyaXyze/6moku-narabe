@@ -20,23 +20,23 @@ type StageInfo = {
 const stageInfo: StageInfo[] = [
     {
         stageNo: 1, rounds: 1, timeLimit: Number.POSITIVE_INFINITY, timeIncrement: 0, guide: "",
-        computer: { name: "素人", depth: 2, beamSize: 3, budget: 150000, sight: 1, defense: 0, blunder: 0.5 },
+        computer: { name: "素人", depth: 2, beamSize: 20, budget: 150000, sight: 1, defense: 0, orderDefense: 0, blunder: 0.5 },
     },
     {
         stageNo: 2, rounds: 2, timeLimit: 20000, timeIncrement: 5000, guide: "",
-        computer: { name: "見習い", depth: 2, beamSize: 5, budget: 150000, sight: 2, defense: 0.3, blunder: 0.3 },
+        computer: { name: "見習い", depth: 2, beamSize: 20, budget: 150000, sight: 2, defense: 0.3, orderDefense: 0.3, blunder: 0.4 },
     },
     {
         stageNo: 3, rounds: 2, timeLimit: 20000, timeIncrement: 5000, guide: "",
-        computer: { name: "門下生", depth: 2, beamSize: 8, budget: 150000, sight: 3, defense: 0.7, blunder: 0.15 },
+        computer: { name: "門下生", depth: 2, beamSize: 20, budget: 150000, sight: 3, defense: 0.7, orderDefense: 0.7, blunder: 0.4 },
     },
     {
         stageNo: 4, rounds: 2, timeLimit: 20000, timeIncrement: 5000, guide: "",
-        computer: { name: "師範代", depth: 2, beamSize: 10, budget: 150000, sight: 4, defense: 1, blunder: 0.05 },
+        computer: { name: "師範代", depth: 4, beamSize: 20, budget: 50000, sight: 4, defense: 1, orderDefense: 2, blunder: 0.4 },
     },
     {
         stageNo: 5, rounds: 2, timeLimit: 20000, timeIncrement: 5000, guide: "",
-        computer: { name: "師範", depth: 4, beamSize: 50, budget: 150000, sight: 4, defense: 1, blunder: 0 },
+        computer: { name: "師範", depth: 4, beamSize: 50, budget: 100000, sight: 5, defense: 1, orderDefense: 2, blunder: 0 },
     },
 ];
 

@@ -20,6 +20,12 @@ export class BoardState extends State {
         this._defense = defense;
         this._computerIsBlack = computerIsBlack;
     }
+    get defense(): number {
+        return this._defense;
+    }
+    set defense(defense: number) {
+        this._defense = defense;
+    }
     legalMoves(boxes: (string | null)[][]): (Array<MoveCoordinate> | null) {
         const ret = new Array<MoveCoordinate>;
         const value = undefined;
