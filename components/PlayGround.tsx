@@ -32,7 +32,7 @@ const COMPUTER_START_DELAY = 300;
 const COMPUTER_MIN_TIME = 1500;
 const CROSS_BONUS = 3000;
 const BONUS_DISPLAY_TIME = 2600;
-const UNDO_PENALTY = 5000;
+const UNDO_EXTRA_PENALTY = 1000;
 const RULE_TIME_RATE = 0.5;
 
 type UndoKind = "back" | "reset" | null;
@@ -59,6 +59,7 @@ export function PlayGround({ playerIsBlack, computer, stageLabel, initialTime, t
     const whiteIsWinner: boolean = whiteSequence[SEQUENCE_LENGTH - 2] > 0;
     const [remainingTime, setRemainingTime] = useState(initialTime);
     const hasTimeLimit: boolean = Number.isFinite(initialTime);
+    const undoPenalty: number = timeIncrement * 2 + UNDO_EXTRA_PENALTY;
     const timeIsUp: boolean = hasTimeLimit && remainingTime < 0 && !blackIsWinner && !whiteIsWinner;
     const isDraw: boolean = !blackIsWinner && !whiteIsWinner && !timeIsUp && currentMove === ROWS * COLUMNS;
     const continueGame: boolean = !blackIsWinner && !whiteIsWinner && !isDraw && !timeIsUp;
@@ -214,9 +215,14 @@ export function PlayGround({ playerIsBlack, computer, stageLabel, initialTime, t
 
     function runUndo(): void {
         if (undoConfirm === null) return;
-        const nextMove = (undoConfirm === "reset") ? 0 : lastFirstPlayerTurn(currentMove, playerIsBlack);
-        setRemainingTime((time) => Math.max(time - UNDO_PENALTY, 0));
-        jumpTo(nextMove);
+        if (undoConfirm === "reset") {
+            setRemainingTime(Math.max(initialTime - undoPenalty, 0));
+            jumpTo(0);
+            setUndoConfirm(null);
+            return;
+        }
+        setRemainingTime((time) => Math.max(time - undoPenalty, 0));
+        jumpTo(lastFirstPlayerTurn(currentMove, playerIsBlack));
         setUndoConfirm(null);
     }
 
@@ -412,7 +418,7 @@ export function PlayGround({ playerIsBlack, computer, stageLabel, initialTime, t
                             {(undoConfirm === "reset") ? "盤面をリセットしますか?" : "1つ前の自分の手番まで戻しますか?"}
                         </div>
                         {hasTimeLimit &&
-                            <div className="undo-note">制限時間が5秒減ります</div>
+                            <div className="undo-note">制限時間が{undoPenalty / 1000}秒減ります</div>
                         }
                         <div className="undo-buttons">
                             <button onClick={() => runUndo()}>戻す</button>
