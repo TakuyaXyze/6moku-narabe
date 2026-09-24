@@ -60,8 +60,12 @@ export function StageFlow() {
     const stageLabel: string = stageNo + "-" + roundNo;
     const initialTime: number = stage.timeLimit + carriedTime - timePenalty;
     const gameOver: boolean = initialTime <= 0;
-    const nextLabel: string = lastWin ? "次へ" : (gameOver ? "ステージ1から" : "もう一度");
-    const resultNote: string = (!lastWin && gameOver) ? "挑戦する持ち時間が尽きました" : "";
+    const fallbackStageNo: number = Math.max(stageNo - 1, 1);
+    const nextLabel: string = lastWin ? "次へ" : (gameOver ? "ステージ" + fallbackStageNo + "へ" : "もう一度");
+    const penaltyApplies: boolean = Number.isFinite(stage.timeLimit);
+    const resultNote: string = lastWin ? ""
+        : (gameOver ? "挑戦する持ち時間が尽きました"
+            : (penaltyApplies ? "敗北ペナルティ −" + Math.floor(TIME_PENALTY / 1000) + "秒" : ""));
     const hasTimeDetail: boolean = Number.isFinite(initialTime) && (carriedTime > 0 || timePenalty > 0);
 
     function startRound(): void {
@@ -83,7 +87,7 @@ export function StageFlow() {
     function handleNext(): void {
         if (!lastWin) {
             if (gameOver) {
-                jumpToStage(1);
+                jumpToStage(fallbackStageNo);
                 return;
             }
             setAttempt(attempt + 1);

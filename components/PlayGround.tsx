@@ -33,6 +33,7 @@ const COMPUTER_MIN_TIME = 1500;
 const CROSS_BONUS = 3000;
 const BONUS_DISPLAY_TIME = 2600;
 const UNDO_EXTRA_PENALTY = 1000;
+const RESET_PENALTY = 3000;
 const RULE_TIME_RATE = 0.5;
 
 type UndoKind = "back" | "reset" | null;
@@ -207,6 +208,7 @@ export function PlayGround({ playerIsBlack, computer, stageLabel, initialTime, t
     }
 
     const [undoConfirm, setUndoConfirm] = useState<UndoKind>(null);
+    const shownPenalty: number = (undoConfirm === "reset") ? RESET_PENALTY : undoPenalty;
 
     function openUndoConfirm(kind: UndoKind): void {
         setIsMenuOpen(false);
@@ -216,7 +218,7 @@ export function PlayGround({ playerIsBlack, computer, stageLabel, initialTime, t
     function runUndo(): void {
         if (undoConfirm === null) return;
         if (undoConfirm === "reset") {
-            setRemainingTime(Math.max(initialTime - undoPenalty, 0));
+            setRemainingTime(Math.max(initialTime - RESET_PENALTY, 0));
             jumpTo(0);
             setUndoConfirm(null);
             return;
@@ -418,7 +420,7 @@ export function PlayGround({ playerIsBlack, computer, stageLabel, initialTime, t
                             {(undoConfirm === "reset") ? "盤面をリセットしますか?" : "1つ前の自分の手番まで戻しますか?"}
                         </div>
                         {hasTimeLimit &&
-                            <div className="undo-note">制限時間が{undoPenalty / 1000}秒減ります</div>
+                            <div className="undo-note">制限時間が{shownPenalty / 1000}秒減ります</div>
                         }
                         <div className="undo-buttons">
                             <button onClick={() => runUndo()}>戻す</button>
