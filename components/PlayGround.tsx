@@ -7,7 +7,7 @@ import "../styles/GameInfo.css"
 import { useState, useEffect, useRef } from "react";
 import { detectSequence } from "../computers/CountSequence";
 import { detectWinLine } from "../computers/DetectWinLine";
-import { detectCross } from "../computers/DetectCross";
+import { detectCross, crossKey, crossCells } from "../computers/DetectCross";
 import { MoveCoordinate } from "../computers/Evaluate"
 import { ComputerSetting } from "../computers/ComputerSetting";
 import type { ComputerRequest, ComputerResponse } from "../computers/ComputerWorker";
@@ -31,7 +31,7 @@ const COUNTDOWN_SECONDS = [10, 5, 4, 3, 2, 1];
 const COMPUTER_START_DELAY = 300;
 const COMPUTER_MIN_TIME = 1500;
 const CROSS_BONUS = 3000;
-const BONUS_DISPLAY_TIME = 1500;
+const BONUS_DISPLAY_TIME = 2600;
 const UNDO_PENALTY = 5000;
 const RULE_TIME_RATE = 0.5;
 
@@ -116,19 +116,26 @@ export function PlayGround({ playerIsBlack, computer, stageLabel, initialTime, t
     }
 
     const [bonusTime, setBonusTime] = useState(0);
+    const [crossMoves, setCrossMoves] = useState<MoveCoordinate[]>([]);
 
     function rewardCross(nextBoxes: (string | null)[][], color: string): void {
         if (!hasTimeLimit) return;
-        const count = detectCross(nextBoxes, color).length - detectCross(history[currentMove], color).length;
+        const beforeKeys = new Set(detectCross(history[currentMove], color).map((cross) => crossKey(cross)));
+        const newCrosses = detectCross(nextBoxes, color).filter((cross) => !beforeKeys.has(crossKey(cross)));
+        const count = newCrosses.length;
         if (count <= 0) return;
         setRemainingTime((time) => time + CROSS_BONUS * count);
         setBonusTime(CROSS_BONUS * count);
+        setCrossMoves(newCrosses.flatMap((cross) => crossCells(cross)));
         recoveringSound();
     }
 
     useEffect(() => {
         if (bonusTime === 0) return;
-        const timerId = setTimeout(() => setBonusTime(0), BONUS_DISPLAY_TIME);
+        const timerId = setTimeout(() => {
+            setBonusTime(0);
+            setCrossMoves([]);
+        }, BONUS_DISPLAY_TIME);
         return () => clearTimeout(timerId);
     }, [bonusTime])
 
@@ -316,6 +323,7 @@ export function PlayGround({ playerIsBlack, computer, stageLabel, initialTime, t
                     pointerColor={pointerColor}
                     markedMoves={markedMoves}
                     winMoves={winMoves}
+                    crossMoves={crossMoves}
                 />
                 {blackIsNext !== playerIsBlack && continueGame &&
                     <div className="computing-message">CPU考え中</div>

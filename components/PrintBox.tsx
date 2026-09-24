@@ -5,9 +5,10 @@ type Props = {
     onBoxClick: () => void;
     isLastMove: boolean;
     isWinMove: boolean;
+    isCrossMove: boolean;
 }
 
-export function PrintBox({ rowNo, columnNo, value, onBoxClick, isLastMove, isWinMove }: Props) {
+export function PrintBox({ rowNo, columnNo, value, onBoxClick, isLastMove, isWinMove, isCrossMove }: Props) {
     //1マス1マスを描画
     const countNum: number = (rowNo) * 100 + (columnNo);
 
@@ -20,6 +21,7 @@ export function PrintBox({ rowNo, columnNo, value, onBoxClick, isLastMove, isWin
                 ${value === null ? 'empty' : ''}
                 ${isLastMove === true ? 'last-move' : ''}
                 ${isWinMove === true ? 'win-move' : ''}
+                ${isCrossMove === true ? 'cross-move' : ''}
             `}
         >
             <div onClick={onBoxClick}

@@ -11,9 +11,10 @@ type Props = {
     pointerColor: (string | null);
     markedMoves: MoveCoordinate[];
     winMoves: MoveCoordinate[];
+    crossMoves: MoveCoordinate[];
 }
 
-export function GameBoard({ boxes, handleClick, pointerColor, markedMoves, winMoves }: Props) {
+export function GameBoard({ boxes, handleClick, pointerColor, markedMoves, winMoves, crossMoves }: Props) {
     return (
         <div className={`
             game-board
@@ -21,14 +22,14 @@ export function GameBoard({ boxes, handleClick, pointerColor, markedMoves, winMo
             ${pointerColor === "w" ? "turn-white" : ""}
             `}
         >
-            {rowNos.map((rowNo) => (printRows(boxes, handleClick, rowNo, markedMoves, winMoves)))}
+            {rowNos.map((rowNo) => (printRows(boxes, handleClick, rowNo, markedMoves, winMoves, crossMoves)))}
         </div>
     )
 };
 
-function printRows(boxes: (string | null)[][], handleClick: (rowNo: number, columnNo: number) => void, rowNo: number, markedMoves: MoveCoordinate[], winMoves: MoveCoordinate[]) {
+function printRows(boxes: (string | null)[][], handleClick: (rowNo: number, columnNo: number) => void, rowNo: number, markedMoves: MoveCoordinate[], winMoves: MoveCoordinate[], crossMoves: MoveCoordinate[]) {
     const key: string = "row-" + rowNo;
     return (
-        <PrintRow key={key} rowNo={rowNo} boxes={boxes} handleClick={handleClick} markedMoves={markedMoves} winMoves={winMoves} />
+        <PrintRow key={key} rowNo={rowNo} boxes={boxes} handleClick={handleClick} markedMoves={markedMoves} winMoves={winMoves} crossMoves={crossMoves} />
     )
 }

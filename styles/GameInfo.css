@@ -188,7 +188,7 @@ ul {
     font-weight: bold;
     color: #3fb950;
     pointer-events: none;
-    animation: time-bonus-rise 1.5s ease-out forwards;
+    animation: time-bonus-rise 2.6s ease-out forwards;
 }
 
 @keyframes time-bonus-rise {
@@ -197,12 +197,12 @@ ul {
         transform: translateY(6px);
     }
 
-    20% {
+    12% {
         opacity: 1;
         transform: translateY(0);
     }
 
-    70% {
+    82% {
         opacity: 1;
         transform: translateY(-6px);
     }
