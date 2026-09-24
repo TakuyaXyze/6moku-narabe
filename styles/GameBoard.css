@@ -89,6 +89,7 @@
     background-color: #0a0a0b;
     color: #fafafa;
 }
+
 .stone.cross-move::before {
     animation: cross-glow 0.5s ease-in-out 3;
     content: "";
