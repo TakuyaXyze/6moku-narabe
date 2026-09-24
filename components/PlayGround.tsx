@@ -44,11 +44,12 @@ type Props = {
     initialTime: number;
     timeIncrement: number;
     nextLabel: string;
+    resultNote: string;
     onGameEnd: (playerWins: boolean, restTime: number) => void;
     onNext: () => void;
 }
 
-export function PlayGround({ playerIsBlack, computer, stageLabel, initialTime, timeIncrement, nextLabel, onGameEnd, onNext }: Props) {
+export function PlayGround({ playerIsBlack, computer, stageLabel, initialTime, timeIncrement, nextLabel, resultNote, onGameEnd, onNext }: Props) {
 
     const [history, setHistory] = useState([Array(ROWS).fill(null).map(() => Array<(string | null)>(COLUMNS).fill(null))]);
     const [currentMove, setCurrentMove] = useState(0);
@@ -321,7 +322,12 @@ export function PlayGround({ playerIsBlack, computer, stageLabel, initialTime, t
                 }
                 {!continueGame &&
                     <div className="game-result">
-                        <div className="game-result-text">{timeIsUp ? "TIME UP" : (playerWins ? "WIN" : "LOSE")}</div>
+                        <div className="game-result-label">
+                            <div className="game-result-text">{timeIsUp ? "TIME UP" : (playerWins ? "WIN" : "LOSE")}</div>
+                            {resultNote !== "" &&
+                                <div className="game-result-note">{resultNote}</div>
+                            }
+                        </div>
                         <button className="game-result-button"
                             onClick={() => onNext()}
                         >{nextLabel}</button>

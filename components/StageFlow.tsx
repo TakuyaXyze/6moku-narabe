@@ -61,6 +61,8 @@ export function StageFlow() {
     const initialTime: number = stage.timeLimit + carriedTime - timePenalty;
     const gameOver: boolean = initialTime <= 0;
     const nextLabel: string = lastWin ? "次へ" : (gameOver ? "ステージ1から" : "もう一度");
+    const resultNote: string = (!lastWin && gameOver) ? "挑戦する持ち時間が尽きました" : "";
+    const hasTimeDetail: boolean = Number.isFinite(initialTime) && (carriedTime > 0 || timePenalty > 0);
 
     function startRound(): void {
         if (stage.guide === "") setPhase("playing");
@@ -85,12 +87,13 @@ export function StageFlow() {
                 return;
             }
             setAttempt(attempt + 1);
-            setPhase("playing");
+            setPhase("eyecatch");
             return;
         }
         if (roundNo < stage.rounds) {
             setRoundNo(roundNo + 1);
             setAttempt(0);
+            setTimePenalty(0);
             setPhase("eyecatch");
             return;
         }
@@ -122,6 +125,7 @@ export function StageFlow() {
                     initialTime={initialTime}
                     timeIncrement={stage.timeIncrement}
                     nextLabel={nextLabel}
+                    resultNote={resultNote}
                     onGameEnd={handleGameEnd}
                     onNext={handleNext}
                 />
@@ -146,17 +150,28 @@ export function StageFlow() {
                     <div className="stage-message">
                         持ち時間 {Number.isFinite(initialTime) ? Math.floor(initialTime / 1000) + "秒" : "無制限"}
                     </div>
-                    {roundNo === 1 && (
+                    {hasTimeDetail && (
+                        <div className="stage-detail">
+                            <span>このステージ {Math.floor(stage.timeLimit / 1000)}秒</span>
+                            {carriedTime > 0 && (
+                                <span className="stage-detail-plus">＋ 繰り越し {Math.floor(carriedTime / 1000)}秒</span>
+                            )}
+                            {timePenalty > 0 && (
+                                <span className="stage-detail-minus">− 敗北ペナルティ {Math.floor(timePenalty / 1000)}秒</span>
+                            )}
+                        </div>
+                    )}
+                    {roundNo === 1 && attempt === 0 && (
                         <div className="stage-choice">
                             <div className="stage-message">先攻・後攻を選ぶ</div>
                             <button onClick={() => selectFirstMove(true)}>先攻（黒）</button>
                             <button onClick={() => selectFirstMove(false)}>後攻（白）</button>
                         </div>
                     )}
-                    {roundNo !== 1 && (
+                    {!(roundNo === 1 && attempt === 0) && (
                         <div className="stage-choice">
                             <div className="stage-message">
-                                ラウンド{roundNo} {playerIsBlack ? "先攻（黒）" : "後攻（白）"}
+                                {attempt > 0 ? "再挑戦" : "ラウンド" + roundNo} {playerIsBlack ? "先攻（黒）" : "後攻（白）"}
                             </div>
                             <button onClick={() => startRound()}>開始</button>
                         </div>
