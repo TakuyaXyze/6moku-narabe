@@ -1,13 +1,16 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { PlayGround } from "./PlayGround";
 import { Tips } from "./Tips";
+import { RuleScreen, ListScreen } from "./GameMenu";
 import { ComputerSetting } from "../computers/ComputerSetting";
 import "../styles/StageFlow.css";
 import "../styles/Field.css";
 
 type Phase = "eyecatch" | "guide" | "playing";
+
+type MenuScreen = "rule" | "hint" | null;
 
 type StageInfo = {
     stageNo: number;
@@ -17,28 +20,50 @@ type StageInfo = {
     timeIncrement: number;
     guide: string;
     field: string;
+    hints: string[];
 };
 
 const stageInfo: StageInfo[] = [
     {
         stageNo: 1, rounds: 1, timeLimit: Number.POSITIVE_INFINITY, timeIncrement: 0, guide: "", field: "morning",
         computer: { name: "素人", depth: 2, beamSize: 20, budget: 150000, sight: 1, defense: 0, orderDefense: 0, blunder: 0.5 },
+        hints: [
+            "この相手は止めにこない。自分の列を伸ばすことだけ考えればいい",
+            "持ち時間は無制限",
+        ],
     },
     {
         stageNo: 2, rounds: 2, timeLimit: 10000, timeIncrement: 5000, guide: "", field: "noon",
         computer: { name: "見習い", depth: 2, beamSize: 20, budget: 150000, sight: 3, defense: 0.7, orderDefense: 0.7, blunder: 0.45 },
+        hints: [
+            "持ち時間が設定される",
+            "持ち時間は石を置くたびに増える。迷うより先に置く",
+            "余った持ち時間の一部は次のステージへ持ち越される",
+        ],
     },
     {
         stageNo: 3, rounds: 2, timeLimit: 5000, timeIncrement: 2000, guide: "", field: "sunset",
         computer: { name: "門下生", depth: 2, beamSize: 20, budget: 150000, sight: 3, defense: 0.7, orderDefense: 0.7, blunder: 0.45 },
+        hints: [
+            "強さは見習いと同じ。違うのは持ち時間の短さだけ",
+            "石を十字やX形に並べると持ち時間が増える。活用するとゆとりを生み出せる",
+        ],
     },
     {
         stageNo: 4, rounds: 2, timeLimit: 20000, timeIncrement: 5000, guide: "", field: "dusk",
         computer: { name: "師範代", depth: 4, beamSize: 20, budget: 50000, sight: 4, defense: 1, orderDefense: 2, blunder: 0.4 },
+        hints: [
+            "先読みが深い。わかりやすい形は作る前に潰される",
+            "ミスをする確率は高い。相手の隙をつけるように、リーチを作り続ける",
+        ],
     },
     {
         stageNo: 5, rounds: 2, timeLimit: 20000, timeIncrement: 5000, guide: "", field: "hall",
         computer: { name: "師範", depth: 4, beamSize: 50, budget: 100000, sight: 5, defense: 1, orderDefense: 2, blunder: 0 },
+        hints: [
+            "この相手はなかなか間違えない",
+            "相手の列を見逃さず、止め続ける",
+        ],
     },
 ];
 
@@ -55,6 +80,9 @@ export function StageFlow() {
     const [lastWin, setLastWin] = useState(true);
     const [carriedTime, setCarriedTime] = useState(0);
     const [timePenalty, setTimePenalty] = useState(0);
+    const [isMenuOpen, setIsMenuOpen] = useState(false);
+    const [openScreen, setOpenScreen] = useState<MenuScreen>(null);
+    const menuArea = useRef<HTMLDivElement>(null);
 
     const allCleared: boolean = stageNo > stageInfo.length;
     const stage: StageInfo = stageInfo[Math.min(stageNo, stageInfo.length) - 1];
@@ -70,10 +98,42 @@ export function StageFlow() {
             : (penaltyApplies ? "敗北ペナルティ −" + Math.floor(TIME_PENALTY / 1000) + "秒" : ""));
     const hasTimeDetail: boolean = Number.isFinite(initialTime) && (carriedTime > 0 || timePenalty > 0);
 
+    const hasHint: boolean = stage.hints.length > 0;
+
     useEffect(() => {
         if (!allCleared) return;
         clappingSound();
     }, [allCleared])
+
+    useEffect(() => {
+        if (phase === "playing") return;
+        function handleEscapeKey(event: KeyboardEvent): void {
+            if (event.key !== "Escape") return;
+            if (openScreen !== null) {
+                setOpenScreen(null);
+                return;
+            }
+            setIsMenuOpen((isOpen) => !isOpen);
+        }
+        document.addEventListener("keydown", handleEscapeKey);
+        return () => document.removeEventListener("keydown", handleEscapeKey);
+    }, [openScreen, phase])
+
+    useEffect(() => {
+        if (!isMenuOpen) return;
+        function handleOutsideClick(event: MouseEvent): void {
+            if (menuArea.current && menuArea.current.contains(event.target as Node)) return;
+            event.stopPropagation();
+            setIsMenuOpen(false);
+        }
+        document.addEventListener("click", handleOutsideClick, true);
+        return () => document.removeEventListener("click", handleOutsideClick, true);
+    }, [isMenuOpen])
+
+    function openMenuScreen(screen: MenuScreen): void {
+        setOpenScreen(screen);
+        setIsMenuOpen(false);
+    }
 
     function startRound(): void {
         if (stage.guide === "") setPhase("playing");
@@ -197,6 +257,34 @@ export function StageFlow() {
                     <button onClick={() => setPhase("playing")}>開始</button>
                 </div>
             )}
+
+            {!allCleared && (
+                <div className="menu-area" ref={menuArea}>
+                    <button className="menu-button"
+                        onClick={() => setIsMenuOpen(!isMenuOpen)}
+                    >☰</button>
+                    {isMenuOpen &&
+                        <div className="menu-panel">
+                            <button onClick={() => openMenuScreen("rule")}>ルール説明</button>
+                            <button onClick={() => openMenuScreen("hint")}
+                                disabled={!hasHint}
+                            >ステージのヒント</button>
+                        </div>
+                    }
+                </div>
+            )}
+
+            {openScreen === "rule" &&
+                <RuleScreen onClose={() => setOpenScreen(null)} />
+            }
+
+            {openScreen === "hint" && hasHint &&
+                <ListScreen
+                    title={"ステージ" + stageNo + "　" + stage.computer.name}
+                    lines={stage.hints}
+                    onClose={() => setOpenScreen(null)}
+                />
+            }
 
             <div className="stage-demo-tool">
                 <span>デモ用</span>

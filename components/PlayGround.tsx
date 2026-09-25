@@ -1,6 +1,7 @@
 "use client";
 
 import { GameBoard } from "./GameBoard";
+import { RuleScreen } from "./GameMenu";
 import "../styles/PlayGround.css"
 import "../styles/GameBoard.css"
 import "../styles/GameInfo.css"
@@ -423,20 +424,7 @@ export function PlayGround({ playerIsBlack, computer, stageLabel, initialTime, t
                 }
             </div>
             {isRuleOpen &&
-                <div className="rule-screen">
-                    <div className="rule-panel">
-                        <div className="rule-title">ルール</div>
-                        <ul>
-                            <li>先に石を6つ直線に並べた方が勝ち。縦・横・斜めのどれでもよい</li>
-                            <li>手番は1手・2手・2手・2手…と進む。最初の1手だけ1つ、それ以降はどちらも2つずつ置く</li>
-                            <li>石は空いている交点ならどこにでも置ける。取ったり動かしたりはしない</li>
-                            <li>持ち時間は自分の手番でだけ減る。相手が考えている間は減らない</li>
-                            <li>石を1つ置くごとに持ち時間が少し増える</li>
-                            <li>持ち時間が尽きたら負け</li>
-                        </ul>
-                        <button onClick={() => setIsRuleOpen(false)}>閉じる</button>
-                    </div>
-                </div>
+                <RuleScreen onClose={() => setIsRuleOpen(false)} />
             }
             {undoConfirm !== null && continueGame &&
                 <div className="rule-screen">
