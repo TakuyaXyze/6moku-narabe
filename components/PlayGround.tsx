@@ -307,77 +307,103 @@ export function PlayGround({ playerIsBlack, computer, stageLabel, initialTime, t
     const pointerColor: (string | null)
         = (continueGame && (playerIsBlack === blackIsNext)) ? playerStoneColor : null;
 
+    const playerIsActive: boolean = continueGame && (playerIsBlack === blackIsNext);
+    const comBowlClass: string = "goishi-box-image-com"
+        + (!continueGame ? "" : (playerIsActive ? " bowl-waiting" : " bowl-active"));
+    const playerBowlClass: string = "goishi-box-image-player"
+        + (!continueGame ? "" : (playerIsActive ? " bowl-active" : " bowl-waiting"));
+
     return (
-        <div className="play-ground">
-            <div className="goishi-box-image-com">
-                {(playerIsBlack) &&
-                    <img src="goke-white.png"
-                        alt="white"
-                        width="96"
-                    />
-                }
-                {(!playerIsBlack) &&
-                    <img src="goke-black.png"
-                        alt="black"
-                        width="96"
-                    />
-                }
+        <div className="play-screen">
+            <div className="game-header">
+                <div className="stage-title">STAGE {stageLabel}</div>
             </div>
-            <div className="board-area">
-                <div className="turn-display">{thisTurnColor}</div>
-                <GameBoard
-                    boxes={history[currentMove]}
-                    handleClick={handleClick}
-                    pointerColor={pointerColor}
-                    markedMoves={markedMoves}
-                    winMoves={winMoves}
-                    crossMoves={crossMoves}
-                />
-                {blackIsNext !== playerIsBlack && continueGame &&
-                    <div className="computing-message">CPU考え中</div>
-                }
-                {!continueGame &&
-                    <div className="game-result">
-                        <div className="game-result-label">
-                            <div className="game-result-text">{timeIsUp ? "TIME UP" : (playerWins ? "WIN" : "LOSE")}</div>
-                            {resultNote !== "" &&
-                                <div className="game-result-note">{resultNote}</div>
+            <div className="play-ground">
+                <div className="com-area">
+                    <div className="side-block">
+                        <div className={comBowlClass}>
+                            {(playerIsBlack) &&
+                                <img src="goke-white.png"
+                                    alt="white"
+                                    width="96"
+                                />
+                            }
+                            {(!playerIsBlack) &&
+                                <img src="goke-black.png"
+                                    alt="black"
+                                    width="96"
+                                />
                             }
                         </div>
-                        <button className="game-result-button"
-                            onClick={() => onNext()}
-                        >{nextLabel}</button>
-                    </div>
-                }
-            </div>
-            <div className="game-info">
-                <div>Stage:{stageLabel}</div>
-                {hasTimeLimit &&
-                    <div className="remaining-time">
-                        <div className="time-bar">
-                            <div className={"time-bar-fill " + timeBarColor}
-                                style={{ width: (timeBarRatio * 100) + "%" }}
-                            />
+                        <div className="side-name">{computer.name}</div>
+                        <div className="side-stone-row">
+                            <span className={"side-stone " + (playerIsBlack ? "side-white" : "side-black")} />
+                            {playerIsBlack ? "後攻" : "先攻"}
                         </div>
-                        <div className={isHurrying ? "time-count time-count-hurry" : "time-count"}>{timeCount}</div>
-                        {bonusTime > 0 &&
-                            <div className="time-bonus">+{bonusTime / 1000}</div>
-                        }
                     </div>
-                }
-                <div className="goishi-box-image-player">
-                    {(!playerIsBlack) &&
-                        <img src="goke-white.png"
-                            alt="white"
-                            width="96"
-                        />
+                </div>
+                <div className="board-area">
+                    <div className="turn-display">{thisTurnColor}</div>
+                    <GameBoard
+                        boxes={history[currentMove]}
+                        handleClick={handleClick}
+                        pointerColor={pointerColor}
+                        markedMoves={markedMoves}
+                        winMoves={winMoves}
+                        crossMoves={crossMoves}
+                    />
+                    {blackIsNext !== playerIsBlack && continueGame &&
+                        <div className="computing-message">CPU考え中</div>
                     }
-                    {(playerIsBlack) &&
-                        <img src="goke-black.png"
-                            alt="black"
-                            width="96"
-                        />
+                    {!continueGame &&
+                        <div className="game-result">
+                            <div className="game-result-label">
+                                <div className="game-result-text">{timeIsUp ? "TIME UP" : (playerWins ? "WIN" : "LOSE")}</div>
+                                {resultNote !== "" &&
+                                    <div className="game-result-note">{resultNote}</div>
+                                }
+                            </div>
+                            <button className="game-result-button"
+                                onClick={() => onNext()}
+                            >{nextLabel}</button>
+                        </div>
                     }
+                </div>
+                <div className="game-info">
+                    {hasTimeLimit &&
+                        <div className="remaining-time">
+                            <div className="time-bar">
+                                <div className={"time-bar-fill " + timeBarColor}
+                                    style={{ width: (timeBarRatio * 100) + "%" }}
+                                />
+                            </div>
+                            <div className={isHurrying ? "time-count time-count-hurry" : "time-count"}>{timeCount}</div>
+                            {bonusTime > 0 &&
+                                <div className="time-bonus">+{bonusTime / 1000}</div>
+                            }
+                        </div>
+                    }
+                    <div className="side-block">
+                        <div className="side-name">あなた</div>
+                        <div className="side-stone-row">
+                            <span className={"side-stone " + (playerIsBlack ? "side-black" : "side-white")} />
+                            {playerIsBlack ? "先攻" : "後攻"}
+                        </div>
+                        <div className={playerBowlClass}>
+                            {(!playerIsBlack) &&
+                                <img src="goke-white.png"
+                                    alt="white"
+                                    width="96"
+                                />
+                            }
+                            {(playerIsBlack) &&
+                                <img src="goke-black.png"
+                                    alt="black"
+                                    width="96"
+                                />
+                            }
+                        </div>
+                    </div>
                 </div>
             </div>
             <div className="menu-area" ref={menuArea}>
@@ -386,7 +412,6 @@ export function PlayGround({ playerIsBlack, computer, stageLabel, initialTime, t
                 >☰</button>
                 {isMenuOpen &&
                     <div className="menu-panel">
-                        <div className="gamemode">相手: {computer.name}</div>
                         <button onClick={() => openUndoConfirm("back")}
                             disabled={!continueGame || currentMove === 0}
                         >1つ戻る</button>

@@ -1,12 +1,90 @@
+.play-screen {
+    display: flex;
+    flex-direction: column;
+    margin: 0;
+    height: 92%;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.game-header {
+    flex: 0 0 36px;
+    display: flex;
+    align-items: center;
+    padding: 0 48px 0 16px;
+    box-sizing: border-box;
+}
+
+.stage-title {
+    font-size: 18px;
+    font-weight: bold;
+    letter-spacing: 0.08em;
+}
+
 .play-ground {
     display: flex;
     flex-direction: row;
     justify-content: center;
-    margin: 0;
-    height: 92%;
+    flex: 1;
+    min-height: 0;
     width: 100%;
-    padding-top: 20px;
     box-sizing: border-box;
+}
+
+.com-area {
+    width: 190px;
+    margin-right: 2.3%;
+    display: flex;
+    flex-direction: column;
+}
+
+.side-block {
+    display: flex;
+    flex-direction: column;
+}
+
+.game-info .side-block {
+    margin-top: auto;
+}
+
+.side-name {
+    margin-top: 8px;
+    font-size: 16px;
+    font-weight: bold;
+}
+
+.game-info .side-name {
+    text-align: right;
+}
+
+.side-stone-row {
+    margin-top: 4px;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 6px;
+    font-size: 13px;
+    color: #5a5a5a;
+}
+
+.game-info .side-stone-row {
+    justify-content: flex-end;
+}
+
+.side-stone {
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    border: 1px solid #8a8a8a;
+    box-sizing: border-box;
+}
+
+.side-black {
+    background-color: #0a0a0b;
+}
+
+.side-white {
+    background-color: #fafafa;
 }
 
 .board-area {
@@ -22,14 +100,25 @@
     height: 24px;
 }
 
-.goishi-box-image-com {
-    margin-top: 24px;
-}
-
 .goishi-box-image-player {
-    margin-top: auto;
+    margin-top: 6px;
     display: flex;
     justify-content: flex-end;
+}
+
+.goishi-box-image-com img,
+.goishi-box-image-player img {
+    transition: filter 0.3s ease, opacity 0.3s ease, transform 0.3s ease;
+}
+
+.bowl-waiting img {
+    filter: grayscale(0.4) brightness(0.9);
+    opacity: 0.65;
+}
+
+.bowl-active img {
+    transform: translateY(-4px);
+    filter: drop-shadow(0 6px 10px rgba(0, 0, 0, 0.3));
 }
 
 .computing-message {
