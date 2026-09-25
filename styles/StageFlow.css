@@ -65,3 +65,42 @@
 .stage-detail-minus {
     color: #b3423a;
 }
+
+.clear-panel {
+    gap: 20px;
+    animation: clear-appear 0.7s ease-out;
+}
+
+.clear-title {
+    font-size: 52px;
+    color: #c8951f;
+    text-shadow: 0 2px 6px rgba(200, 149, 31, 0.35);
+}
+
+.clear-message {
+    font-size: 20px;
+    font-weight: bold;
+    letter-spacing: 0.05em;
+}
+
+.clear-button {
+    width: 180px;
+    padding: 8px 0;
+    font-size: 16px;
+}
+
+@keyframes clear-appear {
+    0% {
+        opacity: 0;
+        transform: scale(0.94);
+    }
+
+    60% {
+        opacity: 1;
+    }
+
+    100% {
+        opacity: 1;
+        transform: scale(1);
+    }
+}

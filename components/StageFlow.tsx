@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { PlayGround } from "./PlayGround";
 import { Tips } from "./Tips";
 import { ComputerSetting } from "../computers/ComputerSetting";
@@ -68,6 +68,11 @@ export function StageFlow() {
             : (penaltyApplies ? "敗北ペナルティ −" + Math.floor(TIME_PENALTY / 1000) + "秒" : ""));
     const hasTimeDetail: boolean = Number.isFinite(initialTime) && (carriedTime > 0 || timePenalty > 0);
 
+    useEffect(() => {
+        if (!allCleared) return;
+        clappingSound();
+    }, [allCleared])
+
     function startRound(): void {
         if (stage.guide === "") setPhase("playing");
         else setPhase("guide");
@@ -109,7 +114,7 @@ export function StageFlow() {
     }
 
     function jumpToStage(nextStageNo: number): void {
-        if (nextStageNo < 1 || nextStageNo > stageInfo.length) return;
+        if (nextStageNo < 1 || nextStageNo > stageInfo.length + 1) return;
         setStageNo(nextStageNo);
         setRoundNo(1);
         setAttempt(0);
@@ -142,9 +147,10 @@ export function StageFlow() {
         <div className="stage-screen">
 
             {phase === "eyecatch" && allCleared && (
-                <div className="stage-panel">
-                    <div className="stage-number">ALL CLEAR</div>
-                    <button onClick={() => jumpToStage(1)}>最初から</button>
+                <div className="stage-panel clear-panel">
+                    <div className="stage-number clear-title">ALL CLEAR</div>
+                    <div className="clear-message">全ステージクリアおめでとう</div>
+                    <button className="clear-button" onClick={() => jumpToStage(1)}>最初から</button>
                 </div>
             )}
 
@@ -194,8 +200,15 @@ export function StageFlow() {
                 <span>デモ用</span>
                 <button onClick={() => jumpToStage(stageNo - 1)}>前のステージ</button>
                 <button onClick={() => jumpToStage(stageNo + 1)}>次のステージ</button>
+                <button onClick={() => jumpToStage(stageInfo.length + 1)}>クリア画面</button>
             </div>
 
         </div>
     );
+}
+
+function clappingSound(): void {
+    const sound = new Audio("/sounds/clapping.mp3");
+    sound.volume = 0.8;
+    sound.play().catch((error) => console.log("SE再生に失敗:", error));
 }
