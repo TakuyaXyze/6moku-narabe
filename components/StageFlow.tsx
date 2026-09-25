@@ -5,6 +5,7 @@ import { PlayGround } from "./PlayGround";
 import { Tips } from "./Tips";
 import { ComputerSetting } from "../computers/ComputerSetting";
 import "../styles/StageFlow.css";
+import "../styles/Field.css";
 
 type Phase = "eyecatch" | "guide" | "playing";
 
@@ -15,27 +16,28 @@ type StageInfo = {
     timeLimit: number;
     timeIncrement: number;
     guide: string;
+    field: string;
 };
 
 const stageInfo: StageInfo[] = [
     {
-        stageNo: 1, rounds: 1, timeLimit: Number.POSITIVE_INFINITY, timeIncrement: 0, guide: "",
+        stageNo: 1, rounds: 1, timeLimit: Number.POSITIVE_INFINITY, timeIncrement: 0, guide: "", field: "morning",
         computer: { name: "素人", depth: 2, beamSize: 20, budget: 150000, sight: 1, defense: 0, orderDefense: 0, blunder: 0.5 },
     },
     {
-        stageNo: 2, rounds: 2, timeLimit: 10000, timeIncrement: 5000, guide: "",
+        stageNo: 2, rounds: 2, timeLimit: 10000, timeIncrement: 5000, guide: "", field: "noon",
         computer: { name: "見習い", depth: 2, beamSize: 20, budget: 150000, sight: 3, defense: 0.7, orderDefense: 0.7, blunder: 0.45 },
     },
     {
-        stageNo: 3, rounds: 2, timeLimit: 5000, timeIncrement: 2000, guide: "",
+        stageNo: 3, rounds: 2, timeLimit: 5000, timeIncrement: 2000, guide: "", field: "sunset",
         computer: { name: "門下生", depth: 2, beamSize: 20, budget: 150000, sight: 3, defense: 0.7, orderDefense: 0.7, blunder: 0.45 },
     },
     {
-        stageNo: 4, rounds: 2, timeLimit: 20000, timeIncrement: 5000, guide: "",
+        stageNo: 4, rounds: 2, timeLimit: 20000, timeIncrement: 5000, guide: "", field: "dusk",
         computer: { name: "師範代", depth: 4, beamSize: 20, budget: 50000, sight: 4, defense: 1, orderDefense: 2, blunder: 0.4 },
     },
     {
-        stageNo: 5, rounds: 2, timeLimit: 20000, timeIncrement: 5000, guide: "",
+        stageNo: 5, rounds: 2, timeLimit: 20000, timeIncrement: 5000, guide: "", field: "hall",
         computer: { name: "師範", depth: 4, beamSize: 50, budget: 100000, sight: 5, defense: 1, orderDefense: 2, blunder: 0 },
     },
 ];
@@ -125,7 +127,7 @@ export function StageFlow() {
 
     if (phase === "playing") {
         return (
-            <>
+            <div className={"stage-field field-" + stage.field}>
                 <PlayGround
                     key={stageNo + "-" + roundNo + "-" + attempt}
                     playerIsBlack={playerIsBlack}
@@ -139,7 +141,7 @@ export function StageFlow() {
                     onNext={handleNext}
                 />
                 <Tips />
-            </>
+            </div>
         );
     }
 
