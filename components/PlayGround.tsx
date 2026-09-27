@@ -229,17 +229,6 @@ export function PlayGround({ playerIsBlack, computer, stageLabel, initialTime, t
         setUndoConfirm(null);
     }
 
-    let result;
-    if (blackIsWinner) {
-        result = 'Winner: black';
-    } else if (whiteIsWinner) {
-        result = 'Winner: white';
-    } else if (timeIsUp) {
-        result = "time up";
-    } else if (isDraw) {
-        result = "draw";
-    }
-
     const blackIsNext = checkBlackIsNext(currentMove);
 
     function printTimer(time: number): string {
@@ -296,8 +285,6 @@ export function PlayGround({ playerIsBlack, computer, stageLabel, initialTime, t
     const markedMoves = lastMoves.filter((move) => history[currentMove][move.rowNo][move.columnNo] !== playerStoneColor);
     const winMoves = (blackIsWinner || whiteIsWinner) ? detectWinLine(history[currentMove]) : [];
 
-    const thisTurnColor = (continueGame ? 'Next Player:' + (blackIsNext ? 'black' : 'white') : result);
-
     const shownTime: number = Math.max(remainingTime, 0);
     const timeBarRatio: number = Math.min(shownTime / TIME_BAR_FULL, 1);
     const timeBarColor: string = (timeBarRatio >= TIME_BAR_YELLOW_RATIO) ? "time-bar-green"
@@ -344,7 +331,6 @@ export function PlayGround({ playerIsBlack, computer, stageLabel, initialTime, t
                     </div>
                 </div>
                 <div className="board-area">
-                    <div className="turn-display">{thisTurnColor}</div>
                     <GameBoard
                         boxes={history[currentMove]}
                         handleClick={handleClick}

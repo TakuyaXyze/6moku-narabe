@@ -95,11 +95,6 @@
     position: relative;
 }
 
-.turn-display {
-    font-size: 16px;
-    height: 24px;
-}
-
 .goishi-box-image-player {
     margin-top: 6px;
     display: flex;
@@ -123,7 +118,7 @@
 
 .computing-message {
     position: absolute;
-    top: calc(24px + 45%);
+    top: 45%;
     left: 50%;
     transform: translate(-50%, -50%);
     padding: 10px 28px;
