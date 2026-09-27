@@ -3,6 +3,7 @@
 import { useState, useEffect, useRef } from "react";
 import { PlayGround } from "./PlayGround";
 import { Tips } from "./Tips";
+import { playSound } from "./Sounds";
 import { RuleScreen, ListScreen } from "./GameMenu";
 import { ComputerSetting } from "../computers/ComputerSetting";
 import "../styles/StageFlow.css";
@@ -103,7 +104,7 @@ export function StageFlow() {
 
     useEffect(() => {
         if (!allCleared) return;
-        clappingSound();
+        playSound("clapping");
     }, [allCleared])
 
     useEffect(() => {
@@ -296,10 +297,4 @@ export function StageFlow() {
 
         </div>
     );
-}
-
-function clappingSound(): void {
-    const sound = new Audio("/sounds/clapping.mp3");
-    sound.volume = 0.8;
-    sound.play().catch((error) => console.log("SE再生に失敗:", error));
 }

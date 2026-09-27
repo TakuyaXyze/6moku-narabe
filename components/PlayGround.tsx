@@ -1,6 +1,7 @@
 "use client";
 
 import { GameBoard } from "./GameBoard";
+import { playSound } from "./Sounds";
 import { RuleScreen } from "./GameMenu";
 import "../styles/PlayGround.css"
 import "../styles/GameBoard.css"
@@ -64,7 +65,7 @@ export function PlayGround({ playerIsBlack, computer, stageLabel, initialTime, t
 
     useEffect(() => {
         if (!cpuIsSettling) return;
-        const soundId = setTimeout(() => stonePlaceSound(), BLINK_TIME);
+        const soundId = setTimeout(() => playSound("place"), BLINK_TIME);
         const clearId = setTimeout(() => setCpuIsSettling(false),
             BLINK_TIME + (continueGame ? 0 : RESULT_DELAY));
         return () => {
@@ -76,8 +77,8 @@ export function PlayGround({ playerIsBlack, computer, stageLabel, initialTime, t
     useEffect(() => {
         if (continueGame) return;
         if (cpuIsSettling) return;
-        if (timeIsUp) timeupSound();
-        else if (blackIsWinner || whiteIsWinner) winSound();
+        if (timeIsUp) playSound("timeup");
+        else if (blackIsWinner || whiteIsWinner) playSound("win");
         onGameEnd(playerWins, Math.max(remainingTime, 0));
     }, [continueGame, cpuIsSettling])
 
@@ -117,14 +118,14 @@ export function PlayGround({ playerIsBlack, computer, stageLabel, initialTime, t
         if (secondRowNo == undefined || secondColumnNo == undefined) {
             if (blackIsNext === playerIsBlack) rewardCross(nextBoxes, color);
             handlePlay(nextBoxes);
-            if (blackIsNext === playerIsBlack) stonePlaceSound();
+            if (blackIsNext === playerIsBlack) playSound("place");
             else setCpuIsSettling(true);
             return;
         }
         nextBoxes[secondRowNo][secondColumnNo] = color;
         if (blackIsNext === playerIsBlack) rewardCross(nextBoxes, color);
         handlePlayDouble(nextBoxes);
-        if (blackIsNext === playerIsBlack) stonePlaceSound();
+        if (blackIsNext === playerIsBlack) playSound("place");
         else setCpuIsSettling(true);
     }
 
@@ -140,7 +141,7 @@ export function PlayGround({ playerIsBlack, computer, stageLabel, initialTime, t
         setRemainingTime((time) => time + CROSS_BONUS * count);
         setBonusTime(CROSS_BONUS * count);
         setCrossMoves(newCrosses.flatMap((cross) => crossCells(cross)));
-        recoveringSound();
+        playSound("recovering");
     }
 
     useEffect(() => {
@@ -177,7 +178,7 @@ export function PlayGround({ playerIsBlack, computer, stageLabel, initialTime, t
             return;
         }
         lastCountedSecond.current = second;
-        if (COUNTDOWN_SECONDS.includes(second)) warningSound();
+        if (COUNTDOWN_SECONDS.includes(second)) playSound("warning");
     }, [remainingTime])
 
     //処理時間の計測
@@ -464,36 +465,6 @@ function getLastMoves(history: (string | null)[][][], currentMove: number): Move
         return detectStoneChange(history[i], history[currentMove]);
     }
     return [];
-}
-
-function stonePlaceSound(): void {
-    const sound = new Audio("/sounds/place-stone.mp3");
-    sound.volume = 0.8;
-    sound.play().catch((error) => console.log("SE再生に失敗:", error));
-}
-
-function warningSound(): void {
-    const sound = new Audio("/sounds/warning-single.mp3");
-    sound.volume = 0.8;
-    sound.play().catch((error) => console.log("SE再生に失敗:", error));
-}
-
-function winSound(): void {
-    const sound = new Audio("/sounds/win.mp3");
-    sound.volume = 0.8;
-    sound.play().catch((error) => console.log("SE再生に失敗:", error));
-}
-
-function recoveringSound(): void {
-    const sound = new Audio("/sounds/recovering.mp3");
-    sound.volume = 0.8;
-    sound.play().catch((error) => console.log("SE再生に失敗:", error));
-}
-
-function timeupSound(): void {
-    const sound = new Audio("/sounds/timeup.mp3");
-    sound.volume = 0.8;
-    sound.play().catch((error) => console.log("SE再生に失敗:", error));
 }
 
 function isFirstPlayerTurn(move: number, playerIsBlack: boolean): boolean {
