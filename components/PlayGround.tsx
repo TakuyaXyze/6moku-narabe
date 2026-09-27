@@ -31,6 +31,8 @@ const COUNTDOWN_TIME = 10000;
 const COUNTDOWN_SECONDS = [10, 5, 4, 3, 2, 1];
 const COMPUTER_START_DELAY = 300;
 const COMPUTER_MIN_TIME = 1500;
+const BLINK_TIME = 1500;
+const RESULT_DELAY = 400;
 const CROSS_BONUS = 3000;
 const BONUS_DISPLAY_TIME = 2600;
 const UNDO_EXTRA_PENALTY = 1000;
@@ -67,12 +69,26 @@ export function PlayGround({ playerIsBlack, computer, stageLabel, initialTime, t
     const continueGame: boolean = !blackIsWinner && !whiteIsWinner && !isDraw && !timeIsUp;
     const playerWins: boolean = !isDraw && !timeIsUp && (blackIsWinner === playerIsBlack);
 
+    const [cpuIsSettling, setCpuIsSettling] = useState(false);
+
+    useEffect(() => {
+        if (!cpuIsSettling) return;
+        const soundId = setTimeout(() => stonePlaceSound(), BLINK_TIME);
+        const clearId = setTimeout(() => setCpuIsSettling(false),
+            BLINK_TIME + (continueGame ? 0 : RESULT_DELAY));
+        return () => {
+            clearTimeout(soundId);
+            clearTimeout(clearId);
+        };
+    }, [cpuIsSettling, continueGame])
+
     useEffect(() => {
         if (continueGame) return;
+        if (cpuIsSettling) return;
         if (timeIsUp) timeupSound();
         else if (blackIsWinner || whiteIsWinner) winSound();
         onGameEnd(playerWins, Math.max(remainingTime, 0));
-    }, [continueGame])
+    }, [continueGame, cpuIsSettling])
 
     function handlePlay(nextBoxes: (string | null)[][]): void {
         const nextHistory = [...history.slice(0, currentMove + 1), nextBoxes];
@@ -89,6 +105,7 @@ export function PlayGround({ playerIsBlack, computer, stageLabel, initialTime, t
     function handleClick(rowNo: number, columnNo: number): void {
         const blackIsNext = checkBlackIsNext(currentMove);
         if (!continueGame) return;
+        if (cpuIsSettling) return;
         if (history[currentMove][rowNo][columnNo] || blackIsNext !== playerIsBlack) {//空白のときのみ配置可能
             return;
         }
@@ -109,13 +126,15 @@ export function PlayGround({ playerIsBlack, computer, stageLabel, initialTime, t
         if (secondRowNo == undefined || secondColumnNo == undefined) {
             if (blackIsNext === playerIsBlack) rewardCross(nextBoxes, color);
             handlePlay(nextBoxes);
-            stonePlaceSound();
+            if (blackIsNext === playerIsBlack) stonePlaceSound();
+            else setCpuIsSettling(true);
             return;
         }
         nextBoxes[secondRowNo][secondColumnNo] = color;
         if (blackIsNext === playerIsBlack) rewardCross(nextBoxes, color);
         handlePlayDouble(nextBoxes);
-        stonePlaceSound();
+        if (blackIsNext === playerIsBlack) stonePlaceSound();
+        else setCpuIsSettling(true);
     }
 
     const [bonusTime, setBonusTime] = useState(0);
@@ -143,7 +162,7 @@ export function PlayGround({ playerIsBlack, computer, stageLabel, initialTime, t
     }, [bonusTime])
 
 
-    const playerIsThinking: boolean = continueGame && hasTimeLimit && (checkBlackIsNext(currentMove) === playerIsBlack);
+    const playerIsThinking: boolean = continueGame && hasTimeLimit && !cpuIsSettling && (checkBlackIsNext(currentMove) === playerIsBlack);
     const [isRuleOpen, setIsRuleOpen] = useState(false);
 
     useEffect(() => {
@@ -205,6 +224,7 @@ export function PlayGround({ playerIsBlack, computer, stageLabel, initialTime, t
     }, [history, currentMove])
 
     function jumpTo(nextMove: number) {
+        setCpuIsSettling(false);
         setCurrentMove(nextMove);
     }
 
@@ -262,7 +282,7 @@ export function PlayGround({ playerIsBlack, computer, stageLabel, initialTime, t
 
     const lastMoves = getLastMoves(history, currentMove);
     const markedMoves = lastMoves.filter((move) => history[currentMove][move.rowNo][move.columnNo] !== playerStoneColor);
-    const winMoves = (blackIsWinner || whiteIsWinner) ? detectWinLine(history[currentMove]) : [];
+    const winMoves = ((blackIsWinner || whiteIsWinner) && !cpuIsSettling) ? detectWinLine(history[currentMove]) : [];
 
     const shownTime: number = Math.max(remainingTime, 0);
     const timeBarRatio: number = Math.min(shownTime / TIME_BAR_FULL, 1);
@@ -272,9 +292,9 @@ export function PlayGround({ playerIsBlack, computer, stageLabel, initialTime, t
     const timeCount: string = isHurrying ? (shownTime / 1000).toFixed(1) : String(Math.ceil(shownTime / 1000));
 
     const pointerColor: (string | null)
-        = (continueGame && (playerIsBlack === blackIsNext)) ? playerStoneColor : null;
+        = (continueGame && !cpuIsSettling && (playerIsBlack === blackIsNext)) ? playerStoneColor : null;
 
-    const playerIsActive: boolean = continueGame && (playerIsBlack === blackIsNext);
+    const playerIsActive: boolean = continueGame && !cpuIsSettling && (playerIsBlack === blackIsNext);
     const comBowlClass: string = "goishi-box-image-com"
         + (!continueGame ? "" : (playerIsActive ? " bowl-waiting" : " bowl-active"));
     const playerBowlClass: string = "goishi-box-image-player"
@@ -321,7 +341,7 @@ export function PlayGround({ playerIsBlack, computer, stageLabel, initialTime, t
                     {blackIsNext !== playerIsBlack && continueGame &&
                         <div className="computing-message">CPU考え中</div>
                     }
-                    {!continueGame &&
+                    {!continueGame && !cpuIsSettling &&
                         <div className="game-result">
                             <div className="game-result-label">
                                 <div className="game-result-text">{timeIsUp ? "TIME UP" : (playerWins ? "WIN" : "LOSE")}</div>
