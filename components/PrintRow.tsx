@@ -1,5 +1,5 @@
 import { PrintBox } from "./PrintBox";
-import { columnNos } from "./PlayGround"
+import { columnNos } from "../computers/GameRule"
 import { MoveCoordinate } from "../computers/Evaluate";
 
 type Props = {

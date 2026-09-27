@@ -2,6 +2,15 @@ export const ROWS = 19;
 export const COLUMNS = ROWS;
 export const SEQUENCE_LENGTH = 6; //MAX6
 
+export const rowNos = new Array<number>;
+for (let i = 0; i < ROWS; i++) {
+    rowNos.push(i);
+}
+export const columnNos = new Array<number>;
+for (let i = 0; i < COLUMNS; i++) {
+    columnNos.push(i);
+}
+
 export function checkBlackIsNext(currentMove: number): boolean {
     /*
     0 void  next black true

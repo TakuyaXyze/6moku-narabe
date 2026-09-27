@@ -2,7 +2,7 @@
 
 import "../styles/GameBoard.css"
 import { PrintRow } from "./PrintRow";
-import { rowNos } from "./PlayGround";
+import { rowNos } from "../computers/GameRule";
 import { MoveCoordinate } from "../computers/Evaluate";
 
 type Props = {

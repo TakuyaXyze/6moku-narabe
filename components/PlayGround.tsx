@@ -14,15 +14,6 @@ import { ComputerSetting } from "../computers/ComputerSetting";
 import type { ComputerRequest, ComputerResponse } from "../computers/ComputerWorker";
 import { ROWS, COLUMNS, SEQUENCE_LENGTH, checkBlackIsNext } from "../computers/GameRule";
 
-export const rowNos = new Array<number>;
-for (let i = 0; i < ROWS; i++) {
-    rowNos.push(i);
-}
-export const columnNos = new Array<number>;
-for (let i = 0; i < COLUMNS; i++) {
-    columnNos.push(i);
-}
-
 const TIMER_INTERVAL = 100;
 const TIME_BAR_FULL = 60000;
 const TIME_BAR_YELLOW_RATIO = 0.4;
