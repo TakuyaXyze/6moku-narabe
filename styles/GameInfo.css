@@ -8,10 +8,6 @@
     overflow: visible;
 }
 
-.gamemode {
-    font-size: 12px;
-}
-
 .remaining-time {
     position: relative;
     margin: 51px 3px 3px;
@@ -189,17 +185,4 @@
     display: flex;
     flex-direction: row;
     gap: 12px;
-}
-
-.select-game-mode {
-    display: flex;
-    flex-direction: column;
-}
-
-.search-info {
-    font-size: small;
-    position: absolute;
-    background-color: rgba(174, 174, 174, 0.95);
-    padding: 2.5px;
-    border-radius: 2px;
 }

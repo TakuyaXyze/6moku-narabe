@@ -9,7 +9,7 @@ export function detectSequence(boxes: (string | null)[][], color: string): numbe
         againstColor = "b"
     }
     //横並びの連続の判定
-    let blockCount = new Array<number>(SEQUENCE_LENGTH - 1).fill(0); //塊の個数を保持
+    const blockCount = new Array<number>(SEQUENCE_LENGTH - 1).fill(0); //塊の個数を保持
 
     for (let i = 0; i < ROWS; i++) { // i:行数番号
         for (let j = 0; j < COLUMNS - SEQUENCE_LENGTH + 1; j++) { // j:列数番号

@@ -1,6 +1,5 @@
 import { checkBlackIsNext } from "./GameRule";
 import { BoardState } from "./BoardState";
-import { BoardTrail } from "./BoardTrail";
 import { Search } from "./Evaluate"
 import { MoveCoordinate } from "./Evaluate";
 
@@ -15,7 +14,7 @@ export class Depth1Search extends Search {
         if (moves == null) return null;
         else size = moves.length;
         // 最良の手が複数あるのでそれを管理する
-        let bestMoves = new Array;
+        let bestMoves: MoveCoordinate[] = [];
         // 最良の手の値を負の無限大に設定しておく
         let bestVal: number = Number.NEGATIVE_INFINITY;
         for (let i = 0; i < size; i++) {
@@ -25,17 +24,16 @@ export class Depth1Search extends Search {
             //trailに保存
             const trail = bstate.doMove(move);
             // 評価値を計算
-            let moveVal: number;
-            let blackIsNext = checkBlackIsNext(bstate.currentMove);
+            const blackIsNext = checkBlackIsNext(bstate.currentMove);
             //console.log("AfterdoMove-boxes: currentMove:" + bstate.currentMove + " blackIsNext:" + blackIsNext);
-            moveVal = bstate.eval();
+            const moveVal: number = bstate.eval();
             //trailから戻す
             bstate.undoMove(trail);
             //console.log("Depth1Search-moveVal:" + moveVal);
             // 評価値がこれまでのbestを超えた時
             if (bestVal < moveVal) {
                 bestVal = moveVal;
-                bestMoves = new Array;//bestが更新されたので、それまでのbestを削除するために新規でnew
+                bestMoves = [];//bestが更新されたので、それまでのbestを削除するために新規でnew
                 bestMoves.push(move);
             }
             // 評価値がこれまでのbestと同じ時

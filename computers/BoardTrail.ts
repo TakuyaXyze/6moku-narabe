@@ -3,7 +3,7 @@ import { TrailStack } from "./Evaluate";
 export class BoardTrail extends TrailStack {
     public _rowNo: number;
     public _columnNo: number;
-    public boxTrail = new Array();
+    public boxTrail: number[] = [];
     public constructor(rowNo: number, columnNo: number) {
         super()
         this._rowNo = rowNo;

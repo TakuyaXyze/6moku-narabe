@@ -14,11 +14,11 @@ import { ComputerSetting } from "../computers/ComputerSetting";
 import type { ComputerRequest, ComputerResponse } from "../computers/ComputerWorker";
 import { ROWS, COLUMNS, SEQUENCE_LENGTH, checkBlackIsNext } from "../computers/GameRule";
 
-export let rowNos = new Array<number>;
+export const rowNos = new Array<number>;
 for (let i = 0; i < ROWS; i++) {
     rowNos.push(i);
 }
-export let columnNos = new Array<number>;
+export const columnNos = new Array<number>;
 for (let i = 0; i < COLUMNS; i++) {
     columnNos.push(i);
 }
@@ -231,27 +231,6 @@ export function PlayGround({ playerIsBlack, computer, stageLabel, initialTime, t
 
     const blackIsNext = checkBlackIsNext(currentMove);
 
-    function printTimer(time: number): string {
-        let word: string;
-        let minute = Math.floor((time * 0.001) / 60);
-        let minuteString;
-        if (minute >= 10) minuteString = String(minute);
-        else if (minute > 0) minuteString = "0" + String(minute);
-        else minuteString = "00"
-        let sec = Math.floor((time * 0.001) % 60);
-        let secString;
-        if (sec >= 10) secString = String(sec);
-        else if (sec > 0) secString = "0" + String(sec);
-        else secString = "00"
-        let millisec = time - Math.floor(time * 0.001) * 1000;
-        let millisecString
-        if (millisec >= 100) millisecString = String(millisec);
-        else if (millisec >= 10) millisecString = "0" + String(millisec);
-        else if (millisec > 0) millisecString = "0" + String(millisec);
-        else millisecString = "000"
-        word = minuteString + ":" + secString + "." + millisecString;
-        return word;
-    }
     const [isMenuOpen, setIsMenuOpen] = useState(false);
     const menuArea = useRef<HTMLDivElement>(null);
 
@@ -432,6 +411,26 @@ export function PlayGround({ playerIsBlack, computer, stageLabel, initialTime, t
     );
 }
 
+function printTimer(time: number): string {
+    const minute = Math.floor((time * 0.001) / 60);
+    let minuteString;
+    if (minute >= 10) minuteString = String(minute);
+    else if (minute > 0) minuteString = "0" + String(minute);
+    else minuteString = "00"
+    const sec = Math.floor((time * 0.001) % 60);
+    let secString;
+    if (sec >= 10) secString = String(sec);
+    else if (sec > 0) secString = "0" + String(sec);
+    else secString = "00"
+    const millisec = time - Math.floor(time * 0.001) * 1000;
+    let millisecString
+    if (millisec >= 100) millisecString = String(millisec);
+    else if (millisec >= 10) millisecString = "0" + String(millisec);
+    else if (millisec > 0) millisecString = "0" + String(millisec);
+    else millisecString = "000"
+    return minuteString + ":" + secString + "." + millisecString;
+}
+
 function detectStoneChange(before: (string | null)[][], after: (string | null)[][]): MoveCoordinate[] {
     if (before === after) return [];
     if (!(before.length === after.length)) throw new Error("beforeとafterの配列の大きさが異なる");
@@ -440,7 +439,7 @@ function detectStoneChange(before: (string | null)[][], after: (string | null)[]
     for (let i = 0; i < length; i++) {
         for (let j = 0; j < length; j++) {
             if (before[i][j] === after[i][j]) continue;
-            let difference = new MoveCoordinate(i, j, undefined);
+            const difference = new MoveCoordinate(i, j, undefined);
             result.push(difference);
         }
     }

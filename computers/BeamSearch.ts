@@ -82,7 +82,7 @@ export class BeamSearch {
         //console.log("size=moves.length:" + size);
 
         // 最良の手が複数あるのでそれを管理する
-        let bestMoves = new Array<[number, DoubleMoveCoordinate]>;
+        const bestMoves = new Array<[number, DoubleMoveCoordinate]>;
         let count = 0;
         const evalDefense = bstate.defense;
         if (bstate.level > 2) bstate.defense = this._orderDefense;
