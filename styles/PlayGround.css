@@ -187,26 +187,3 @@
     font-size: 15px;
     white-space: nowrap;
 }
-
-@media screen and (max-aspect-ratio: 1.1998/1) {
-    .play-ground {
-        flex-direction: column;
-        justify-content: start;
-        height: 130%;
-    }
-
-    html,
-    body {
-        height: 130%;
-    }
-
-    .game-board {
-        height: 50%;
-        width: 100%;
-        aspect-ratio: 1/1;
-    }
-
-    .game-info {
-        height: 100%;
-    }
-}

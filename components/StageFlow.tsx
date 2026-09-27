@@ -7,6 +7,7 @@ import { RuleScreen, ListScreen } from "./GameMenu";
 import { ComputerSetting } from "../computers/ComputerSetting";
 import "../styles/StageFlow.css";
 import "../styles/Field.css";
+import "../styles/Portrait.css";
 
 type Phase = "eyecatch" | "guide" | "playing";
 

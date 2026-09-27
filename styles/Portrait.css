@@ -1,0 +1,93 @@
+@media screen and (max-aspect-ratio: 1.1998/1) {
+    .play-screen {
+        flex: 1 1 auto;
+        height: auto;
+        min-height: 0;
+    }
+
+    .game-header {
+        padding-right: 52px;
+    }
+
+    .play-ground {
+        flex-direction: column;
+        align-items: stretch;
+        justify-content: center;
+    }
+
+    .com-area {
+        width: 100%;
+        margin-right: 0;
+        flex: 0 0 auto;
+        padding: 0 8px 4px;
+        box-sizing: border-box;
+    }
+
+    .board-area {
+        width: 100%;
+        height: auto;
+        flex: 0 1 auto;
+        min-height: 0;
+        justify-content: center;
+    }
+
+    .game-board {
+        width: min(100%, calc(100vh - 200px));
+        width: round(down, min(100%, calc(100vh - 200px)), 19px);
+        height: auto;
+        aspect-ratio: 1/1;
+    }
+
+    .game-info {
+        width: 100%;
+        height: auto;
+        margin-left: 0;
+        flex: 0 0 auto;
+        flex-direction: row;
+        align-items: center;
+        padding: 6px 8px 0;
+        box-sizing: border-box;
+    }
+
+    .side-block {
+        flex-direction: row;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .game-info .side-block {
+        margin-top: 0;
+        margin-left: auto;
+    }
+
+    .side-name,
+    .side-stone-row,
+    .goishi-box-image-player {
+        margin-top: 0;
+    }
+
+    .goishi-box-image-com img,
+    .goishi-box-image-player img {
+        width: 52px;
+        height: auto;
+    }
+
+    .remaining-time {
+        margin: 0;
+        flex: 0 0 auto;
+    }
+
+    .time-bar {
+        width: 110px;
+        flex-grow: 0;
+    }
+
+    .time-count {
+        width: 42px;
+    }
+
+    .tips-bar {
+        flex: 0 0 auto;
+        height: 36px;
+    }
+}
