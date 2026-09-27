@@ -2,6 +2,7 @@
 
 import { GameBoard } from "./GameBoard";
 import { playSound } from "./Sounds";
+import { TimeBar } from "./TimeBar";
 import { RuleScreen } from "./GameMenu";
 import "../styles/PlayGround.css"
 import "../styles/GameBoard.css"
@@ -16,10 +17,6 @@ import type { ComputerRequest, ComputerResponse } from "../computers/ComputerWor
 import { ROWS, COLUMNS, SEQUENCE_LENGTH, checkBlackIsNext } from "../computers/GameRule";
 
 const TIMER_INTERVAL = 100;
-const TIME_BAR_FULL = 60000;
-const TIME_BAR_YELLOW_RATIO = 0.4;
-const TIME_BAR_RED_RATIO = 0.2;
-const COUNTDOWN_TIME = 10000;
 const COUNTDOWN_SECONDS = [10, 5, 4, 3, 2, 1];
 const COMPUTER_START_DELAY = 300;
 const COMPUTER_MIN_TIME = 1500;
@@ -276,13 +273,6 @@ export function PlayGround({ playerIsBlack, computer, stageLabel, initialTime, t
     const markedMoves = lastMoves.filter((move) => history[currentMove][move.rowNo][move.columnNo] !== playerStoneColor);
     const winMoves = ((blackIsWinner || whiteIsWinner) && !cpuIsSettling) ? detectWinLine(history[currentMove]) : [];
 
-    const shownTime: number = Math.max(remainingTime, 0);
-    const timeBarRatio: number = Math.min(shownTime / TIME_BAR_FULL, 1);
-    const timeBarColor: string = (timeBarRatio >= TIME_BAR_YELLOW_RATIO) ? "time-bar-green"
-        : ((timeBarRatio >= TIME_BAR_RED_RATIO) ? "time-bar-yellow" : "time-bar-red");
-    const isHurrying: boolean = shownTime <= COUNTDOWN_TIME;
-    const timeCount: string = isHurrying ? (shownTime / 1000).toFixed(1) : String(Math.ceil(shownTime / 1000));
-
     const pointerColor: (string | null)
         = (continueGame && !cpuIsSettling && (playerIsBlack === blackIsNext)) ? playerStoneColor : null;
 
@@ -349,17 +339,7 @@ export function PlayGround({ playerIsBlack, computer, stageLabel, initialTime, t
                 </div>
                 <div className="game-info">
                     {hasTimeLimit &&
-                        <div className="remaining-time">
-                            <div className="time-bar">
-                                <div className={"time-bar-fill " + timeBarColor}
-                                    style={{ width: (timeBarRatio * 100) + "%" }}
-                                />
-                            </div>
-                            <div className={isHurrying ? "time-count time-count-hurry" : "time-count"}>{timeCount}</div>
-                            {bonusTime > 0 &&
-                                <div className="time-bonus">+{bonusTime / 1000}</div>
-                            }
-                        </div>
+                        <TimeBar remainingTime={remainingTime} bonusTime={bonusTime} />
                     }
                     <div className="side-block">
                         <div className="side-name">あなた</div>
