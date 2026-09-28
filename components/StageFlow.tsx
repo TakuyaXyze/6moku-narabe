@@ -12,7 +12,7 @@ import "../styles/StageFlow.css";
 import "../styles/Field.css";
 import "../styles/Portrait.css";
 
-type Phase = "eyecatch" | "guide" | "playing";
+type Phase = "eyecatch" | "playing";
 
 type MenuScreen = "rule" | "hint" | null;
 
@@ -84,8 +84,7 @@ export function StageFlow() {
     }
 
     function startRound(): void {
-        if (stage.guide === "") setPhase("playing");
-        else setPhase("guide");
+        setPhase("playing");
     }
 
     function selectFirstMove(isBlack: boolean): void {
@@ -173,13 +172,6 @@ export function StageFlow() {
                     onSelectFirstMove={selectFirstMove}
                     onStart={startRound}
                 />
-            )}
-
-            {phase === "guide" && (
-                <div className="stage-panel">
-                    <div className="stage-message">{stage.guide}</div>
-                    <button onClick={() => setPhase("playing")}>開始</button>
-                </div>
             )}
 
             {!allCleared && (

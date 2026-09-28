@@ -6,14 +6,13 @@ export type StageInfo = {
     computer: ComputerSetting;
     timeLimit: number;
     timeIncrement: number;
-    guide: string;
     field: string;
     hints: string[];
 };
 
 export const stageInfo: StageInfo[] = [
     {
-        stageNo: 1, rounds: 1, timeLimit: Number.POSITIVE_INFINITY, timeIncrement: 0, guide: "", field: "morning",
+        stageNo: 1, rounds: 1, timeLimit: Number.POSITIVE_INFINITY, timeIncrement: 0, field: "morning",
         computer: { name: "素人", depth: 2, beamSize: 20, budget: 150000, sight: 1, defense: 0, orderDefense: 0, blunder: 0.5 },
         hints: [
             "この相手は止めにこない。自分の列を伸ばすことだけ考えればいい",
@@ -21,7 +20,7 @@ export const stageInfo: StageInfo[] = [
         ],
     },
     {
-        stageNo: 2, rounds: 2, timeLimit: 10000, timeIncrement: 5000, guide: "", field: "noon",
+        stageNo: 2, rounds: 2, timeLimit: 10000, timeIncrement: 5000, field: "noon",
         computer: { name: "見習い", depth: 2, beamSize: 20, budget: 150000, sight: 3, defense: 0.7, orderDefense: 0.7, blunder: 0.45 },
         hints: [
             "持ち時間が設定される",
@@ -30,7 +29,7 @@ export const stageInfo: StageInfo[] = [
         ],
     },
     {
-        stageNo: 3, rounds: 2, timeLimit: 5000, timeIncrement: 2000, guide: "", field: "sunset",
+        stageNo: 3, rounds: 2, timeLimit: 5000, timeIncrement: 2000, field: "sunset",
         computer: { name: "門下生", depth: 2, beamSize: 20, budget: 150000, sight: 3, defense: 0.7, orderDefense: 0.7, blunder: 0.45 },
         hints: [
             "強さは見習いと同じ。違うのは持ち時間の短さだけ",
@@ -38,7 +37,7 @@ export const stageInfo: StageInfo[] = [
         ],
     },
     {
-        stageNo: 4, rounds: 2, timeLimit: 20000, timeIncrement: 5000, guide: "", field: "dusk",
+        stageNo: 4, rounds: 2, timeLimit: 20000, timeIncrement: 5000, field: "dusk",
         computer: { name: "師範代", depth: 4, beamSize: 20, budget: 50000, sight: 4, defense: 1, orderDefense: 2, blunder: 0.4 },
         hints: [
             "先読みが深い。わかりやすい形は作る前に潰される",
@@ -46,7 +45,7 @@ export const stageInfo: StageInfo[] = [
         ],
     },
     {
-        stageNo: 5, rounds: 2, timeLimit: 20000, timeIncrement: 5000, guide: "", field: "hall",
+        stageNo: 5, rounds: 2, timeLimit: 20000, timeIncrement: 5000, field: "hall",
         computer: { name: "師範", depth: 4, beamSize: 50, budget: 100000, sight: 5, defense: 1, orderDefense: 2, blunder: 0 },
         hints: [
             "この相手はなかなか間違えない",
