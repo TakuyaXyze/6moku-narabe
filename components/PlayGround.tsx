@@ -7,6 +7,7 @@ import { SideBlock, BowlState } from "./SideBlock";
 import { ResultPopup, GameResult } from "./ResultPopup";
 import { UndoDialog, UndoKind } from "./UndoDialog";
 import { ComputingMessage } from "./ComputingMessage";
+import { PlayHeader } from "./PlayHeader";
 import { RuleScreen } from "./GameMenu";
 import "../styles/PlayGround.css"
 import "../styles/GameBoard.css"
@@ -285,9 +286,7 @@ export function PlayGround({ playerIsBlack, computer, stageLabel, initialTime, t
 
     return (
         <div className="play-screen">
-            <div className="game-header">
-                <div className="stage-title">STAGE {stageLabel}</div>
-            </div>
+            <PlayHeader stageLabel={stageLabel} />
             <div className="play-ground">
                 <div className="com-area">
                     <SideBlock side="com" name={computer.name} isBlack={!playerIsBlack} bowlState={comBowlState} />
