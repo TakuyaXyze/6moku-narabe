@@ -3,6 +3,7 @@
 import { GameBoard } from "./GameBoard";
 import { playSound } from "./Sounds";
 import { TimeBar } from "./TimeBar";
+import { SideBlock, BowlState } from "./SideBlock";
 import { RuleScreen } from "./GameMenu";
 import "../styles/PlayGround.css"
 import "../styles/GameBoard.css"
@@ -277,10 +278,8 @@ export function PlayGround({ playerIsBlack, computer, stageLabel, initialTime, t
         = (continueGame && !cpuIsSettling && (playerIsBlack === blackIsNext)) ? playerStoneColor : null;
 
     const playerIsActive: boolean = continueGame && !cpuIsSettling && (playerIsBlack === blackIsNext);
-    const comBowlClass: string = "goishi-box-image-com"
-        + (!continueGame ? "" : (playerIsActive ? " bowl-waiting" : " bowl-active"));
-    const playerBowlClass: string = "goishi-box-image-player"
-        + (!continueGame ? "" : (playerIsActive ? " bowl-active" : " bowl-waiting"));
+    const comBowlState: BowlState = !continueGame ? null : (playerIsActive ? "waiting" : "active");
+    const playerBowlState: BowlState = !continueGame ? null : (playerIsActive ? "active" : "waiting");
 
     return (
         <div className="play-screen">
@@ -289,27 +288,7 @@ export function PlayGround({ playerIsBlack, computer, stageLabel, initialTime, t
             </div>
             <div className="play-ground">
                 <div className="com-area">
-                    <div className="side-block">
-                        <div className={comBowlClass}>
-                            {(playerIsBlack) &&
-                                <img src="goke-white.png"
-                                    alt="white"
-                                    width="96"
-                                />
-                            }
-                            {(!playerIsBlack) &&
-                                <img src="goke-black.png"
-                                    alt="black"
-                                    width="96"
-                                />
-                            }
-                        </div>
-                        <div className="side-name">{computer.name}</div>
-                        <div className="side-stone-row">
-                            <span className={"side-stone " + (playerIsBlack ? "side-white" : "side-black")} />
-                            {playerIsBlack ? "後攻" : "先攻"}
-                        </div>
-                    </div>
+                    <SideBlock side="com" name={computer.name} isBlack={!playerIsBlack} bowlState={comBowlState} />
                 </div>
                 <div className="board-area">
                     <GameBoard
@@ -341,27 +320,7 @@ export function PlayGround({ playerIsBlack, computer, stageLabel, initialTime, t
                     {hasTimeLimit &&
                         <TimeBar remainingTime={remainingTime} bonusTime={bonusTime} />
                     }
-                    <div className="side-block">
-                        <div className="side-name">あなた</div>
-                        <div className="side-stone-row">
-                            <span className={"side-stone " + (playerIsBlack ? "side-black" : "side-white")} />
-                            {playerIsBlack ? "先攻" : "後攻"}
-                        </div>
-                        <div className={playerBowlClass}>
-                            {(!playerIsBlack) &&
-                                <img src="goke-white.png"
-                                    alt="white"
-                                    width="96"
-                                />
-                            }
-                            {(playerIsBlack) &&
-                                <img src="goke-black.png"
-                                    alt="black"
-                                    width="96"
-                                />
-                            }
-                        </div>
-                    </div>
+                    <SideBlock side="player" name="あなた" isBlack={playerIsBlack} bowlState={playerBowlState} />
                 </div>
             </div>
             <div className="menu-area" ref={menuArea}>
