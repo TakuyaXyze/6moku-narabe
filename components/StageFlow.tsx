@@ -197,7 +197,7 @@ export function StageFlow() {
 
             {openScreen === "hint" && hasHint &&
                 <ListScreen
-                    title={"ステージ" + stageNo + "　" + stage.computer.name}
+                    title={"ステージ" + stageNo + " " + stage.computer.name}
                     lines={stage.hints}
                     onClose={() => setOpenScreen(null)}
                 />
