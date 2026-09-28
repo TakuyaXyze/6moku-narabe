@@ -6,6 +6,7 @@ import { Tips } from "./Tips";
 import { playSound } from "./Sounds";
 import { RuleScreen, ListScreen } from "./GameMenu";
 import { stageInfo, StageInfo } from "./StageData";
+import { EyecatchScreen } from "./EyecatchScreen";
 import "../styles/StageFlow.css";
 import "../styles/Field.css";
 import "../styles/Portrait.css";
@@ -43,7 +44,6 @@ export function StageFlow() {
     const resultNote: string = lastWin ? ""
         : (gameOver ? "挑戦する持ち時間が尽きました"
             : (penaltyApplies ? "敗北ペナルティ −" + Math.floor(TIME_PENALTY / 1000) + "秒" : ""));
-    const hasTimeDetail: boolean = Number.isFinite(initialTime) && (carriedTime > 0 || timePenalty > 0);
 
     const hasHint: boolean = stage.hints.length > 0;
 
@@ -164,38 +164,18 @@ export function StageFlow() {
             )}
 
             {phase === "eyecatch" && !allCleared && (
-                <div className="stage-panel">
-                    <div className="stage-number">STAGE {stageLabel}</div>
-                    <div className="stage-message">
-                        持ち時間 {Number.isFinite(initialTime) ? Math.floor(initialTime / 1000) + "秒" : "無制限"}
-                    </div>
-                    {hasTimeDetail && (
-                        <div className="stage-detail">
-                            <span>このステージ {Math.floor(stage.timeLimit / 1000)}秒</span>
-                            {carriedTime > 0 && (
-                                <span className="stage-detail-plus">＋ 繰り越し {Math.floor(carriedTime / 1000)}秒</span>
-                            )}
-                            {timePenalty > 0 && (
-                                <span className="stage-detail-minus">− 敗北ペナルティ {Math.floor(timePenalty / 1000)}秒</span>
-                            )}
-                        </div>
-                    )}
-                    {roundNo === 1 && attempt === 0 && (
-                        <div className="stage-choice">
-                            <div className="stage-message">先攻・後攻を選ぶ</div>
-                            <button onClick={() => selectFirstMove(true)}>先攻（黒）</button>
-                            <button onClick={() => selectFirstMove(false)}>後攻（白）</button>
-                        </div>
-                    )}
-                    {!(roundNo === 1 && attempt === 0) && (
-                        <div className="stage-choice">
-                            <div className="stage-message">
-                                {attempt > 0 ? "再挑戦" : "ラウンド" + roundNo} {playerIsBlack ? "先攻（黒）" : "後攻（白）"}
-                            </div>
-                            <button onClick={() => startRound()}>開始</button>
-                        </div>
-                    )}
-                </div>
+                <EyecatchScreen
+                    stageLabel={stageLabel}
+                    initialTime={initialTime}
+                    stageTimeLimit={stage.timeLimit}
+                    carriedTime={carriedTime}
+                    timePenalty={timePenalty}
+                    roundNo={roundNo}
+                    attempt={attempt}
+                    playerIsBlack={playerIsBlack}
+                    onSelectFirstMove={selectFirstMove}
+                    onStart={startRound}
+                />
             )}
 
             {phase === "guide" && (
