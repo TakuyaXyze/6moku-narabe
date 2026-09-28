@@ -4,6 +4,7 @@ import { GameBoard } from "./GameBoard";
 import { playSound } from "./Sounds";
 import { TimeBar } from "./TimeBar";
 import { SideBlock, BowlState } from "./SideBlock";
+import { ResultPopup, GameResult } from "./ResultPopup";
 import { RuleScreen } from "./GameMenu";
 import "../styles/PlayGround.css"
 import "../styles/GameBoard.css"
@@ -58,6 +59,7 @@ export function PlayGround({ playerIsBlack, computer, stageLabel, initialTime, t
     const isDraw: boolean = !blackIsWinner && !whiteIsWinner && !timeIsUp && currentMove === ROWS * COLUMNS;
     const continueGame: boolean = !blackIsWinner && !whiteIsWinner && !isDraw && !timeIsUp;
     const playerWins: boolean = !isDraw && !timeIsUp && (blackIsWinner === playerIsBlack);
+    const gameResult: GameResult = timeIsUp ? "timeup" : (playerWins ? "win" : "lose");
 
     const [cpuIsSettling, setCpuIsSettling] = useState(false);
 
@@ -303,17 +305,7 @@ export function PlayGround({ playerIsBlack, computer, stageLabel, initialTime, t
                         <div className="computing-message">CPU考え中</div>
                     }
                     {!continueGame && !cpuIsSettling &&
-                        <div className="game-result">
-                            <div className="game-result-label">
-                                <div className="game-result-text">{timeIsUp ? "TIME UP" : (playerWins ? "WIN" : "LOSE")}</div>
-                                {resultNote !== "" &&
-                                    <div className="game-result-note">{resultNote}</div>
-                                }
-                            </div>
-                            <button className="game-result-button"
-                                onClick={() => onNext()}
-                            >{nextLabel}</button>
-                        </div>
+                        <ResultPopup result={gameResult} note={resultNote} buttonLabel={nextLabel} onNext={onNext} />
                     }
                 </div>
                 <div className="game-info">
