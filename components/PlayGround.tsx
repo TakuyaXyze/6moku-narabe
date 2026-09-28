@@ -6,6 +6,7 @@ import { TimeBar } from "./TimeBar";
 import { SideBlock, BowlState } from "./SideBlock";
 import { ResultPopup, GameResult } from "./ResultPopup";
 import { UndoDialog, UndoKind } from "./UndoDialog";
+import { ComputingMessage } from "./ComputingMessage";
 import { RuleScreen } from "./GameMenu";
 import "../styles/PlayGround.css"
 import "../styles/GameBoard.css"
@@ -301,7 +302,7 @@ export function PlayGround({ playerIsBlack, computer, stageLabel, initialTime, t
                         crossMoves={crossMoves}
                     />
                     {blackIsNext !== playerIsBlack && continueGame &&
-                        <div className="computing-message">CPU考え中</div>
+                        <ComputingMessage />
                     }
                     {!continueGame && !cpuIsSettling &&
                         <ResultPopup result={gameResult} note={resultNote} buttonLabel={nextLabel} onNext={onNext} />
