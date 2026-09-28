@@ -8,6 +8,7 @@ import { RuleScreen, ListScreen } from "./GameMenu";
 import { stageInfo, StageInfo } from "./StageData";
 import { EyecatchScreen } from "./EyecatchScreen";
 import { ClearScreen } from "./ClearScreen";
+import { DemoTool } from "./DemoTool";
 import "../styles/StageFlow.css";
 import "../styles/Field.css";
 import "../styles/Portrait.css";
@@ -202,12 +203,7 @@ export function StageFlow() {
                 />
             }
 
-            <div className="stage-demo-tool">
-                <span>デモ用</span>
-                <button onClick={() => jumpToStage(stageNo - 1)}>前のステージ</button>
-                <button onClick={() => jumpToStage(stageNo + 1)}>次のステージ</button>
-                <button onClick={() => jumpToStage(stageInfo.length + 1)}>クリア画面</button>
-            </div>
+            <DemoTool stageNo={stageNo} stageCount={stageInfo.length} onJump={jumpToStage} />
 
         </div>
     );
