@@ -7,6 +7,7 @@ import { playSound } from "./Sounds";
 import { RuleScreen, ListScreen } from "./GameMenu";
 import { stageInfo, StageInfo } from "./StageData";
 import { EyecatchScreen } from "./EyecatchScreen";
+import { ClearScreen } from "./ClearScreen";
 import "../styles/StageFlow.css";
 import "../styles/Field.css";
 import "../styles/Portrait.css";
@@ -156,11 +157,7 @@ export function StageFlow() {
         <div className="stage-screen">
 
             {phase === "eyecatch" && allCleared && (
-                <div className="stage-panel clear-panel">
-                    <div className="stage-number clear-title">ALL CLEAR</div>
-                    <div className="clear-message">全ステージクリアおめでとう</div>
-                    <button className="clear-button" onClick={() => jumpToStage(1)}>最初から</button>
-                </div>
+                <ClearScreen onRestart={() => jumpToStage(1)} />
             )}
 
             {phase === "eyecatch" && !allCleared && (
