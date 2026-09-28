@@ -5,6 +5,7 @@ import { playSound } from "./Sounds";
 import { TimeBar } from "./TimeBar";
 import { SideBlock, BowlState } from "./SideBlock";
 import { ResultPopup, GameResult } from "./ResultPopup";
+import { UndoDialog, UndoKind } from "./UndoDialog";
 import { RuleScreen } from "./GameMenu";
 import "../styles/PlayGround.css"
 import "../styles/GameBoard.css"
@@ -29,8 +30,6 @@ const BONUS_DISPLAY_TIME = 2600;
 const UNDO_EXTRA_PENALTY = 1000;
 const RESET_PENALTY = 3000;
 const RULE_TIME_RATE = 0.5;
-
-type UndoKind = "back" | "reset" | null;
 
 type Props = {
     playerIsBlack: boolean;
@@ -220,7 +219,7 @@ export function PlayGround({ playerIsBlack, computer, stageLabel, initialTime, t
         setCurrentMove(nextMove);
     }
 
-    const [undoConfirm, setUndoConfirm] = useState<UndoKind>(null);
+    const [undoConfirm, setUndoConfirm] = useState<UndoKind | null>(null);
     const shownPenalty: number = (undoConfirm === "reset") ? RESET_PENALTY : undoPenalty;
 
     function openUndoConfirm(kind: UndoKind): void {
@@ -335,20 +334,12 @@ export function PlayGround({ playerIsBlack, computer, stageLabel, initialTime, t
                 <RuleScreen onClose={() => setIsRuleOpen(false)} />
             }
             {undoConfirm !== null && continueGame &&
-                <div className="rule-screen">
-                    <div className="rule-panel undo-panel">
-                        <div className="undo-message">
-                            {(undoConfirm === "reset") ? "盤面をリセットしますか?" : "1つ前の自分の手番まで戻しますか?"}
-                        </div>
-                        {hasTimeLimit &&
-                            <div className="undo-note">制限時間が{shownPenalty / 1000}秒減ります</div>
-                        }
-                        <div className="undo-buttons">
-                            <button onClick={() => runUndo()}>戻す</button>
-                            <button onClick={() => setUndoConfirm(null)}>やめる</button>
-                        </div>
-                    </div>
-                </div>
+                <UndoDialog
+                    kind={undoConfirm}
+                    penalty={hasTimeLimit ? shownPenalty : null}
+                    onConfirm={runUndo}
+                    onCancel={() => setUndoConfirm(null)}
+                />
             }
         </div >
     );
