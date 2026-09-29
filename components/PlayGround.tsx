@@ -229,6 +229,11 @@ export function PlayGround({ playerIsBlack, computer, stageLabel, initialTime, t
         setUndoConfirm(kind);
     }
 
+    function openRule(): void {
+        setIsMenuOpen(false);
+        setIsRuleOpen(true);
+    }
+
     function runUndo(): void {
         if (undoConfirm === null) return;
         if (undoConfirm === "reset") {
@@ -326,7 +331,7 @@ export function PlayGround({ playerIsBlack, computer, stageLabel, initialTime, t
                         <button onClick={() => openUndoConfirm("reset")}
                             disabled={!continueGame || currentMove === 0}
                         >最初に戻る</button>
-                        <button onClick={() => setIsRuleOpen(true)}>ルール説明</button>
+                        <button onClick={() => openRule()}>ルール説明</button>
                     </div>
                 }
             </div>

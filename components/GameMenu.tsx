@@ -2,6 +2,8 @@
 
 import "../styles/GameInfo.css";
 
+export type MenuScreen = "rule" | "hint";
+
 const RULES: string[] = [
     "先に石を6つ直線に並べた方が勝ち。縦・横・斜めのどれでもよい",
     "手番は1手・2手・2手・2手…と進む。最初の1手だけ1つ、それ以降はどちらも2つずつ置く",
@@ -19,7 +21,11 @@ type ListScreenProps = {
 
 export function ListScreen({ title, lines, onClose }: ListScreenProps) {
     return (
-        <div className="rule-screen">
+        <div className="rule-screen"
+            onClick={(event) => {
+                if (event.target === event.currentTarget) onClose();
+            }}
+        >
             <div className="rule-panel">
                 <div className="rule-title">{title}</div>
                 <ul>

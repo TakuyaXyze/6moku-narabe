@@ -1,0 +1,114 @@
+.stage-screen {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 16px;
+}
+
+.stage-screen button {
+    cursor: pointer;
+}
+
+.stage-screen button:disabled {
+    cursor: default;
+}
+
+.stage-screen-header,
+.stage-screen-info {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-bottom: 32px;
+    color: var(--dark-brown);
+}
+
+.stage-screen-title {
+    font-size: 40px;
+    font-weight: bold;
+    color: var(--dark-brown);
+    margin: 8px;
+}
+
+.stage-screen-rule-button {
+    border: none;
+    border-radius: 8px;
+    padding: 4px 12px 4px 12px;
+    background-color: var(--dark-brown);
+    color: var(--white);
+    font-size: 12px;
+}
+
+.stage-screen-label {
+    font-size: 24px;
+    font-weight: bold;
+    letter-spacing: 0.1em;
+    margin: 8px;
+}
+
+.stage-screen-time,
+.stage-screen-opponent-name,
+.stage-screen-start-message {
+    font-size: 16px;
+    margin: 4px;
+    font-weight: bold;
+}
+
+.stage-screen-time-detail {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin: 4px;
+    gap: 2px;
+    margin-top: -4px;
+    font-size: 12px;
+    color: #5a5a5a;
+}
+
+.stage-screen-time-plus {
+    color: #2f7d3a;
+}
+
+.stage-screen-time-minus {
+    color: #b3423a;
+}
+
+.stage-screen-start {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    color: var(--dark-brown);
+}
+
+.stage-screen-start-button {
+    width: 160px;
+    padding: 6px 0;
+    font-size: 16px;
+    font-weight: bold;
+    color: var(--dark-brown);
+    border-color: var(--dark-brown);
+    border-radius: 8px;
+    border-style: solid;
+    background-color: var(--light-brown);
+}
+
+.goishi-black,
+.goishi-white {
+    display: inline-block;
+    width: 1em;
+    height: 1em;
+    border-radius: 50%;
+    vertical-align: middle;
+    transform: translateY(-0.15em);
+    /* middleは英小文字基準で和文には低く見えるため補正 */
+}
+
+.goishi-black {
+    background: radial-gradient(circle at 34% 28%, #6b6b72 0%, #26262b 40%, #08080a 100%);
+    box-shadow: inset -1px -2px 3px rgba(0, 0, 0, 0.55), 0 2px 3px rgba(0, 0, 0, 0.45);
+}
+
+.goishi-white {
+    background: radial-gradient(circle at 34% 28%, #ffffff 0%, #f4f1ea 42%, #d5cec1 100%);
+    box-shadow: inset -1px -2px 3px rgba(90, 80, 60, 0.18), 0 2px 3px rgba(0, 0, 0, 0.35);
+}

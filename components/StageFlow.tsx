@@ -1,21 +1,19 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect } from "react";
 import { PlayGround } from "./PlayGround";
 import { Tips } from "./Tips";
 import { playSound } from "./Sounds";
-import { RuleScreen, ListScreen } from "./GameMenu";
+import { RuleScreen, ListScreen, MenuScreen } from "./GameMenu";
 import { stageInfo, StageInfo } from "./StageData";
-import { EyecatchScreen } from "./EyecatchScreen";
+import { StageScreen } from "./StageScreen";
 import { ClearScreen } from "./ClearScreen";
 import { DemoTool } from "./DemoTool";
 import "../styles/StageFlow.css";
 import "../styles/Field.css";
 import "../styles/Portrait.css";
 
-type Phase = "eyecatch" | "playing";
-
-type MenuScreen = "rule" | "hint" | null;
+type Phase = "standby" | "playing";
 
 const TIME_CARRY_RATE = 0.2;
 const TIME_PENALTY = 3000;
@@ -25,14 +23,12 @@ export function StageFlow() {
     const [stageNo, setStageNo] = useState(1);
     const [roundNo, setRoundNo] = useState(1);
     const [attempt, setAttempt] = useState(0);
-    const [phase, setPhase] = useState<Phase>("eyecatch");
+    const [phase, setPhase] = useState<Phase>("standby");
     const [firstRoundIsBlack, setFirstRoundIsBlack] = useState(true);
     const [lastWin, setLastWin] = useState(true);
     const [carriedTime, setCarriedTime] = useState(0);
     const [timePenalty, setTimePenalty] = useState(0);
-    const [isMenuOpen, setIsMenuOpen] = useState(false);
-    const [openScreen, setOpenScreen] = useState<MenuScreen>(null);
-    const menuArea = useRef<HTMLDivElement>(null);
+    const [openScreen, setOpenScreen] = useState<MenuScreen | null>(null);
 
     const allCleared: boolean = stageNo > stageInfo.length;
     const stage: StageInfo = stageInfo[Math.min(stageNo, stageInfo.length) - 1];
@@ -56,33 +52,14 @@ export function StageFlow() {
 
     useEffect(() => {
         if (phase === "playing") return;
+        if (openScreen === null) return;
         function handleEscapeKey(event: KeyboardEvent): void {
             if (event.key !== "Escape") return;
-            if (openScreen !== null) {
-                setOpenScreen(null);
-                return;
-            }
-            setIsMenuOpen((isOpen) => !isOpen);
+            setOpenScreen(null);
         }
         document.addEventListener("keydown", handleEscapeKey);
         return () => document.removeEventListener("keydown", handleEscapeKey);
     }, [openScreen, phase])
-
-    useEffect(() => {
-        if (!isMenuOpen) return;
-        function handleOutsideClick(event: MouseEvent): void {
-            if (menuArea.current && menuArea.current.contains(event.target as Node)) return;
-            event.stopPropagation();
-            setIsMenuOpen(false);
-        }
-        document.addEventListener("click", handleOutsideClick, true);
-        return () => document.removeEventListener("click", handleOutsideClick, true);
-    }, [isMenuOpen])
-
-    function openMenuScreen(screen: MenuScreen): void {
-        setOpenScreen(screen);
-        setIsMenuOpen(false);
-    }
 
     function startRound(): void {
         setPhase("playing");
@@ -106,21 +83,21 @@ export function StageFlow() {
                 return;
             }
             setAttempt(attempt + 1);
-            setPhase("eyecatch");
+            setPhase("standby");
             return;
         }
         if (roundNo < stage.rounds) {
             setRoundNo(roundNo + 1);
             setAttempt(0);
             setTimePenalty(0);
-            setPhase("eyecatch");
+            setPhase("standby");
             return;
         }
         setStageNo(stageNo + 1);
         setRoundNo(1);
         setAttempt(0);
         setTimePenalty(0);
-        setPhase("eyecatch");
+        setPhase("standby");
     }
 
     function jumpToStage(nextStageNo: number): void {
@@ -130,7 +107,7 @@ export function StageFlow() {
         setAttempt(0);
         setCarriedTime(0);
         setTimePenalty(0);
-        setPhase("eyecatch");
+        setPhase("standby");
     }
 
     if (phase === "playing") {
@@ -154,15 +131,16 @@ export function StageFlow() {
     }
 
     return (
-        <div className="stage-screen">
+        <div className="standby-screen">
 
-            {phase === "eyecatch" && allCleared && (
+            {phase === "standby" && allCleared && (
                 <ClearScreen onRestart={() => jumpToStage(1)} />
             )}
 
-            {phase === "eyecatch" && !allCleared && (
-                <EyecatchScreen
+            {phase === "standby" && !allCleared && (
+                <StageScreen
                     stageLabel={stageLabel}
+                    opponentName={stage.computer.name}
                     initialTime={initialTime}
                     stageTimeLimit={stage.timeLimit}
                     carriedTime={carriedTime}
@@ -172,23 +150,9 @@ export function StageFlow() {
                     playerIsBlack={playerIsBlack}
                     onSelectFirstMove={selectFirstMove}
                     onStart={startRound}
+                    hasHint={hasHint}
+                    onOpenMenuScreen={setOpenScreen}
                 />
-            )}
-
-            {!allCleared && (
-                <div className="menu-area" ref={menuArea}>
-                    <button className="menu-button"
-                        onClick={() => setIsMenuOpen(!isMenuOpen)}
-                    >☰</button>
-                    {isMenuOpen &&
-                        <div className="menu-panel">
-                            <button onClick={() => openMenuScreen("rule")}>ルール説明</button>
-                            <button onClick={() => openMenuScreen("hint")}
-                                disabled={!hasHint}
-                            >ステージのヒント</button>
-                        </div>
-                    }
-                </div>
             )}
 
             {openScreen === "rule" &&
