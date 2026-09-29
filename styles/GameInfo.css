@@ -144,11 +144,33 @@
 }
 
 .rule-panel {
+    position: relative;
     max-width: 480px;
     padding: 20px 28px;
     border-radius: 10px;
     background-color: #fafafa;
     color: #0a0a0b;
+}
+
+.close-panel {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    border: none;
+    border-radius: 50%;
+    background: none;
+    color: #5a5a5a;
+    cursor: pointer;
+}
+
+.close-panel:hover {
+    background-color: rgba(0, 0, 0, 0.08);
 }
 
 .rule-title {
@@ -167,6 +189,7 @@
     flex-direction: column;
     align-items: center;
     text-align: center;
+    padding: 32px 48px;
 }
 
 .undo-message {

@@ -1,6 +1,7 @@
 "use client";
 
 import "../styles/GameInfo.css";
+import { CloseButton } from "./CloseButton";
 
 const RULES: string[] = [
     "先に石を6つ直線に並べた方が勝ち。縦・横・斜めのどれでもよい",
@@ -23,11 +24,11 @@ export function RuleScreen({ onClose }: Props) {
             }}
         >
             <div className="rule-panel">
+                <CloseButton onClick={onClose} />
                 <div className="rule-title">ルール</div>
                 <ul>
                     {RULES.map((rule) => <li key={rule}>{rule}</li>)}
                 </ul>
-                <button onClick={onClose}>閉じる</button>
             </div>
         </div>
     );

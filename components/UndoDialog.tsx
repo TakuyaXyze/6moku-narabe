@@ -1,3 +1,5 @@
+import { CloseButton } from "./CloseButton";
+
 export type UndoKind = "back" | "reset";
 
 const UNDO_MESSAGES: Record<UndoKind, string> = {
@@ -20,6 +22,7 @@ export function UndoDialog({ kind, penalty, onConfirm, onCancel }: Props) {
             }}
         >
             <div className="rule-panel undo-panel">
+                <CloseButton onClick={onCancel} />
                 <div className="undo-message">{UNDO_MESSAGES[kind]}</div>
                 {penalty !== null &&
                     <div className="undo-note">制限時間が{penalty / 1000}秒減ります</div>
