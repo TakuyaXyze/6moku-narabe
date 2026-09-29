@@ -259,11 +259,15 @@ export function PlayGround({ playerIsBlack, computer, stageLabel, initialTime, t
                 setIsRuleOpen(false);
                 return;
             }
+            if (undoConfirm !== null) {
+                setUndoConfirm(null);
+                return;
+            }
             setIsMenuOpen((isOpen) => !isOpen);
         }
         document.addEventListener("keydown", handleEscapeKey);
         return () => document.removeEventListener("keydown", handleEscapeKey);
-    }, [isRuleOpen])
+    }, [isRuleOpen, undoConfirm])
 
     useEffect(() => {
         if (!isMenuOpen) return;

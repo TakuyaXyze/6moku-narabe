@@ -14,7 +14,11 @@ type Props = {
 
 export function UndoDialog({ kind, penalty, onConfirm, onCancel }: Props) {
     return (
-        <div className="rule-screen">
+        <div className="rule-screen"
+            onClick={(event) => {
+                if (event.target === event.currentTarget) onCancel();
+            }}
+        >
             <div className="rule-panel undo-panel">
                 <div className="undo-message">{UNDO_MESSAGES[kind]}</div>
                 {penalty !== null &&
