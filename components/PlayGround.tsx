@@ -29,6 +29,7 @@ const BLINK_TIME = 1500;
 const RESULT_DELAY = 400;
 const CROSS_BONUS = 3000;
 const BONUS_DISPLAY_TIME = 2600;
+const BONUS_BLOCK_TIME = 1800;      //ボーナス演出の開始から、勝敗演出を始めるまでの時間
 const UNDO_EXTRA_PENALTY = 1000;
 const RESET_PENALTY = 3000;
 const RULE_TIME_RATE = 0.5;
@@ -63,6 +64,9 @@ export function PlayGround({ playerIsBlack, computer, stageLabel, initialTime, t
     const gameResult: GameResult = timeIsUp ? "timeup" : (playerWins ? "win" : "lose");
 
     const [cpuIsSettling, setCpuIsSettling] = useState(false);
+    const [bonusTime, setBonusTime] = useState(0);
+    const [crossMoves, setCrossMoves] = useState<MoveCoordinate[]>([]);
+    const [bonusIsBlocking, setBonusIsBlocking] = useState(false);
 
     useEffect(() => {
         if (!cpuIsSettling) return;
@@ -78,10 +82,11 @@ export function PlayGround({ playerIsBlack, computer, stageLabel, initialTime, t
     useEffect(() => {
         if (continueGame) return;
         if (cpuIsSettling) return;
+        if (bonusIsBlocking) return;
         if (timeIsUp) playSound("timeup");
         else if (blackIsWinner || whiteIsWinner) playSound("win");
         onGameEnd(playerWins, Math.max(remainingTime, 0));
-    }, [continueGame, cpuIsSettling])
+    }, [continueGame, cpuIsSettling, bonusIsBlocking])
 
     function handlePlay(nextBoxes: (string | null)[][]): void {
         const nextHistory = [...history.slice(0, currentMove + 1), nextBoxes];
@@ -130,9 +135,6 @@ export function PlayGround({ playerIsBlack, computer, stageLabel, initialTime, t
         else setCpuIsSettling(true);
     }
 
-    const [bonusTime, setBonusTime] = useState(0);
-    const [crossMoves, setCrossMoves] = useState<MoveCoordinate[]>([]);
-
     function rewardCross(nextBoxes: (string | null)[][], color: string): void {
         if (!hasTimeLimit) return;
         const beforeKeys = new Set(detectCross(history[currentMove], color).map((cross) => crossKey(cross)));
@@ -142,16 +144,21 @@ export function PlayGround({ playerIsBlack, computer, stageLabel, initialTime, t
         setRemainingTime((time) => time + CROSS_BONUS * count);
         setBonusTime(CROSS_BONUS * count);
         setCrossMoves(newCrosses.flatMap((cross) => crossCells(cross)));
+        setBonusIsBlocking(true);
         playSound("recovering");
     }
 
     useEffect(() => {
         if (bonusTime === 0) return;
-        const timerId = setTimeout(() => {
+        const blockId = setTimeout(() => setBonusIsBlocking(false), BONUS_BLOCK_TIME);
+        const clearId = setTimeout(() => {
             setBonusTime(0);
             setCrossMoves([]);
         }, BONUS_DISPLAY_TIME);
-        return () => clearTimeout(timerId);
+        return () => {
+            clearTimeout(blockId);
+            clearTimeout(clearId);
+        };
     }, [bonusTime])
 
 
@@ -284,7 +291,7 @@ export function PlayGround({ playerIsBlack, computer, stageLabel, initialTime, t
 
     const lastMoves = getLastMoves(history, currentMove);
     const markedMoves = lastMoves.filter((move) => history[currentMove][move.rowNo][move.columnNo] !== playerStoneColor);
-    const winMoves = ((blackIsWinner || whiteIsWinner) && !cpuIsSettling) ? detectWinLine(history[currentMove]) : [];
+    const winMoves = ((blackIsWinner || whiteIsWinner) && !cpuIsSettling && !bonusIsBlocking) ? detectWinLine(history[currentMove]) : [];
     const bonusCount: number = bonusTime / CROSS_BONUS;
     const bonusText: string | null = (bonusTime > 0)
         ? (CROSS_BONUS / 1000) + "秒" + (bonusCount > 1 ? " ×" + bonusCount : "")
@@ -317,7 +324,7 @@ export function PlayGround({ playerIsBlack, computer, stageLabel, initialTime, t
                     {blackIsNext !== playerIsBlack && continueGame &&
                         <ComputingMessage />
                     }
-                    {!continueGame && !cpuIsSettling &&
+                    {!continueGame && !cpuIsSettling && !bonusIsBlocking &&
                         <ResultPopup result={gameResult} note={resultNote} buttonLabel={nextLabel} onNext={onNext} />
                     }
                 </div>
