@@ -2,6 +2,7 @@
 
 import "../styles/GameBoard.css"
 import { PrintRow } from "./PrintRow";
+import { BonusEffect } from "./BonusEffect";
 import { rowNos } from "../computers/GameRule";
 import { MoveCoordinate } from "../computers/Evaluate";
 
@@ -12,9 +13,10 @@ type Props = {
     markedMoves: MoveCoordinate[];
     winMoves: MoveCoordinate[];
     crossMoves: MoveCoordinate[];
+    bonusText: string | null;
 }
 
-export function GameBoard({ boxes, handleClick, pointerColor, markedMoves, winMoves, crossMoves }: Props) {
+export function GameBoard({ boxes, handleClick, pointerColor, markedMoves, winMoves, crossMoves, bonusText }: Props) {
     return (
         <div className={`
             game-board
@@ -23,6 +25,9 @@ export function GameBoard({ boxes, handleClick, pointerColor, markedMoves, winMo
             `}
         >
             {rowNos.map((rowNo) => (printRows(boxes, handleClick, rowNo, markedMoves, winMoves, crossMoves)))}
+            {bonusText !== null &&
+                <BonusEffect text={bonusText} cells={crossMoves} />
+            }
         </div>
     )
 };

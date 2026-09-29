@@ -285,6 +285,10 @@ export function PlayGround({ playerIsBlack, computer, stageLabel, initialTime, t
     const lastMoves = getLastMoves(history, currentMove);
     const markedMoves = lastMoves.filter((move) => history[currentMove][move.rowNo][move.columnNo] !== playerStoneColor);
     const winMoves = ((blackIsWinner || whiteIsWinner) && !cpuIsSettling) ? detectWinLine(history[currentMove]) : [];
+    const bonusCount: number = bonusTime / CROSS_BONUS;
+    const bonusText: string | null = (bonusTime > 0)
+        ? (CROSS_BONUS / 1000) + "秒" + (bonusCount > 1 ? " ×" + bonusCount : "")
+        : null;
 
     const pointerColor: (string | null)
         = (continueGame && !cpuIsSettling && (playerIsBlack === blackIsNext)) ? playerStoneColor : null;
@@ -308,6 +312,7 @@ export function PlayGround({ playerIsBlack, computer, stageLabel, initialTime, t
                         markedMoves={markedMoves}
                         winMoves={winMoves}
                         crossMoves={crossMoves}
+                        bonusText={bonusText}
                     />
                     {blackIsNext !== playerIsBlack && continueGame &&
                         <ComputingMessage />

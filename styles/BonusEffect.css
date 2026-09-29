@@ -1,0 +1,40 @@
+.bonus-effect {
+    position: absolute;
+    z-index: 1;
+    transform: translate(-50%, -100%);
+    font-size: 18px;
+    font-weight: bold;
+    white-space: nowrap;
+    color: var(--dark-brown);
+    text-shadow:
+        1px 0 0 #fff, -1px 0 0 #fff, 0 1px 0 #fff, 0 -1px 0 #fff,
+        1px 1px 0 #fff, -1px 1px 0 #fff, 1px -1px 0 #fff, -1px -1px 0 #fff;
+    pointer-events: none;
+    text-align: right;
+    animation: bonus-effect 2.6s ease-out forwards;
+}
+
+@keyframes bonus-effect {
+    0% {
+        opacity: 0;
+        transform: translate(-50%, -100%) scale(0.5);
+    }
+
+    8% {
+        opacity: 1;
+        transform: translate(-50%, -100%) scale(1.2);
+    }
+
+    16% {
+        transform: translate(-50%, -100%) scale(1);
+    }
+
+    70% {
+        opacity: 1;
+    }
+
+    100% {
+        opacity: 0;
+        transform: translate(-50%, -100%) scale(1);
+    }
+}
