@@ -6,9 +6,10 @@ const COUNTDOWN_TIME = 10000;
 type Props = {
     remainingTime: number;
     bonusTime: number;
+    bonusNo: number;
 }
 
-export function TimeBar({ remainingTime, bonusTime }: Props) {
+export function TimeBar({ remainingTime, bonusTime, bonusNo }: Props) {
     const shownTime: number = Math.max(remainingTime, 0);
     const timeBarRatio: number = Math.min(shownTime / TIME_BAR_FULL, 1);
     const timeBarColor: string = (timeBarRatio >= TIME_BAR_YELLOW_RATIO) ? "time-bar-green"
@@ -25,7 +26,7 @@ export function TimeBar({ remainingTime, bonusTime }: Props) {
             </div>
             <div className={isHurrying ? "time-count time-count-hurry" : "time-count"}>{timeCount}</div>
             {bonusTime > 0 &&
-                <div className="time-bonus">+{bonusTime / 1000}</div>
+                <div key={bonusNo} className="time-bonus">+{bonusTime / 1000}</div>
             }
         </div>
     );

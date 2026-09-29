@@ -6,14 +6,16 @@ type Props = {
     isLastMove: boolean;
     isWinMove: boolean;
     isCrossMove: boolean;
+    bonusNo: number;
 }
 
-export function PrintBox({ rowNo, columnNo, value, onBoxClick, isLastMove, isWinMove, isCrossMove }: Props) {
+export function PrintBox({ rowNo, columnNo, value, onBoxClick, isLastMove, isWinMove, isCrossMove, bonusNo }: Props) {
     //1マス1マスを描画
     const countNum: number = (rowNo) * 100 + (columnNo);
+    const boxKey: string = isCrossMove ? countNum + "-" + bonusNo : String(countNum);
 
     return (
-        <div key={countNum}
+        <div key={boxKey}
             className={`
                 stone
                 ${value === "b" ? 'black' : ''}

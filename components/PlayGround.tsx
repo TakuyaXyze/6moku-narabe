@@ -67,6 +67,7 @@ export function PlayGround({ playerIsBlack, computer, stageLabel, initialTime, t
     const [bonusTime, setBonusTime] = useState(0);
     const [crossMoves, setCrossMoves] = useState<MoveCoordinate[]>([]);
     const [bonusIsBlocking, setBonusIsBlocking] = useState(false);
+    const [bonusNo, setBonusNo] = useState(0);
 
     useEffect(() => {
         if (!cpuIsSettling) return;
@@ -145,11 +146,12 @@ export function PlayGround({ playerIsBlack, computer, stageLabel, initialTime, t
         setBonusTime(CROSS_BONUS * count);
         setCrossMoves(newCrosses.flatMap((cross) => crossCells(cross)));
         setBonusIsBlocking(true);
+        setBonusNo((no) => no + 1);
         playSound("recovering");
     }
 
     useEffect(() => {
-        if (bonusTime === 0) return;
+        if (bonusNo === 0) return;
         const blockId = setTimeout(() => setBonusIsBlocking(false), BONUS_BLOCK_TIME);
         const clearId = setTimeout(() => {
             setBonusTime(0);
@@ -159,7 +161,7 @@ export function PlayGround({ playerIsBlack, computer, stageLabel, initialTime, t
             clearTimeout(blockId);
             clearTimeout(clearId);
         };
-    }, [bonusTime])
+    }, [bonusNo])
 
 
     const playerIsThinking: boolean = continueGame && hasTimeLimit && !cpuIsSettling && (checkBlackIsNext(currentMove) === playerIsBlack);
@@ -320,6 +322,7 @@ export function PlayGround({ playerIsBlack, computer, stageLabel, initialTime, t
                         winMoves={winMoves}
                         crossMoves={crossMoves}
                         bonusText={bonusText}
+                        bonusNo={bonusNo}
                     />
                     {blackIsNext !== playerIsBlack && continueGame &&
                         <ComputingMessage />
@@ -330,7 +333,7 @@ export function PlayGround({ playerIsBlack, computer, stageLabel, initialTime, t
                 </div>
                 <div className="game-info">
                     {hasTimeLimit &&
-                        <TimeBar remainingTime={remainingTime} bonusTime={bonusTime} />
+                        <TimeBar remainingTime={remainingTime} bonusTime={bonusTime} bonusNo={bonusNo} />
                     }
                     <SideBlock side="player" name="あなた" isBlack={playerIsBlack} bowlState={playerBowlState} />
                 </div>
