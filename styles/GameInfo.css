@@ -133,6 +133,14 @@
     background-color: rgba(250, 250, 250, 0.95);
 }
 
+.menu-panel button {
+    cursor: pointer;
+}
+
+.menu-panel button:disabled {
+    cursor: default;
+}
+
 .rule-screen {
     position: fixed;
     inset: 0;
