@@ -11,13 +11,11 @@ const RULES: string[] = [
     "持ち時間が尽きたら負け",
 ];
 
-type ListScreenProps = {
-    title: string;
-    lines: string[];
+type Props = {
     onClose: () => void;
 }
 
-export function ListScreen({ title, lines, onClose }: ListScreenProps) {
+export function RuleScreen({ onClose }: Props) {
     return (
         <div className="rule-screen"
             onClick={(event) => {
@@ -25,20 +23,12 @@ export function ListScreen({ title, lines, onClose }: ListScreenProps) {
             }}
         >
             <div className="rule-panel">
-                <div className="rule-title">{title}</div>
+                <div className="rule-title">ルール</div>
                 <ul>
-                    {lines.map((line) => <li key={line}>{line}</li>)}
+                    {RULES.map((rule) => <li key={rule}>{rule}</li>)}
                 </ul>
                 <button onClick={onClose}>閉じる</button>
             </div>
         </div>
     );
-}
-
-type RuleScreenProps = {
-    onClose: () => void;
-}
-
-export function RuleScreen({ onClose }: RuleScreenProps) {
-    return <ListScreen title="ルール" lines={RULES} onClose={onClose} />;
 }

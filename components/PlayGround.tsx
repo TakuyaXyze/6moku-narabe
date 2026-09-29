@@ -8,7 +8,7 @@ import { ResultPopup, GameResult } from "./ResultPopup";
 import { UndoDialog, UndoKind } from "./UndoDialog";
 import { ComputingMessage } from "./ComputingMessage";
 import { PlayHeader } from "./PlayHeader";
-import { RuleScreen } from "./GameMenu";
+import { RuleScreen } from "./RuleScreen";
 import "../styles/PlayGround.css"
 import "../styles/GameBoard.css"
 import "../styles/GameInfo.css"

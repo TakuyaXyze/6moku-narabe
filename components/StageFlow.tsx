@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import { PlayGround } from "./PlayGround";
 import { Tips } from "./Tips";
 import { playSound } from "./Sounds";
-import { RuleScreen } from "./GameMenu";
+import { RuleScreen } from "./RuleScreen";
 import { stageInfo, StageInfo } from "./StageData";
 import { StageScreen } from "./StageScreen";
 import { ClearScreen } from "./ClearScreen";
