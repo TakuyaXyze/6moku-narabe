@@ -2,8 +2,6 @@
 
 import "../styles/GameInfo.css";
 
-export type MenuScreen = "rule" | "hint";
-
 const RULES: string[] = [
     "先に石を6つ直線に並べた方が勝ち。縦・横・斜めのどれでもよい",
     "手番は1手・2手・2手・2手…と進む。最初の1手だけ1つ、それ以降はどちらも2つずつ置く",

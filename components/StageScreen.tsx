@@ -1,5 +1,4 @@
 import "../styles/StageScreen.css";
-import type { MenuScreen } from "./GameMenu";
 
 type Props = {
     stageLabel: string;
@@ -11,13 +10,12 @@ type Props = {
     roundNo: number;
     attempt: number;
     playerIsBlack: boolean;
-    hasHint: boolean;
     onSelectFirstMove: (isBlack: boolean) => void;
     onStart: () => void;
-    onOpenMenuScreen: (screen: MenuScreen) => void;
+    onOpenRule: () => void;
 }
 
-export function StageScreen({ stageLabel, opponentName, initialTime, stageTimeLimit, carriedTime, timePenalty, roundNo, attempt, playerIsBlack, hasHint, onSelectFirstMove, onStart, onOpenMenuScreen }: Props) {
+export function StageScreen({ stageLabel, opponentName, initialTime, stageTimeLimit, carriedTime, timePenalty, roundNo, attempt, playerIsBlack, onSelectFirstMove, onStart, onOpenRule }: Props) {
     const hasTimeDetail: boolean = Number.isFinite(initialTime) && (carriedTime > 0 || timePenalty > 0);
     const choosesFirstMove: boolean = roundNo === 1 && attempt === 0;
 
@@ -26,7 +24,7 @@ export function StageScreen({ stageLabel, opponentName, initialTime, stageTimeLi
             <div className="stage-screen-header">
                 <div className="stage-screen-title">六目並べ</div>
                 <button className="stage-screen-rule-button"
-                    onClick={() => onOpenMenuScreen("rule")}
+                    onClick={() => onOpenRule()}
                 >ルール説明</button>
             </div>
             <div className="stage-screen-info">

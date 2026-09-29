@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import { PlayGround } from "./PlayGround";
 import { Tips } from "./Tips";
 import { playSound } from "./Sounds";
-import { RuleScreen, ListScreen, MenuScreen } from "./GameMenu";
+import { RuleScreen } from "./GameMenu";
 import { stageInfo, StageInfo } from "./StageData";
 import { StageScreen } from "./StageScreen";
 import { ClearScreen } from "./ClearScreen";
@@ -28,7 +28,7 @@ export function StageFlow() {
     const [lastWin, setLastWin] = useState(true);
     const [carriedTime, setCarriedTime] = useState(0);
     const [timePenalty, setTimePenalty] = useState(0);
-    const [openScreen, setOpenScreen] = useState<MenuScreen | null>(null);
+    const [isRuleOpen, setIsRuleOpen] = useState(false);
 
     const allCleared: boolean = stageNo > stageInfo.length;
     const stage: StageInfo = stageInfo[Math.min(stageNo, stageInfo.length) - 1];
@@ -43,8 +43,6 @@ export function StageFlow() {
         : (gameOver ? "挑戦する持ち時間が尽きました"
             : (penaltyApplies ? "敗北ペナルティ −" + Math.floor(TIME_PENALTY / 1000) + "秒" : ""));
 
-    const hasHint: boolean = stage.hints.length > 0;
-
     useEffect(() => {
         if (!allCleared) return;
         playSound("clapping");
@@ -52,14 +50,14 @@ export function StageFlow() {
 
     useEffect(() => {
         if (phase === "playing") return;
-        if (openScreen === null) return;
+        if (!isRuleOpen) return;
         function handleEscapeKey(event: KeyboardEvent): void {
             if (event.key !== "Escape") return;
-            setOpenScreen(null);
+            setIsRuleOpen(false);
         }
         document.addEventListener("keydown", handleEscapeKey);
         return () => document.removeEventListener("keydown", handleEscapeKey);
-    }, [openScreen, phase])
+    }, [isRuleOpen, phase])
 
     function startRound(): void {
         setPhase("playing");
@@ -150,21 +148,12 @@ export function StageFlow() {
                     playerIsBlack={playerIsBlack}
                     onSelectFirstMove={selectFirstMove}
                     onStart={startRound}
-                    hasHint={hasHint}
-                    onOpenMenuScreen={setOpenScreen}
+                    onOpenRule={() => setIsRuleOpen(true)}
                 />
             )}
 
-            {openScreen === "rule" &&
-                <RuleScreen onClose={() => setOpenScreen(null)} />
-            }
-
-            {openScreen === "hint" && hasHint &&
-                <ListScreen
-                    title={"ステージ" + stageNo + " " + stage.computer.name}
-                    lines={stage.hints}
-                    onClose={() => setOpenScreen(null)}
-                />
+            {isRuleOpen &&
+                <RuleScreen onClose={() => setIsRuleOpen(false)} />
             }
 
             <DemoTool stageNo={stageNo} stageCount={stageInfo.length} onJump={jumpToStage} />
