@@ -27,7 +27,7 @@ export function SideBlock({ side, name, isBlack, bowlState }: Props) {
             <div className="side-name">{name}</div>
             <div className="side-stone-row">
                 <span className={"side-stone " + (isBlack ? "side-black" : "side-white")} />
-                {isBlack ? "先攻" : "後攻"}
+                {isBlack ? "先手" : "後手"}
             </div>
             {side === "player" && bowl}
         </div>
