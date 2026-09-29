@@ -81,7 +81,7 @@
 @keyframes tips-slide-next {
     from {
         opacity: 0;
-        transform: translateX(40px);
+        transform: translateX(-40px);
     }
 
     to {
@@ -93,7 +93,7 @@
 @keyframes tips-slide-prev {
     from {
         opacity: 0;
-        transform: translateX(-40px);
+        transform: translateX(40px);
     }
 
     to {
