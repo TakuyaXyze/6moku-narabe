@@ -50,10 +50,6 @@ export function StageScreen({ stageLabel, opponentName, initialTime, stageTimeLi
                         )}
                     </div>
                 )}
-                <button className="stage-screen-hint-button"
-                    onClick={() => onOpenMenuScreen("hint")}
-                    disabled={!hasHint}
-                >ステージのヒント</button>
             </div>
             <div className="stage-screen-start">
                 {choosesFirstMove && (
