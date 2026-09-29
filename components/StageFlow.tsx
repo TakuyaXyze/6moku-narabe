@@ -125,7 +125,7 @@ export function StageFlow() {
                     onGameEnd={handleGameEnd}
                     onNext={handleNext}
                 />
-                <Tips />
+                <Tips tips={stage.hints} />
             </div>
         );
     }
