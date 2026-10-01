@@ -250,13 +250,16 @@ export function PlayGround({ playerIsBlack, computer, stageLabel, initialTime, t
         ? "1手戻すには持ち時間が" + (undoPenalty / 1000) + "秒より多く必要です"
         : null;
 
+    //ポップアップは同時に1つだけ。開くときは他を閉じる
     function openUndoConfirm(kind: UndoKind): void {
         setIsMenuOpen(false);
+        setIsRuleOpen(false);
         setUndoConfirm(kind);
     }
 
     function openRule(): void {
         setIsMenuOpen(false);
+        setUndoConfirm(null);
         setIsRuleOpen(true);
     }
 
@@ -277,25 +280,31 @@ export function PlayGround({ playerIsBlack, computer, stageLabel, initialTime, t
     const [isMenuOpen, setIsMenuOpen] = useState(false);
     const menuArea = useRef<HTMLDivElement>(null);
 
+    //勝敗が決まったら、勝敗画面と重ならないように他のポップアップとメニューは表示しない
+    const ruleIsShown: boolean = isRuleOpen && continueGame;
+    const undoIsShown: boolean = undoConfirm !== null && continueGame;
+    const menuIsShown: boolean = isMenuOpen && continueGame;
+
     useEffect(() => {
         function handleEscapeKey(event: KeyboardEvent): void {
             if (event.key !== "Escape") return;
-            if (isRuleOpen) {
+            if (ruleIsShown) {
                 setIsRuleOpen(false);
                 return;
             }
-            if (undoConfirm !== null) {
+            if (undoIsShown) {
                 setUndoConfirm(null);
                 return;
             }
+            if (!continueGame) return;
             setIsMenuOpen((isOpen) => !isOpen);
         }
         document.addEventListener("keydown", handleEscapeKey);
         return () => document.removeEventListener("keydown", handleEscapeKey);
-    }, [isRuleOpen, undoConfirm])
+    }, [ruleIsShown, undoIsShown, continueGame])
 
     useEffect(() => {
-        if (!isMenuOpen) return;
+        if (!menuIsShown) return;
         function handleOutsideClick(event: MouseEvent): void {
             if (menuArea.current && menuArea.current.contains(event.target as Node)) return;
             event.stopPropagation();
@@ -303,7 +312,7 @@ export function PlayGround({ playerIsBlack, computer, stageLabel, initialTime, t
         }
         document.addEventListener("click", handleOutsideClick, true);
         return () => document.removeEventListener("click", handleOutsideClick, true);
-    }, [isMenuOpen])
+    }, [menuIsShown])
 
     const playerStoneColor = playerIsBlack ? "b" : "w";
 
@@ -354,8 +363,9 @@ export function PlayGround({ playerIsBlack, computer, stageLabel, initialTime, t
             <div className="menu-area" ref={menuArea}>
                 <button className="menu-button"
                     onClick={() => setIsMenuOpen(!isMenuOpen)}
+                    disabled={!continueGame}
                 >☰</button>
-                {isMenuOpen &&
+                {menuIsShown &&
                     <div className="menu-panel">
                         <button onClick={() => openUndoConfirm("back")}
                             disabled={!continueGame || currentMove === 0}
@@ -367,13 +377,13 @@ export function PlayGround({ playerIsBlack, computer, stageLabel, initialTime, t
                     </div>
                 }
             </div>
-            {isRuleOpen &&
+            {ruleIsShown &&
                 <RuleScreen onClose={() => setIsRuleOpen(false)} />
             }
             {resultIsShown &&
                 <ResultPopup result={gameResult} note={resultNote} buttonLabel={nextLabel} onNext={onNext} />
             }
-            {undoConfirm !== null && continueGame &&
+            {undoIsShown && undoConfirm !== null &&
                 <UndoDialog
                     kind={undoConfirm}
                     penalty={hasTimeLimit ? shownPenalty : null}
