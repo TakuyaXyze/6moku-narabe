@@ -27,6 +27,7 @@ const COMPUTER_START_DELAY = 300;
 const COMPUTER_MIN_TIME = 1500;
 const BLINK_TIME = 1500;
 const RESULT_DELAY = 400;
+const RESULT_OVERLAY_DELAY = 1600;
 const CROSS_BONUS = 3000;
 const BONUS_DISPLAY_TIME = 2600;
 const BONUS_BLOCK_TIME = 1800;      //ボーナス演出の開始から、勝敗演出を始めるまでの時間
@@ -90,6 +91,16 @@ export function PlayGround({ playerIsBlack, computer, stageLabel, initialTime, t
         else if (blackIsWinner || whiteIsWinner) playSound("win");
         onGameEnd(playerWins, Math.max(remainingTime, 0));
     }, [continueGame, cpuIsSettling, bonusIsBlocking])
+
+    const resultIsReady: boolean = !continueGame && !cpuIsSettling && !bonusIsBlocking;
+    const [resultIsShown, setResultIsShown] = useState(false);
+
+    useEffect(() => {
+        if (!resultIsReady) return;
+        const hasWinLine: boolean = blackIsWinner || whiteIsWinner;       //時間切れ・引き分けは光る石がないのですぐ出す
+        const showId = setTimeout(() => setResultIsShown(true), hasWinLine ? RESULT_OVERLAY_DELAY : 0);
+        return () => clearTimeout(showId);
+    }, [resultIsReady, blackIsWinner, whiteIsWinner])
 
     function handlePlay(nextBoxes: (string | null)[][]): void {
         const nextHistory = [...history.slice(0, currentMove + 1), nextBoxes];
@@ -332,9 +343,6 @@ export function PlayGround({ playerIsBlack, computer, stageLabel, initialTime, t
                     {blackIsNext !== playerIsBlack && continueGame &&
                         <ComputingMessage />
                     }
-                    {!continueGame && !cpuIsSettling && !bonusIsBlocking &&
-                        <ResultPopup result={gameResult} note={resultNote} buttonLabel={nextLabel} onNext={onNext} />
-                    }
                 </div>
                 <div className="game-info">
                     {hasTimeLimit &&
@@ -361,6 +369,9 @@ export function PlayGround({ playerIsBlack, computer, stageLabel, initialTime, t
             </div>
             {isRuleOpen &&
                 <RuleScreen onClose={() => setIsRuleOpen(false)} />
+            }
+            {resultIsShown &&
+                <ResultPopup result={gameResult} note={resultNote} buttonLabel={nextLabel} onNext={onNext} />
             }
             {undoConfirm !== null && continueGame &&
                 <UndoDialog
