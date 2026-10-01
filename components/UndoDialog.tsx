@@ -1,11 +1,10 @@
-import { CloseButton } from "./CloseButton";
 import { Overlay } from "./Overlay";
 
 export type UndoKind = "back" | "reset";
 
 const UNDO_MESSAGES: Record<UndoKind, string> = {
-    back: "1つ前の自分の手番まで戻しますか?",
-    reset: "盤面をリセットしますか?",
+    back: "1つ前の自分の手番まで戻す?",
+    reset: "盤面をリセットする?",
 };
 
 type Props = {
@@ -22,7 +21,6 @@ export function UndoDialog({ kind, penalty, shortage, warning, onConfirm, onCanc
     return (
         <Overlay onClose={onCancel}>
             <div className="rule-panel undo-panel">
-                <CloseButton onClick={onCancel} />
                 <div className="undo-message">{canUndo ? UNDO_MESSAGES[kind] : "これ以上戻せません"}</div>
                 {!canUndo &&
                     <div className="undo-note">{shortage}</div>

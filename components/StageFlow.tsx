@@ -39,11 +39,16 @@ export function StageFlow() {
     const fallbackStageNo: number = Math.max(stageNo - 1, 1);
     const nextLabel: string = lastWin ? "次へ" : (gameOver ? "ステージ" + fallbackStageNo + "へ" : "もう一度");
     const penaltyApplies: boolean = Number.isFinite(stage.timeLimit);
-    const resultNote: string = lastWin ? ""
-        : (gameOver ? "挑戦する持ち時間が尽きました"
-            : (penaltyApplies ? "敗北ペナルティ −" + Math.floor(TIME_PENALTY / 1000) + "秒" : ""));
+    const winNote: string = (carriedTime > 0)
+        ? "勝利ボーナス +" + (carriedTime / 1000) + "秒 で\n" + "次の対局へ"
+        : "";
+    const gameoverNote: string = "再度前のステージをクリアしてから\nリベンジしに来よう";
+    const penaltyNote: string = "敗北ペナルティ −" + Math.floor(TIME_PENALTY / 1000) + "秒 で再挑戦";
+    const resultNote: string = lastWin ? winNote
+        : (gameOver ? gameoverNote
+            : (penaltyApplies ? penaltyNote : ""));
     const resetPenalty: number = penaltyApplies ? TIME_PENALTY : 0;
-    const resetIsGameOver: boolean = stage.timeLimit - (timePenalty + resetPenalty) <= 0;     //敗北と同じく持ち越し時間は失う
+    const resetIsGameOver: boolean = stage.timeLimit - (timePenalty + resetPenalty) <= 0;
     const resetWarning: string | null = resetIsGameOver
         ? "持ち時間が尽きるため、ステージ" + fallbackStageNo + "からやり直しになります"
         : null;
@@ -75,7 +80,7 @@ export function StageFlow() {
 
     function handleGameEnd(playerWins: boolean, restTime: number): void {
         setLastWin(playerWins);
-        setCarriedTime((playerWins && Number.isFinite(restTime)) ? Math.floor(restTime * TIME_CARRY_RATE) : 0);
+        setCarriedTime((playerWins && Number.isFinite(restTime)) ? Math.floor(restTime * TIME_CARRY_RATE / 1000) * 1000 : 0);     //秒単位に切り捨て
         if (!playerWins && Number.isFinite(stage.timeLimit)) setTimePenalty(timePenalty + TIME_PENALTY);
     }
 

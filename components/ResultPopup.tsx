@@ -8,6 +8,12 @@ const RESULT_TEXTS: Record<GameResult, string> = {
     timeup: "TIME UP",
 };
 
+const SUB_TEXTS: Record<GameResult, string> = {
+    win: "なかなかやるな",
+    lose: "まだまだだな",
+    timeup: "",
+};
+
 type Props = {
     result: GameResult;
     note: string;
@@ -21,6 +27,7 @@ export function ResultPopup({ result, note, buttonLabel, onNext }: Props) {
             <div className="game-result">
                 <div className="game-result-label">
                     <div className="game-result-text">{RESULT_TEXTS[result]}</div>
+                    <div className="game-sub-text">{SUB_TEXTS[result]}</div>
                     {note !== "" &&
                         <div className="game-result-note">{note}</div>
                     }

@@ -54,9 +54,7 @@
     border-top: 1px solid var(--band);
 }
 
-.stage-field .game-result,
-.stage-field .menu-panel,
-.stage-field .rule-panel {
+.stage-field .menu-panel {
     color: #0a0a0b;
     text-shadow: none;
 }

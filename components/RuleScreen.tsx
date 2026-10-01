@@ -1,7 +1,6 @@
 "use client";
 
 import "../styles/GameInfo.css";
-import { CloseButton } from "./CloseButton";
 import { Overlay } from "./Overlay";
 
 const RULES: string[] = [
@@ -21,7 +20,6 @@ export function RuleScreen({ onClose }: Props) {
     return (
         <Overlay onClose={onClose}>
             <div className="rule-panel">
-                <CloseButton onClick={onClose} />
                 <div className="rule-title">ルール</div>
                 <ul>
                     {RULES.map((rule) => <li key={rule}>{rule}</li>)}

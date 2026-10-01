@@ -4,6 +4,25 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    background-color: rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(2px);
+    background-color: rgba(0, 0, 0, 0.6);
+    color: var(--white);
     z-index: 10;
+}
+
+.overlay button {
+    min-width: 96px;
+    padding: 4px 16px;
+    font-size: 16px;
+    font-weight: bold;
+    color: var(--dark-brown);
+    border: 2px solid var(--dark-brown);
+    border-radius: 8px;
+    background-color: var(--light-brown);
+    cursor: pointer;
+}
+
+.overlay button:focus-visible {
+    outline: 2px solid var(--white);
+    outline-offset: -5px;
 }
