@@ -30,6 +30,7 @@
 
 .tips-progress-done {
     width: 100%;
+    color: var(--gray);
 }
 
 .tips-progress-active {
@@ -37,6 +38,7 @@
     animation-name: tips-progress;
     animation-timing-function: linear;
     animation-fill-mode: forwards;
+    color: var(--gray);
 }
 
 @keyframes tips-progress {
