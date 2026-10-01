@@ -2,6 +2,7 @@
 
 import "../styles/GameInfo.css";
 import { CloseButton } from "./CloseButton";
+import { Overlay } from "./Overlay";
 
 const RULES: string[] = [
     "先に石を6つ直線に並べた方が勝ち。縦・横・斜めのどれでもよい",
@@ -18,11 +19,7 @@ type Props = {
 
 export function RuleScreen({ onClose }: Props) {
     return (
-        <div className="rule-screen"
-            onClick={(event) => {
-                if (event.target === event.currentTarget) onClose();
-            }}
-        >
+        <Overlay onClose={onClose}>
             <div className="rule-panel">
                 <CloseButton onClick={onClose} />
                 <div className="rule-title">ルール</div>
@@ -30,6 +27,6 @@ export function RuleScreen({ onClose }: Props) {
                     {RULES.map((rule) => <li key={rule}>{rule}</li>)}
                 </ul>
             </div>
-        </div>
+        </Overlay>
     );
 }

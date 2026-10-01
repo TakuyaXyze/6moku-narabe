@@ -1,4 +1,5 @@
 import { CloseButton } from "./CloseButton";
+import { Overlay } from "./Overlay";
 
 export type UndoKind = "back" | "reset";
 
@@ -19,11 +20,7 @@ type Props = {
 export function UndoDialog({ kind, penalty, shortage, warning, onConfirm, onCancel }: Props) {
     const canUndo: boolean = shortage === null;
     return (
-        <div className="rule-screen"
-            onClick={(event) => {
-                if (event.target === event.currentTarget) onCancel();
-            }}
-        >
+        <Overlay onClose={onCancel}>
             <div className="rule-panel undo-panel">
                 <CloseButton onClick={onCancel} />
                 <div className="undo-message">{canUndo ? UNDO_MESSAGES[kind] : "これ以上戻せません"}</div>
@@ -43,6 +40,6 @@ export function UndoDialog({ kind, penalty, shortage, warning, onConfirm, onCanc
                     <button onClick={() => onCancel()}>{canUndo ? "やめる" : "閉じる"}</button>
                 </div>
             </div>
-        </div>
+        </Overlay>
     );
 }
