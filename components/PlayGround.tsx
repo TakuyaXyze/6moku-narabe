@@ -31,7 +31,6 @@ const CROSS_BONUS = 3000;
 const BONUS_DISPLAY_TIME = 2600;
 const BONUS_BLOCK_TIME = 1800;      //ボーナス演出の開始から、勝敗演出を始めるまでの時間
 const UNDO_EXTRA_PENALTY = 1000;
-const RESET_PENALTY = 3000;
 const RULE_TIME_RATE = 0.5;
 
 type Props = {
@@ -42,11 +41,14 @@ type Props = {
     timeIncrement: number;
     nextLabel: string;
     resultNote: string;
+    resetPenalty: number;
+    resetWarning: string | null;        //最初に戻すと持ち時間が尽きるときの注意。尽きないときはnull
     onGameEnd: (playerWins: boolean, restTime: number) => void;
     onNext: () => void;
+    onReset: () => void;
 }
 
-export function PlayGround({ playerIsBlack, computer, stageLabel, initialTime, timeIncrement, nextLabel, resultNote, onGameEnd, onNext }: Props) {
+export function PlayGround({ playerIsBlack, computer, stageLabel, initialTime, timeIncrement, nextLabel, resultNote, resetPenalty, resetWarning, onGameEnd, onNext, onReset }: Props) {
 
     const [history, setHistory] = useState([Array(ROWS).fill(null).map(() => Array<(string | null)>(COLUMNS).fill(null))]);
     const [currentMove, setCurrentMove] = useState(0);
@@ -231,7 +233,11 @@ export function PlayGround({ playerIsBlack, computer, stageLabel, initialTime, t
     }
 
     const [undoConfirm, setUndoConfirm] = useState<UndoKind | null>(null);
-    const shownPenalty: number = (undoConfirm === "reset") ? RESET_PENALTY : undoPenalty;
+    const shownPenalty: number = (undoConfirm === "reset") ? resetPenalty : undoPenalty;
+    const canGoBack: boolean = !hasTimeLimit || remainingTime - undoPenalty > 0;
+    const undoShortage: string | null = (undoConfirm === "back" && !canGoBack)
+        ? "1手戻すには持ち時間が" + (undoPenalty / 1000) + "秒より多く必要です"
+        : null;
 
     function openUndoConfirm(kind: UndoKind): void {
         setIsMenuOpen(false);
@@ -246,12 +252,11 @@ export function PlayGround({ playerIsBlack, computer, stageLabel, initialTime, t
     function runUndo(): void {
         if (undoConfirm === null) return;
         if (undoConfirm === "reset") {
-            setRemainingTime(Math.max(initialTime - RESET_PENALTY, 0));
-            jumpTo(0);
-            setUndoConfirm(null);
+            onReset();          //敗北と同じ扱い。
             return;
         }
-        setRemainingTime((time) => Math.max(time - undoPenalty, 0));
+        if (!canGoBack) return;
+        setRemainingTime((time) => time - undoPenalty);
         jumpTo(lastFirstPlayerTurn(currentMove, playerIsBlack));
         setUndoConfirm(null);
     }
@@ -361,6 +366,8 @@ export function PlayGround({ playerIsBlack, computer, stageLabel, initialTime, t
                 <UndoDialog
                     kind={undoConfirm}
                     penalty={hasTimeLimit ? shownPenalty : null}
+                    shortage={undoShortage}
+                    warning={undoConfirm === "reset" ? resetWarning : null}
                     onConfirm={runUndo}
                     onCancel={() => setUndoConfirm(null)}
                 />

@@ -10,11 +10,14 @@ const UNDO_MESSAGES: Record<UndoKind, string> = {
 type Props = {
     kind: UndoKind;
     penalty: number | null;     //持ち時間無制限のときはnull
+    shortage: string | null;    //戻せないときの理由。戻せるときはnull
+    warning: string | null;     //戻す前に知らせておく注意。無いときはnull
     onConfirm: () => void;
     onCancel: () => void;
 }
 
-export function UndoDialog({ kind, penalty, onConfirm, onCancel }: Props) {
+export function UndoDialog({ kind, penalty, shortage, warning, onConfirm, onCancel }: Props) {
+    const canUndo: boolean = shortage === null;
     return (
         <div className="rule-screen"
             onClick={(event) => {
@@ -23,13 +26,21 @@ export function UndoDialog({ kind, penalty, onConfirm, onCancel }: Props) {
         >
             <div className="rule-panel undo-panel">
                 <CloseButton onClick={onCancel} />
-                <div className="undo-message">{UNDO_MESSAGES[kind]}</div>
-                {penalty !== null &&
+                <div className="undo-message">{canUndo ? UNDO_MESSAGES[kind] : "これ以上戻せません"}</div>
+                {!canUndo &&
+                    <div className="undo-note">{shortage}</div>
+                }
+                {canUndo && penalty !== null &&
                     <div className="undo-note">制限時間が{penalty / 1000}秒減ります</div>
                 }
+                {canUndo && warning !== null &&
+                    <div className="undo-note undo-warning">{warning}</div>
+                }
                 <div className="undo-buttons">
-                    <button onClick={() => onConfirm()}>戻す</button>
-                    <button onClick={() => onCancel()}>やめる</button>
+                    {canUndo &&
+                        <button onClick={() => onConfirm()}>戻す</button>
+                    }
+                    <button onClick={() => onCancel()}>{canUndo ? "やめる" : "閉じる"}</button>
                 </div>
             </div>
         </div>

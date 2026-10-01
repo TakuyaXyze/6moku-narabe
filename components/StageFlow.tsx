@@ -42,6 +42,11 @@ export function StageFlow() {
     const resultNote: string = lastWin ? ""
         : (gameOver ? "挑戦する持ち時間が尽きました"
             : (penaltyApplies ? "敗北ペナルティ −" + Math.floor(TIME_PENALTY / 1000) + "秒" : ""));
+    const resetPenalty: number = penaltyApplies ? TIME_PENALTY : 0;
+    const resetIsGameOver: boolean = stage.timeLimit - (timePenalty + resetPenalty) <= 0;     //敗北と同じく持ち越し時間は失う
+    const resetWarning: string | null = resetIsGameOver
+        ? "持ち時間が尽きるため、ステージ" + fallbackStageNo + "からやり直しになります"
+        : null;
 
     useEffect(() => {
         if (!allCleared) return;
@@ -72,6 +77,17 @@ export function StageFlow() {
         setLastWin(playerWins);
         setCarriedTime((playerWins && Number.isFinite(restTime)) ? Math.floor(restTime * TIME_CARRY_RATE) : 0);
         if (!playerWins && Number.isFinite(stage.timeLimit)) setTimePenalty(timePenalty + TIME_PENALTY);
+    }
+
+    function handleReset(): void {
+        //最初に戻すのは敗北と同じ扱い。持ち時間が尽きたら前のステージへ
+        if (resetIsGameOver) {
+            jumpToStage(fallbackStageNo);
+            return;
+        }
+        setCarriedTime(0);
+        setTimePenalty(timePenalty + resetPenalty);
+        setAttempt(attempt + 1);
     }
 
     function handleNext(): void {
@@ -120,8 +136,11 @@ export function StageFlow() {
                     timeIncrement={stage.timeIncrement}
                     nextLabel={nextLabel}
                     resultNote={resultNote}
+                    resetPenalty={resetPenalty}
+                    resetWarning={resetWarning}
                     onGameEnd={handleGameEnd}
                     onNext={handleNext}
+                    onReset={handleReset}
                 />
                 <Tips tips={stage.hints} />
             </div>
