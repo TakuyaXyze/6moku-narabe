@@ -63,11 +63,41 @@
 .tips-text {
     font-size: 15px;
     white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
     max-width: 100%;
+}
+
+/* 上下を反転させてスクロールバーを上側に出し、中身はもう一度反転して元の向きに戻す */
+.tips-scroll {
+    overflow-x: auto;
     padding: 0 16px;
     box-sizing: border-box;
+    transform: rotateX(180deg);
+}
+
+.tips-scroll-content {
+    transform: rotateX(180deg);
+}
+
+/* スクロールバーを細い線だけの簡素な見た目にする（Chrome・Edge・Safari） */
+.tips-scroll::-webkit-scrollbar {
+    height: 3px;
+}
+
+.tips-scroll::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.tips-scroll::-webkit-scrollbar-thumb {
+    border-radius: 2px;
+    background-color: rgba(138, 138, 138, 0.5);
+}
+
+/* 上の指定が効かないブラウザ（Firefox）向け */
+@supports not selector(::-webkit-scrollbar) {
+    .tips-scroll {
+        scrollbar-width: thin;
+        scrollbar-color: rgba(138, 138, 138, 0.5) transparent;
+    }
 }
 
 .tips-slide-next {
