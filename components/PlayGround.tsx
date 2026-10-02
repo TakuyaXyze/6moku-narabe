@@ -306,8 +306,10 @@ export function PlayGround({ playerIsBlack, computer, stageLabel, initialTime, t
     useEffect(() => {
         if (!menuIsShown) return;
         function handleOutsideClick(event: MouseEvent): void {
-            if (menuArea.current && menuArea.current.contains(event.target as Node)) return;
-            event.stopPropagation();
+            const target = event.target as HTMLElement;
+            const inMenu: boolean = menuArea.current !== null && menuArea.current.contains(target);
+            if (inMenu && target.closest("button")) return;     //メニューのボタンは各自の処理に任せる
+            if (!inMenu) event.stopPropagation();               //メニューの外のクリックは、閉じるだけで盤面などには届けない
             setIsMenuOpen(false);
         }
         document.addEventListener("click", handleOutsideClick, true);

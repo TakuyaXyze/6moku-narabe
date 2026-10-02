@@ -54,11 +54,6 @@
     border-top: 1px solid var(--band);
 }
 
-.stage-field .menu-panel {
-    color: #0a0a0b;
-    text-shadow: none;
-}
-
 .field-morning {
     --field-image: url(/fields/forest.webp);
     --field-scale: 280px;
