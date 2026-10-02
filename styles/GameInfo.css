@@ -133,11 +133,54 @@
     padding: 0;
 }
 
+.menu-button path {
+    transform-box: view-box;
+    transform-origin: 12px 12px;    /* アイコンの中心で回す */
+    transition: transform 0.2s ease-out, opacity 0.2s ease-out;
+}
+
+.menu-button-open .menu-line-top {
+    transform: rotate(45deg) translateY(5px);
+}
+
+.menu-button-open .menu-line-middle {
+    opacity: 0;
+}
+
+.menu-button-open .menu-line-bottom {
+    transform: rotate(-45deg) translateY(-5px);
+}
+
 .menu-panel {
     display: flex;
     flex-direction: column;
     align-items: stretch;
     gap: 6px;
+}
+
+/* 開いたとき、項目が上から順に少しずつずれて降りてくる */
+.menu-panel button {
+    animation: menu-item-drop 0.2s ease-out both;
+}
+
+.menu-panel button:nth-child(2) {
+    animation-delay: 0.05s;
+}
+
+.menu-panel button:nth-child(3) {
+    animation-delay: 0.1s;
+}
+
+@keyframes menu-item-drop {
+    from {
+        opacity: 0;
+        transform: translateY(-8px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 
 .menu-panel button {

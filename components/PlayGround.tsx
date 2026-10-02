@@ -363,18 +363,18 @@ export function PlayGround({ playerIsBlack, computer, stageLabel, initialTime, t
                 </div>
             </div>
             <div className="menu-area" ref={menuArea}>
-                <button className="menu-button"
+                <button className={"menu-button" + (menuIsShown ? " menu-button-open" : "")}
                     aria-label="メニュー"
                     aria-expanded={menuIsShown}
                     onClick={() => setIsMenuOpen(!isMenuOpen)}
                     disabled={!continueGame}
                 >
-                    <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true">
-                        <path d="M4 7 H20 M4 12 H20 M4 17 H20"
-                            stroke="currentColor"
-                            strokeWidth="2.5"
-                            strokeLinecap="round"
-                        />
+                    <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"
+                        stroke="currentColor" strokeWidth="2.5" strokeLinecap="round"
+                    >
+                        <path className="menu-line-top" d="M4 7 H20" />
+                        <path className="menu-line-middle" d="M4 12 H20" />
+                        <path className="menu-line-bottom" d="M4 17 H20" />
                     </svg>
                 </button>
                 {menuIsShown &&
