@@ -11,6 +11,11 @@ const RULES: string[] = [
     "石を1つ置くごとに持ち時間が少し増える",
 ];
 
+const CREDITS: string[] = [
+    "音楽：魔王魂",
+    "効果音：効果音ラボ",
+];
+
 type Props = {
     onClose: () => void;
 }
@@ -22,6 +27,10 @@ export function RuleScreen({ onClose }: Props) {
                 <div className="rule-title">ルール</div>
                 <ul>
                     {RULES.map((rule) => <li key={rule}>{rule}</li>)}
+                </ul>
+                <div className="rule-title rule-credit-title">使用素材</div>
+                <ul>
+                    {CREDITS.map((credit) => <li key={credit}>{credit}</li>)}
                 </ul>
             </div>
         </Overlay>

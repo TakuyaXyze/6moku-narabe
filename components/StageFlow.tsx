@@ -9,6 +9,7 @@ import { stageInfo, StageInfo } from "./StageData";
 import { StageScreen } from "./StageScreen";
 import { ClearScreen } from "./ClearScreen";
 import { DemoTool } from "./DemoTool";
+import { useBgm, BgmTrack } from "./Bgm";
 import "../styles/StageFlow.css";
 import "../styles/Field.css";
 import "../styles/Portrait.css";
@@ -17,6 +18,7 @@ type Phase = "standby" | "playing";
 
 const TIME_CARRY_RATE = 0.2;
 const TIME_PENALTY = 3000;
+const CLEAR_BGM: BgmTrack = { src: "/bgm/maou_loop_bgm_fantasy13.mp3", rate: 1 };
 
 export function StageFlow() {
 
@@ -53,6 +55,8 @@ export function StageFlow() {
     const resetWarning: string | null = resetIsGameOver
         ? "持ち時間が尽きるため、" + fallbackName + "との対局からやり直しになります"
         : null;
+
+    useBgm(allCleared ? CLEAR_BGM : stage.bgm);
 
     useEffect(() => {
         if (!allCleared) return;

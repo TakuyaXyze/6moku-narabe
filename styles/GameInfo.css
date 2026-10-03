@@ -135,7 +135,8 @@
 
 .menu-button path {
     transform-box: view-box;
-    transform-origin: 12px 12px;    /* アイコンの中心で回す */
+    transform-origin: 12px 12px;
+    /* アイコンの中心で回す */
     transition: transform 0.2s ease-out, opacity 0.2s ease-out;
 }
 
@@ -219,6 +220,10 @@
 .rule-panel li {
     margin-bottom: 6px;
     line-height: 1.5;
+}
+
+.rule-credit-title {
+    margin-top: 20px;
 }
 
 .undo-panel {
