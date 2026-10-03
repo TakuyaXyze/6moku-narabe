@@ -114,6 +114,12 @@
     gap: 6px;
 }
 
+.menu-buttons {
+    display: flex;
+    flex-direction: row;
+    gap: 6px;
+}
+
 .menu-button,
 .menu-panel button {
     color: var(--dark-brown);

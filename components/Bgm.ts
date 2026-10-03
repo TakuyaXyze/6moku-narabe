@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 
 export type BgmTrack = {
     src: string;
@@ -18,6 +18,11 @@ function getAudioContext(): AudioContext {
     return audioContext;
 }
 
+function setVolume(gain: GainNode, target: number): void {
+    gain.gain.cancelScheduledValues(getAudioContext().currentTime);
+    gain.gain.value = target;
+}
+
 function fadeTo(gain: GainNode, target: number): void {
     const now = getAudioContext().currentTime;
     gain.gain.cancelScheduledValues(now);
@@ -25,10 +30,23 @@ function fadeTo(gain: GainNode, target: number): void {
     gain.gain.linearRampToValueAtTime(target, now + FADE_SECONDS);
 }
 
+type BgmControl = {
+    resume: () => void;
+    mute: () => void;
+};
+
 //曲を切り替えるときは、前の曲をフェードアウトしながら次の曲をフェードインする
-export function useBgm(track: BgmTrack | null): void {
+export function useBgm(track: BgmTrack | null, isOn: boolean): void {
     const src: string | null = track?.src ?? null;
     const rate: number = track?.rate ?? 1;
+    const isOnRef = useRef(isOn);
+    const control = useRef<BgmControl | null>(null);
+
+    useEffect(() => {
+        isOnRef.current = isOn;
+        if (isOn) control.current?.resume();
+        else control.current?.mute();
+    }, [isOn])
 
     useEffect(() => {
         if (src === null) return;
@@ -42,30 +60,42 @@ export function useBgm(track: BgmTrack | null): void {
         context.createMediaElementSource(audio).connect(gain).connect(context.destination);
 
         let stopped = false;
+        let fadesIn = true;         //曲の始まりだけフェードインする
 
-        function start(): void {
-            if (stopped) return;
+        function play(): void {
+            if (stopped || !isOnRef.current) return;
             context.resume();
             audio.play()
                 .then(() => {
-                    fadeTo(gain, BGM_VOLUME);
+                    if (!isOnRef.current) return;       //再生を待つ間にオフにされたとき
+                    if (fadesIn) fadeTo(gain, BGM_VOLUME);
+                    else setVolume(gain, BGM_VOLUME);
+                    fadesIn = false;
                     if (context.state !== "running") waitForUserAction();   //再生できても音の出口が止められているとき
                 })
                 .catch(() => waitForUserAction());      //ブラウザに自動再生を止められたとき
         }
 
-        //ブラウザは、ユーザーが一度も操作していないページの音を鳴らさない。最初のクリックやキー入力を待って鳴らす
-        function waitForUserAction(): void {
-            document.addEventListener("pointerdown", start, { once: true });
-            document.addEventListener("keydown", start, { once: true });
+        function mute(): void {
+            setVolume(gain, 0);
+            audio.pause();
         }
 
-        start();
+        //ブラウザは、ユーザーが一度も操作していないページの音を鳴らさない。最初のクリックやキー入力を待って鳴らす
+        function waitForUserAction(): void {
+            document.addEventListener("pointerdown", play, { once: true });
+            document.addEventListener("keydown", play, { once: true });
+        }
+
+        const ownControl: BgmControl = { resume: play, mute };
+        control.current = ownControl;
+        play();
 
         return () => {
             stopped = true;
-            document.removeEventListener("pointerdown", start);
-            document.removeEventListener("keydown", start);
+            if (control.current === ownControl) control.current = null;
+            document.removeEventListener("pointerdown", play);
+            document.removeEventListener("keydown", play);
             fadeTo(gain, 0);
             setTimeout(() => {
                 audio.pause();

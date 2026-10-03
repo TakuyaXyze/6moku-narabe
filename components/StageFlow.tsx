@@ -56,7 +56,8 @@ export function StageFlow() {
         ? "持ち時間が尽きるため、" + fallbackName + "との対局からやり直しになります"
         : null;
 
-    useBgm(allCleared ? CLEAR_BGM : stage.bgm);
+    const [bgmIsOn, setBgmIsOn] = useState(true);
+    useBgm(allCleared ? CLEAR_BGM : stage.bgm, bgmIsOn);
 
     useEffect(() => {
         if (!allCleared) return;
@@ -150,6 +151,8 @@ export function StageFlow() {
                     onGameEnd={handleGameEnd}
                     onNext={handleNext}
                     onReset={handleReset}
+                    bgmIsOn={bgmIsOn}
+                    onToggleBgm={() => setBgmIsOn(!bgmIsOn)}
                 />
                 <Tips tips={stage.hints} />
             </div>
