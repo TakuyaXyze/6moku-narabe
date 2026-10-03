@@ -37,7 +37,6 @@ const RULE_TIME_RATE = 0.5;
 type Props = {
     playerIsBlack: boolean;
     computer: ComputerSetting;
-    stageLabel: string;
     initialTime: number;
     timeIncrement: number;
     nextLabel: string;
@@ -49,7 +48,7 @@ type Props = {
     onReset: () => void;
 }
 
-export function PlayGround({ playerIsBlack, computer, stageLabel, initialTime, timeIncrement, nextLabel, resultNote, resetPenalty, resetWarning, onGameEnd, onNext, onReset }: Props) {
+export function PlayGround({ playerIsBlack, computer, initialTime, timeIncrement, nextLabel, resultNote, resetPenalty, resetWarning, onGameEnd, onNext, onReset }: Props) {
 
     const [history, setHistory] = useState([Array(ROWS).fill(null).map(() => Array<(string | null)>(COLUMNS).fill(null))]);
     const [currentMove, setCurrentMove] = useState(0);
@@ -335,7 +334,7 @@ export function PlayGround({ playerIsBlack, computer, stageLabel, initialTime, t
 
     return (
         <div className="play-screen">
-            <PlayHeader stageLabel={stageLabel} />
+            <PlayHeader opponentName={computer.name} />
             <div className="play-ground">
                 <div className="com-area">
                     <SideBlock side="com" name={computer.name} isBlack={!playerIsBlack} bowlState={comBowlState} />

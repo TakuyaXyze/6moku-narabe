@@ -1,7 +1,8 @@
 import "../styles/StageScreen.css";
 
 type Props = {
-    stageLabel: string;
+    opponentNames: string[];
+    stageNo: number;
     opponentName: string;
     initialTime: number;
     stageTimeLimit: number;
@@ -15,7 +16,7 @@ type Props = {
     onOpenRule: () => void;
 }
 
-export function StageScreen({ stageLabel, opponentName, initialTime, stageTimeLimit, carriedTime, timePenalty, roundNo, attempt, playerIsBlack, onSelectFirstMove, onStart, onOpenRule }: Props) {
+export function StageScreen({ opponentNames, stageNo, opponentName, initialTime, stageTimeLimit, carriedTime, timePenalty, roundNo, attempt, playerIsBlack, onSelectFirstMove, onStart, onOpenRule }: Props) {
     const hasTimeDetail: boolean = Number.isFinite(initialTime) && (carriedTime > 0 || timePenalty > 0);
     const choosesFirstMove: boolean = roundNo === 1 && attempt === 0;
 
@@ -29,11 +30,15 @@ export function StageScreen({ stageLabel, opponentName, initialTime, stageTimeLi
             </div>
             <div className="stage-screen-info">
                 <div className="stage-screen-label">
-                    STAGE {stageLabel}
+                    VS {opponentName}
                 </div>
-                <div className="stage-screen-opponent-name">
-                    対戦相手: {opponentName}
-                </div>
+                <ol className="stage-screen-ladder">
+                    {opponentNames.map((name, i) => (
+                        <li key={name}
+                            className={i + 1 < stageNo ? "ladder-cleared" : (i + 1 === stageNo ? "ladder-current" : "ladder-next")}
+                        >{name}</li>
+                    ))}
+                </ol>
                 <div className="stage-screen-time">
                     持ち時間 {Number.isFinite(initialTime) ? Math.floor(initialTime / 1000) + "秒" : "無制限"}
                 </div>
@@ -63,7 +68,7 @@ export function StageScreen({ stageLabel, opponentName, initialTime, stageTimeLi
                 {!choosesFirstMove && (
                     <>
                         <div className="stage-screen-start-message">
-                            {attempt > 0 ? "再挑戦" : "ラウンド" + roundNo}
+                            {attempt > 0 ? "再挑戦" : "手番を入れ替えて " + roundNo + "局目"}
                         </div>
                         <button className="stage-screen-start-button" onClick={() => onStart()}>
                             {playerIsBlack ? "先手" : "後手"}で開始 <span className={playerIsBlack ? "goishi-black" : "goishi-white"} />

@@ -52,11 +52,40 @@
 }
 
 .stage-screen-time,
-.stage-screen-opponent-name,
 .stage-screen-start-message {
     font-size: 16px;
     margin: 4px;
     font-weight: bold;
+}
+
+.stage-screen-ladder {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: center;
+    margin: 0 0 8px;
+    padding: 0;
+    list-style: none;
+    font-size: 13px;
+}
+
+.stage-screen-ladder li+li::before {
+    content: "›";
+    margin: 0 6px;
+    opacity: 0.4;
+    font-weight: normal;
+}
+
+.ladder-cleared {
+    opacity: 0.6;
+}
+
+.ladder-current {
+    font-weight: bold;
+}
+
+.ladder-next {
+    opacity: 0.35;
 }
 
 .stage-screen-time-detail {

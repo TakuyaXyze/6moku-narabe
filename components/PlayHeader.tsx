@@ -1,11 +1,11 @@
 type Props = {
-    stageLabel: string;
+    opponentName: string;
 }
 
-export function PlayHeader({ stageLabel }: Props) {
+export function PlayHeader({ opponentName }: Props) {
     return (
         <div className="game-header">
-            <div className="stage-title">STAGE {stageLabel}</div>
+            <div className="stage-title">VS {opponentName}</div>
         </div>
     );
 }

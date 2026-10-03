@@ -33,16 +33,17 @@ export function StageFlow() {
     const allCleared: boolean = stageNo > stageInfo.length;
     const stage: StageInfo = stageInfo[Math.min(stageNo, stageInfo.length) - 1];
     const playerIsBlack: boolean = (roundNo === 1) ? firstRoundIsBlack : !firstRoundIsBlack;
-    const stageLabel: string = stageNo + "-" + roundNo;
+    const opponentNames: string[] = stageInfo.map((info) => info.computer.name);
     const initialTime: number = stage.timeLimit + carriedTime - timePenalty;
     const gameOver: boolean = initialTime <= 0;
     const fallbackStageNo: number = Math.max(stageNo - 1, 1);
-    const nextLabel: string = lastWin ? "次へ" : (gameOver ? "ステージ" + fallbackStageNo + "へ" : "もう一度");
+    const fallbackName: string = opponentNames[fallbackStageNo - 1];
+    const nextLabel: string = lastWin ? "次へ" : (gameOver ? fallbackName + "と再戦" : "もう一度");
     const penaltyApplies: boolean = Number.isFinite(stage.timeLimit);
     const winNote: string = (carriedTime > 0)
         ? "勝利ボーナス +" + (carriedTime / 1000) + "秒 で\n" + "次の対局へ"
         : "";
-    const gameoverNote: string = "再度前のステージをクリアしてから\nリベンジしに来よう";
+    const gameoverNote: string = fallbackName + "に勝ってから\nリベンジしに来よう";
     const penaltyNote: string = "敗北ペナルティ −" + Math.floor(TIME_PENALTY / 1000) + "秒 で再挑戦";
     const resultNote: string = lastWin ? winNote
         : (gameOver ? gameoverNote
@@ -50,7 +51,7 @@ export function StageFlow() {
     const resetPenalty: number = penaltyApplies ? TIME_PENALTY : 0;
     const resetIsGameOver: boolean = stage.timeLimit - (timePenalty + resetPenalty) <= 0;
     const resetWarning: string | null = resetIsGameOver
-        ? "持ち時間が尽きるため、ステージ" + fallbackStageNo + "からやり直しになります"
+        ? "持ち時間が尽きるため、" + fallbackName + "との対局からやり直しになります"
         : null;
 
     useEffect(() => {
@@ -136,7 +137,6 @@ export function StageFlow() {
                     key={stageNo + "-" + roundNo + "-" + attempt}
                     playerIsBlack={playerIsBlack}
                     computer={stage.computer}
-                    stageLabel={stageLabel}
                     initialTime={initialTime}
                     timeIncrement={stage.timeIncrement}
                     nextLabel={nextLabel}
@@ -161,7 +161,8 @@ export function StageFlow() {
 
             {phase === "standby" && !allCleared && (
                 <StageScreen
-                    stageLabel={stageLabel}
+                    opponentNames={opponentNames}
+                    stageNo={stageNo}
                     opponentName={stage.computer.name}
                     initialTime={initialTime}
                     stageTimeLimit={stage.timeLimit}
