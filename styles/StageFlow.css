@@ -69,3 +69,30 @@
         transform: scale(1);
     }
 }
+
+/* 対局画面に入るときの暗転。0.35秒で真っ暗になり、少し保ってから明ける */
+.screen-fade {
+    position: fixed;
+    inset: 0;
+    z-index: 20;
+    background-color: #000;
+    animation: screen-fade 0.8s ease-in-out both;
+}
+
+@keyframes screen-fade {
+    0% {
+        opacity: 0;
+    }
+
+    44% {
+        opacity: 1;
+    }
+
+    56% {
+        opacity: 1;
+    }
+
+    100% {
+        opacity: 0;
+    }
+}

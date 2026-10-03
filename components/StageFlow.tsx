@@ -19,6 +19,8 @@ type Phase = "standby" | "playing";
 const TIME_CARRY_RATE = 0.2;
 const TIME_PENALTY = 3000;
 const BOMB_MUTED_RATE = 0.3;
+const SCREEN_DARK_TIME = 350;
+const SCREEN_FADE_TIME = 800;
 const CLEAR_BGM: BgmTrack = { src: "/bgm/maou_loop_bgm_fantasy13.mp3", rate: 1 };
 
 export function StageFlow() {
@@ -76,10 +78,17 @@ export function StageFlow() {
         return () => document.removeEventListener("keydown", handleEscapeKey);
     }, [isRuleOpen, phase])
 
+    const [isFading, setIsFading] = useState(false);
+
     function startRound(): void {
         playSound("select");            //対局に入るボタンはすべてこの音
-        setPhase("playing");
+        setIsFading(true);              //一度暗転してから対局画面に入る
+        setTimeout(() => setPhase("playing"), SCREEN_DARK_TIME);
+        setTimeout(() => setIsFading(false), SCREEN_FADE_TIME);    //animationendはタブが裏にあると届かないので時間で消す
     }
+
+    const screenFade = isFading &&
+        <div className="screen-fade" />;
 
     function selectFirstMove(isBlack: boolean): void {
         setFirstRoundIsBlack(isBlack);
@@ -139,61 +148,63 @@ export function StageFlow() {
         setPhase("standby");
     }
 
-    if (phase === "playing") {
-        return (
-            <div className={"stage-field field-" + stage.field}>
-                <PlayGround
-                    key={stageNo + "-" + roundNo + "-" + attempt}
-                    playerIsBlack={playerIsBlack}
-                    computer={stage.computer}
-                    initialTime={initialTime}
-                    timeIncrement={stage.timeIncrement}
-                    nextLabel={nextLabel}
-                    resultNote={resultNote}
-                    resetPenalty={resetPenalty}
-                    resetWarning={resetWarning}
-                    onGameEnd={handleGameEnd}
-                    onNext={handleNext}
-                    onReset={handleReset}
-                    bgmIsOn={bgmIsOn}
-                    onToggleBgm={() => setBgmIsOn(!bgmIsOn)}
-                />
-                <Tips tips={stage.hints} />
-            </div>
-        );
-    }
-
+    //暗転の幕(screenFade)は画面の切り替えで作り直されないよう、両方の画面の外側の同じ位置に置く
     return (
-        <div className="standby-screen">
+        <>
+            {phase === "playing" ? (
+                <div className={"stage-field field-" + stage.field}>
+                    <PlayGround
+                        key={stageNo + "-" + roundNo + "-" + attempt}
+                        playerIsBlack={playerIsBlack}
+                        computer={stage.computer}
+                        initialTime={initialTime}
+                        timeIncrement={stage.timeIncrement}
+                        nextLabel={nextLabel}
+                        resultNote={resultNote}
+                        resetPenalty={resetPenalty}
+                        resetWarning={resetWarning}
+                        onGameEnd={handleGameEnd}
+                        onNext={handleNext}
+                        onReset={handleReset}
+                        bgmIsOn={bgmIsOn}
+                        onToggleBgm={() => setBgmIsOn(!bgmIsOn)}
+                    />
+                    <Tips tips={stage.hints} />
+                </div>
+            ) : (
+                <div className="standby-screen">
 
-            {phase === "standby" && allCleared && (
-                <ClearScreen onRestart={() => jumpToStage(1)} />
+                {phase === "standby" && allCleared && (
+                    <ClearScreen onRestart={() => jumpToStage(1)} />
+                )}
+
+                {phase === "standby" && !allCleared && (
+                    <StageScreen
+                        opponentNames={opponentNames}
+                        stageNo={stageNo}
+                        opponentName={stage.computer.name}
+                        initialTime={initialTime}
+                        stageTimeLimit={stage.timeLimit}
+                        carriedTime={carriedTime}
+                        timePenalty={timePenalty}
+                        roundNo={roundNo}
+                        attempt={attempt}
+                        playerIsBlack={playerIsBlack}
+                        onSelectFirstMove={selectFirstMove}
+                        onStart={startRound}
+                        onOpenRule={() => setIsRuleOpen(true)}
+                    />
+                )}
+
+                {isRuleOpen &&
+                    <RuleScreen onClose={() => setIsRuleOpen(false)} />
+                }
+
+                <DemoTool stageNo={stageNo} stageCount={stageInfo.length} onJump={jumpToStage} />
+
+                </div>
             )}
-
-            {phase === "standby" && !allCleared && (
-                <StageScreen
-                    opponentNames={opponentNames}
-                    stageNo={stageNo}
-                    opponentName={stage.computer.name}
-                    initialTime={initialTime}
-                    stageTimeLimit={stage.timeLimit}
-                    carriedTime={carriedTime}
-                    timePenalty={timePenalty}
-                    roundNo={roundNo}
-                    attempt={attempt}
-                    playerIsBlack={playerIsBlack}
-                    onSelectFirstMove={selectFirstMove}
-                    onStart={startRound}
-                    onOpenRule={() => setIsRuleOpen(true)}
-                />
-            )}
-
-            {isRuleOpen &&
-                <RuleScreen onClose={() => setIsRuleOpen(false)} />
-            }
-
-            <DemoTool stageNo={stageNo} stageCount={stageInfo.length} onJump={jumpToStage} />
-
-        </div>
+            {screenFade}
+        </>
     );
 }
