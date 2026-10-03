@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import { PlayGround } from "./PlayGround";
 import { Tips } from "./Tips";
-import { playSound } from "./Sounds";
+import { playSound, DEFAULT_VOLUME } from "./Sounds";
 import { RuleScreen } from "./RuleScreen";
 import { stageInfo, StageInfo } from "./StageData";
 import { StageScreen } from "./StageScreen";
@@ -18,6 +18,7 @@ type Phase = "standby" | "playing";
 
 const TIME_CARRY_RATE = 0.2;
 const TIME_PENALTY = 3000;
+const BOMB_MUTED_RATE = 0.3;
 const CLEAR_BGM: BgmTrack = { src: "/bgm/maou_loop_bgm_fantasy13.mp3", rate: 1 };
 
 export function StageFlow() {
@@ -76,6 +77,7 @@ export function StageFlow() {
     }, [isRuleOpen, phase])
 
     function startRound(): void {
+        playSound("select");            //対局に入るボタンはすべてこの音
         setPhase("playing");
     }
 
@@ -102,6 +104,8 @@ export function StageFlow() {
     }
 
     function handleNext(): void {
+        if (lastWin) playSound("bomb", bgmIsOn ? DEFAULT_VOLUME : DEFAULT_VOLUME * BOMB_MUTED_RATE);
+        else playSound("restart");
         if (!lastWin) {
             if (gameOver) {
                 jumpToStage(fallbackStageNo);
