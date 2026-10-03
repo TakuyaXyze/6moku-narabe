@@ -5,56 +5,98 @@
 このプロジェクトは、六目並べをプレイできるWebアプリを実現するためのものです。
 コンピューター対戦が可能です。
 
-## インストール
+**▶ ここで遊べます：<https://6moku-narabe.vercel.app/>**
 
-1. ???
+## 遊び方
 
-## 使い方
+### ルール
 
-1. ???
+- 先に石を6つ、縦・横・斜めのいずれかの直線で並べた方が勝ち
+- 手番は1手・2手・2手・2手…と進む。先手の1手目だけ1つ、それ以降はどちらも2つずつ置く
+- 石は空いている交点ならどこにでも置ける。取ったり動かしたりはしない
+- 持ち時間は自分の手番でだけ減る。相手が考えている間は減らない
+- 石を1つ置くごとに持ち時間が少し増える
+- 持ち時間が尽きたら負け
 
-## 運用
+### ステージ
 
-1. ???
+5人の相手に順番に挑みます。ステージ2以降は、先手と後手を入れ替えて2局指し、両方に勝つと次の相手へ進めます。
+
+| ステージ | 相手 | 局数 | 持ち時間 | 1手ごとの加算 |
+|---|---|---|---|---|
+| 1 | 素人 | 1 | 無制限 | なし |
+| 2 | 見習い | 2 | 10秒 | +5秒 |
+| 3 | 門下生 | 2 | 5秒 | +2秒 |
+| 4 | 師範代 | 2 | 20秒 | +5秒 |
+| 5 | 師範 | 2 | 20秒 | +5秒 |
+
+### 持ち時間のしくみ
+
+- **勝利ボーナス**：勝ったときに残っていた持ち時間の2割（1秒未満は切り捨て）を、次の対局へ持ち越せる
+- **敗北ペナルティ**：負けると、同じ相手への次の挑戦の持ち時間が3秒減る。負けるたびに積み重なる
+- **持ち時間が尽きたら**：挑戦できる持ち時間がなくなると、1つ前の相手からやり直しになる
+- **十字ボーナス**：自分の石で十字や×字の形を作ると、持ち時間が3秒増える
+
+### 操作
+
+- 盤面の交点をクリックして石を置く
+- 対局中は右上のメニューから、次の操作ができる
+  - **1つ戻る**：1つ前の自分の手番まで戻す。持ち時間が「1手ごとの加算×2＋1秒」減る。戻した後に持ち時間が残らない場合は使えない
+  - **最初に戻る**：盤面をリセットする。負けたときと同じ扱いになる
+  - **ルール説明**：表示している間は、持ち時間の減り方が半分になる
+- メニューの左隣のボタンで、BGMのオン・オフを切り替えられる
+- `Esc` キーで、開いているポップアップを閉じる。対局中に何も開いていなければメニューを開閉する
+
+## 開発
+
+### 必要なもの
+
+- Node.js（Next.js 16 が動くバージョン）
+- npm
+
+### 起動
+
+```bash
+npm install
+npm run dev
+```
+
+ブラウザで <http://localhost:3000> を開くと遊べます。
+
+| コマンド | 内容 |
+|---|---|
+| `npm run dev` | 開発サーバーを起動する |
+| `npm run build` | 本番用にビルドする |
+| `npm run start` | ビルドしたものを起動する |
+| `npm run lint` | ESLint で検査する |
+
+対局前の画面の右下にある「デモ用」のボタンで、ステージを自由に移動できます（動作確認用）。
+
+### 技術構成
+
+- Next.js 16（App Router）／React 19／TypeScript
+- コンピューターの思考は Web Worker（`computers/ComputerWorker.ts`）で動かし、画面が固まらないようにしている
+- 探索はビームサーチ（`computers/PutBeam.ts`・`BeamSearch.ts`）。相手ごとの強さは、読む深さ・候補の数・ミスの確率などを `components/StageData.ts` で設定している
+- BGM の音量とフェードは Web Audio API で操作している（`components/Bgm.ts`）
+
+### ディレクトリ構成
+
+```
+app/          ページの入口（layout.tsx・page.tsx）
+components/   画面の部品。ステージの進行（StageFlow）、対局画面（PlayGround）など
+computers/    盤面の判定とコンピューターの思考
+styles/       部品ごとの CSS
+public/       画像・効果音（sounds/）・BGM（bgm/）
+```
+
+`computers/` の `PutMinMax.ts`・`PutAlphaBeta.ts`・`PutDepth1Search.ts` などは、制作の途中で試した探索方法です。現在のコンピューターは使っていません。
+
+## 使用素材
+
+- 音楽：[魔王魂](https://maou.audio/)
+- 効果音：[効果音ラボ](https://soundeffect-lab.info/)
 
 ## 更新履歴
 
-* 2026/07/11: 作成
-
-
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
-
-## Getting Started
-
-First, run the development server:
-
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
-
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
-
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
-
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
-
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- 2026/07/11：作成
+- 2026/10/04：README を書き直し
