@@ -21,7 +21,7 @@ const TIME_PENALTY = 3000;
 const BOMB_MUTED_RATE = 0.3;
 const SCREEN_DARK_TIME = 350;
 const SCREEN_FADE_TIME = 800;
-const CLEAR_BGM: BgmTrack = { src: "/bgm/maou_loop_bgm_fantasy13.mp3" };
+const CLEAR_BGM: BgmTrack = { src: "/bgm/maou_loop_bgm_fantasy13.mp3", overlap: 0.06 };
 
 export function StageFlow() {
 
