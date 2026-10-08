@@ -4,7 +4,6 @@ import { useEffect, useRef } from "react";
 
 export type BgmTrack = {
     src: string;
-    rate: number;       //再生速度。音程は保ったまま速さだけ変わる
 };
 
 const BGM_VOLUME = 0.3;
@@ -38,7 +37,6 @@ type BgmControl = {
 //曲を切り替えるときは、前の曲をフェードアウトしながら次の曲をフェードインする
 export function useBgm(track: BgmTrack | null, isOn: boolean): void {
     const src: string | null = track?.src ?? null;
-    const rate: number = track?.rate ?? 1;
     const isOnRef = useRef(isOn);
     const control = useRef<BgmControl | null>(null);
 
@@ -53,8 +51,6 @@ export function useBgm(track: BgmTrack | null, isOn: boolean): void {
         const context = getAudioContext();
         const audio = new Audio(src);
         audio.loop = true;
-        audio.defaultPlaybackRate = rate;
-        audio.playbackRate = rate;
         const gain = context.createGain();
         gain.gain.value = 0;
         context.createMediaElementSource(audio).connect(gain).connect(context.destination);
@@ -102,5 +98,5 @@ export function useBgm(track: BgmTrack | null, isOn: boolean): void {
                 gain.disconnect();
             }, FADE_SECONDS * 1000);
         };
-    }, [src, rate])
+    }, [src])
 }
