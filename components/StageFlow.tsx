@@ -8,6 +8,7 @@ import { RuleScreen } from "./RuleScreen";
 import { stageInfo, StageInfo } from "./StageData";
 import { StageScreen } from "./StageScreen";
 import { ClearScreen } from "./ClearScreen";
+import { GameResult } from "./ResultPopup";
 import { DemoTool } from "./DemoTool";
 import { useBgm, BgmTrack } from "./Bgm";
 import "../styles/StageFlow.css";
@@ -30,12 +31,13 @@ export function StageFlow() {
     const [attempt, setAttempt] = useState(0);
     const [phase, setPhase] = useState<Phase>("standby");
     const [firstRoundIsBlack, setFirstRoundIsBlack] = useState(true);
-    const [lastWin, setLastWin] = useState(true);
+    const [lastResult, setLastResult] = useState<GameResult>("win");
     const [carriedTime, setCarriedTime] = useState(0);
     const [timePenalty, setTimePenalty] = useState(0);
     const [isRuleOpen, setIsRuleOpen] = useState(false);
 
     const allCleared: boolean = stageNo > stageInfo.length;
+    const lastWin: boolean = lastResult === "win";
     const stage: StageInfo = stageInfo[Math.min(stageNo, stageInfo.length) - 1];
     const playerIsBlack: boolean = (roundNo === 1) ? firstRoundIsBlack : !firstRoundIsBlack;
     const opponentNames: string[] = stageInfo.map((info) => info.computer.name);
@@ -48,7 +50,9 @@ export function StageFlow() {
         ? "勝利ボーナス +" + (carriedTime / 1000) + "秒 で\n" + "次の対局へ"
         : "";
     const gameoverNote: string = fallbackName + "に勝ってから\nリベンジしに来よう";
-    const penaltyNote: string = "敗北ペナルティ −" + Math.floor(TIME_PENALTY / 1000) + "秒 で再挑戦";
+    const penaltyNote: string = (lastResult === "draw")
+        ? "引き分けはペナルティなしで再挑戦"
+        : "敗北ペナルティ −" + Math.floor(TIME_PENALTY / 1000) + "秒 で再挑戦";
     const resultNote: string = lastWin ? winNote
         : (gameOver ? gameoverNote
             : (penaltyApplies ? penaltyNote : ""));
@@ -99,10 +103,11 @@ export function StageFlow() {
         startRound();                   //選択直後に対局自動開始
     }
 
-    function handleGameEnd(playerWins: boolean, restTime: number): void {
-        setLastWin(playerWins);
+    function handleGameEnd(result: GameResult, restTime: number): void {
+        const playerWins: boolean = result === "win";
+        setLastResult(result);
         setCarriedTime((playerWins && Number.isFinite(restTime)) ? Math.floor(restTime * TIME_CARRY_RATE / 1000) * 1000 : 0);     //秒単位に切り捨て
-        if (!playerWins && Number.isFinite(stage.timeLimit)) setTimePenalty(timePenalty + TIME_PENALTY);
+        if (!playerWins && result !== "draw" && Number.isFinite(stage.timeLimit)) setTimePenalty(timePenalty + TIME_PENALTY);       //引き分けはペナルティなしでやり直し
     }
 
     function handleReset(): void {

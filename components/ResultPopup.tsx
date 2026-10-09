@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { Overlay } from "./Overlay";
 
-export type GameResult = "win" | "lose" | "timeup";
+export type GameResult = "win" | "lose" | "timeup" | "draw";
 
 const RESULT_SHOW_TIME = 2500;
 
@@ -9,12 +9,14 @@ const RESULT_TEXTS: Record<GameResult, string> = {
     win: "WIN",
     lose: "LOSE",
     timeup: "TIME UP",
+    draw: "DRAW",
 };
 
 const SUB_TEXTS: Record<GameResult, string> = {
     win: "なかなかやるな",
     lose: "まだまだだな",
     timeup: "",
+    draw: "",
 };
 
 type Props = {

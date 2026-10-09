@@ -42,7 +42,7 @@ type Props = {
     resultNote: string;
     resetPenalty: number;
     resetWarning: string | null;        //最初に戻すと持ち時間が尽きるときの注意。尽きないときはnull
-    onGameEnd: (playerWins: boolean, restTime: number) => void;
+    onGameEnd: (result: GameResult, restTime: number) => void;
     onNext: () => void;
     onReset: () => void;
     bgmIsOn: boolean;
@@ -64,7 +64,7 @@ export function PlayGround({ playerIsBlack, computer, initialTime, timeIncrement
     const isDraw: boolean = !blackIsWinner && !whiteIsWinner && !timeIsUp && currentMove === ROWS * COLUMNS;
     const continueGame: boolean = !blackIsWinner && !whiteIsWinner && !isDraw && !timeIsUp;
     const playerWins: boolean = !isDraw && !timeIsUp && (blackIsWinner === playerIsBlack);
-    const gameResult: GameResult = timeIsUp ? "timeup" : (playerWins ? "win" : "lose");
+    const gameResult: GameResult = timeIsUp ? "timeup" : (isDraw ? "draw" : (playerWins ? "win" : "lose"));
 
     const [cpuIsSettling, setCpuIsSettling] = useState(false);
     const [bonusTime, setBonusTime] = useState(0);
@@ -89,7 +89,7 @@ export function PlayGround({ playerIsBlack, computer, initialTime, timeIncrement
         if (bonusIsBlocking) return;
         if (timeIsUp) playSound("timeup");
         else if (blackIsWinner || whiteIsWinner) playSound("win");
-        onGameEnd(playerWins, Math.max(remainingTime, 0));
+        onGameEnd(gameResult, Math.max(remainingTime, 0));
     }, [continueGame, cpuIsSettling, bonusIsBlocking])
 
     const resultIsReady: boolean = !continueGame && !cpuIsSettling && !bonusIsBlocking;
