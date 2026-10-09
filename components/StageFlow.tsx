@@ -79,11 +79,16 @@ export function StageFlow() {
 
     const [isFading, setIsFading] = useState(false);
 
+    //一度暗転して、真っ暗な間に画面を入れ替える
+    function fadeScreen(changeScreen: () => void): void {
+        setIsFading(true);
+        setTimeout(changeScreen, SCREEN_DARK_TIME);
+        setTimeout(() => setIsFading(false), SCREEN_FADE_TIME);    //animationendはタブが裏にあると届かないので時間で消す
+    }
+
     function startRound(): void {
         playSound("select");            //対局に入るボタンはすべてこの音
-        setIsFading(true);              //一度暗転してから対局画面に入る
-        setTimeout(() => setPhase("playing"), SCREEN_DARK_TIME);
-        setTimeout(() => setIsFading(false), SCREEN_FADE_TIME);    //animationendはタブが裏にあると届かないので時間で消す
+        fadeScreen(() => setPhase("playing"));
     }
 
     const screenFade = isFading &&
@@ -161,7 +166,7 @@ export function StageFlow() {
                         resetPenalty={resetPenalty}
                         resetWarning={resetWarning}
                         onGameEnd={handleGameEnd}
-                        onNext={handleNext}
+                        onNext={() => fadeScreen(handleNext)}
                         onReset={handleReset}
                         bgmIsOn={bgmIsOn}
                         onToggleBgm={() => setBgmIsOn(!bgmIsOn)}
