@@ -1,4 +1,4 @@
-export type SoundName = "place" | "warning" | "win" | "recovering" | "timeup" | "clapping" | "select" | "bomb" | "restart";
+export type SoundName = "place" | "warning" | "win" | "recovering" | "timeup" | "clapping" | "select" | "bomb";
 
 const SOUND_FILES: Record<SoundName, string> = {
     place: "/sounds/place-stone.mp3",
@@ -9,7 +9,6 @@ const SOUND_FILES: Record<SoundName, string> = {
     clapping: "/sounds/clapping.mp3",
     select: "/sounds/select.mp3",
     bomb: "/sounds/bomb.mp3",
-    restart: "/sounds/restart.mp3",
 };
 
 export const DEFAULT_VOLUME = 0.8;

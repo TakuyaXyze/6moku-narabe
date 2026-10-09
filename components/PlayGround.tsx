@@ -39,7 +39,6 @@ type Props = {
     computer: ComputerSetting;
     initialTime: number;
     timeIncrement: number;
-    nextLabel: string;
     resultNote: string;
     resetPenalty: number;
     resetWarning: string | null;        //最初に戻すと持ち時間が尽きるときの注意。尽きないときはnull
@@ -50,7 +49,7 @@ type Props = {
     onToggleBgm: () => void;
 }
 
-export function PlayGround({ playerIsBlack, computer, initialTime, timeIncrement, nextLabel, resultNote, resetPenalty, resetWarning, onGameEnd, onNext, onReset, bgmIsOn, onToggleBgm }: Props) {
+export function PlayGround({ playerIsBlack, computer, initialTime, timeIncrement, resultNote, resetPenalty, resetWarning, onGameEnd, onNext, onReset, bgmIsOn, onToggleBgm }: Props) {
 
     const [history, setHistory] = useState([Array(ROWS).fill(null).map(() => Array<(string | null)>(COLUMNS).fill(null))]);
     const [currentMove, setCurrentMove] = useState(0);
@@ -178,7 +177,8 @@ export function PlayGround({ playerIsBlack, computer, initialTime, timeIncrement
     }, [bonusNo])
 
 
-    const playerIsThinking: boolean = continueGame && hasTimeLimit && !cpuIsSettling && (checkBlackIsNext(currentMove) === playerIsBlack);
+    //先手のときは、最初の石を置くまで時計を動かさない
+    const playerIsThinking: boolean = continueGame && hasTimeLimit && !cpuIsSettling && currentMove > 0 && (checkBlackIsNext(currentMove) === playerIsBlack);
     const [isRuleOpen, setIsRuleOpen] = useState(false);
 
     useEffect(() => {
@@ -411,7 +411,7 @@ export function PlayGround({ playerIsBlack, computer, initialTime, timeIncrement
                 <RuleScreen onClose={() => setIsRuleOpen(false)} />
             }
             {resultIsShown &&
-                <ResultPopup result={gameResult} note={resultNote} buttonLabel={nextLabel} onNext={onNext} />
+                <ResultPopup result={gameResult} note={resultNote} onNext={onNext} />
             }
             {undoIsShown && undoConfirm !== null &&
                 <UndoDialog

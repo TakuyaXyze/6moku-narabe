@@ -43,7 +43,6 @@ export function StageFlow() {
     const gameOver: boolean = initialTime <= 0;
     const fallbackStageNo: number = Math.max(stageNo - 1, 1);
     const fallbackName: string = opponentNames[fallbackStageNo - 1];
-    const nextLabel: string = lastWin ? "次へ" : (gameOver ? fallbackName + "と再戦" : "もう一度");
     const penaltyApplies: boolean = Number.isFinite(stage.timeLimit);
     const winNote: string = (carriedTime > 0)
         ? "勝利ボーナス +" + (carriedTime / 1000) + "秒 で\n" + "次の対局へ"
@@ -113,8 +112,6 @@ export function StageFlow() {
     }
 
     function handleNext(): void {
-        if (lastWin) playSound("bomb", bgmIsOn ? DEFAULT_VOLUME : DEFAULT_VOLUME * BOMB_MUTED_RATE);
-        else playSound("restart");
         if (!lastWin) {
             if (gameOver) {
                 jumpToStage(fallbackStageNo);
@@ -131,6 +128,7 @@ export function StageFlow() {
             setPhase("standby");
             return;
         }
+        playSound("bomb", bgmIsOn ? DEFAULT_VOLUME : DEFAULT_VOLUME * BOMB_MUTED_RATE);     //相手を倒したときだけ鳴らす。BGMが切り替わるのと同時
         setStageNo(stageNo + 1);
         setRoundNo(1);
         setAttempt(0);
@@ -159,7 +157,6 @@ export function StageFlow() {
                         computer={stage.computer}
                         initialTime={initialTime}
                         timeIncrement={stage.timeIncrement}
-                        nextLabel={nextLabel}
                         resultNote={resultNote}
                         resetPenalty={resetPenalty}
                         resetWarning={resetWarning}
