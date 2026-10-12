@@ -8,6 +8,7 @@ import { ResultPopup, GameResult } from "./ResultPopup";
 import { UndoDialog, UndoKind } from "./UndoDialog";
 import { ComputingMessage } from "./ComputingMessage";
 import { PlayHeader } from "./PlayHeader";
+import { WIN_GLOW_STEP } from "./PrintBox";
 import { RuleScreen } from "./RuleScreen";
 import "../styles/PlayGround.css"
 import "../styles/GameBoard.css"
@@ -27,7 +28,8 @@ const COMPUTER_START_DELAY = 300;
 const COMPUTER_MIN_TIME = 1500;
 const BLINK_TIME = 1500;
 const RESULT_DELAY = 400;
-const RESULT_OVERLAY_DELAY = 1600;
+const WIN_GLOW_TIME = 400;          //石1つが光るのにかかる時間。GameBoard.cssのwin-glowの長さと合わせる
+const RESULT_PAUSE = WIN_GLOW_STEP;           //勝ちの列が光り終わってから、勝敗の文字を出すまでの間
 const CROSS_BONUS = 3000;
 const BONUS_DISPLAY_TIME = 2600;
 const BONUS_BLOCK_TIME = 1800;      //ボーナス演出の開始から、勝敗演出を始めるまでの時間
@@ -97,8 +99,10 @@ export function PlayGround({ playerIsBlack, computer, initialTime, timeIncrement
 
     useEffect(() => {
         if (!resultIsReady) return;
-        const hasWinLine: boolean = blackIsWinner || whiteIsWinner;       //時間切れ・引き分けは光る石がないのですぐ出す
-        const showId = setTimeout(() => setResultIsShown(true), hasWinLine ? RESULT_OVERLAY_DELAY : 0);
+        //勝ちの列の最後の石が光り終わってから出す。時間切れ・引き分けは光る石がないのですぐ出す
+        const lastOrder: number = Math.max(-1, ...winMoves.map((move) => move.order));
+        const delay: number = (lastOrder < 0) ? 0 : lastOrder * WIN_GLOW_STEP + WIN_GLOW_TIME + RESULT_PAUSE;
+        const showId = setTimeout(() => setResultIsShown(true), delay);
         return () => clearTimeout(showId);
     }, [resultIsReady, blackIsWinner, whiteIsWinner])
 

@@ -1,6 +1,6 @@
 import { CSSProperties } from "react";
 
-const WIN_GLOW_STEP = 150;      //勝ちの列で、隣の石が光り始めるまでの時間(ミリ秒)
+export const WIN_GLOW_STEP = 150;      //勝ちの列で、隣の石が光り始めるまでの時間(ミリ秒)
 
 type Props = {
     rowNo: number;
