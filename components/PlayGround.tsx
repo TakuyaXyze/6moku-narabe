@@ -51,7 +51,7 @@ type Props = {
 
 export function PlayGround({ playerIsBlack, computer, initialTime, timeIncrement, resultNote, resetPenalty, resetWarning, onGameEnd, onNext, onReset, bgmIsOn, onToggleBgm }: Props) {
 
-    const [history, setHistory] = useState([Array(ROWS).fill(null).map(() => Array<(string | null)>(COLUMNS).fill(null))]);
+    const [history, setHistory] = useState([debugBoard() ?? Array(ROWS).fill(null).map(() => Array<(string | null)>(COLUMNS).fill(null))]);
     const [currentMove, setCurrentMove] = useState(0);
     const blackSequence: number[] = detectSequence(history[currentMove], "b");
     const whiteSequence: number[] = detectSequence(history[currentMove], "w");
@@ -425,6 +425,19 @@ export function PlayGround({ playerIsBlack, computer, initialTime, timeIncrement
             }
         </div >
     );
+}
+
+//デバッグ用。URLの末尾に ?debug=win2 を付けると、黒があと1手でそろう盤面から始まる
+function debugBoard(): (string | null)[][] | null {
+    if (typeof window === "undefined" || !window.location.search.includes("debug=win2")) return null;
+    const boxes = Array(ROWS).fill(null).map(() => Array<(string | null)>(COLUMNS).fill(null));
+    for (const k of [6, 7, 8, 10, 11]) {
+        boxes[9][k] = "b";      //横。中央(9,9)が空き
+        boxes[k][9] = "b";      //縦。中央(9,9)が空き
+    }
+    for (const k of [2, 3, 4, 6, 7, 8]) boxes[15][k] = "b";     //横。(15,5)に置くと7連
+    for (const k of [0, 1, 2, 4, 5]) boxes[1 + k][17 - k] = "b";    //左下がりの斜め。(4,14)が空き
+    return boxes;
 }
 
 function printTimer(time: number): string {
