@@ -126,8 +126,46 @@ Tipsの帯の高さは横長の画面で画面の8%、縦長の画面で36px（T
     transform: skewX(14deg);
 }
 
+/*角丸の札(R1)：say-round を付けると、傾けずに四辺を同じ太さの紺の縁で囲み、影は真下だけにする
+今は URL に say=round を付けたときだけ使う*/
+.say-round .result-say {
+    padding: 20px 16px 14px 24px;
+    border: 2px solid rgb(var(--night));
+    border-radius: 14px;
+    box-shadow: 0 4px 0 rgba(var(--night), 0.45);
+    transform: translateX(-50%);
+}
+
+/*名前の札の左端を、台詞の文字の左端(札の左の余白 24px)にそろえる*/
+.say-round .result-say-name {
+    top: -14px;
+    left: 24px;
+    border: 2px solid rgb(var(--night));
+    border-radius: 8px;
+    box-shadow: 0 2px 0 rgba(0, 0, 0, 0.3);
+}
+
+.say-round .result-say-name span,
+.say-round .result-say-text {
+    transform: none;
+}
+
 @media screen and (max-aspect-ratio: 1.1998/1) {
     .result-say {
         --tips-height: 36px;
     }
+}
+/*デバッグ用。hold=result で止めたときに上に並ぶボタン*/
+.trial-bar {
+    position: fixed;
+    top: 8px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    gap: 8px;
+    white-space: nowrap;
+}
+
+.overlay .trial-bar button {
+    min-width: 0;
 }

@@ -1,7 +1,6 @@
 import { useState, useEffect } from "react";
 import { Zen_Antique, Cormorant_Garamond } from "next/font/google";
 import { Overlay } from "./Overlay";
-import { useResultTrial } from "./ResultTrial";
 import "../styles/ResultPopup.css";
 
 export type GameResult = "win" | "lose" | "timeup" | "draw";
@@ -33,10 +32,13 @@ const SUB_TEXTS: Record<GameResult, string> = {
     draw: "",
 };
 
-//デバッグ用。URLに hold=result を付けると、勝敗画面が自動では閉じず、上の「次へ進む」ボタンを押すまで止まる。見た目の案と勝敗の種類もここで切り替える
-function resultHoldIsOn(): boolean {
-    return typeof window !== "undefined" && window.location.search.includes("hold=result");
+//デバッグ用。URLに hold=result を付けると、勝敗画面が自動では閉じず、上の「次へ進む」ボタンを押すまで止まる。上のボタンで勝敗の種類も切り替えられる
+//URLに say=round を付けると、台詞の札が角丸の矩形になる
+function urlHas(text: string): boolean {
+    return typeof window !== "undefined" && window.location.search.includes(text);
 }
+
+const RESULTS: GameResult[] = ["win", "lose", "timeup", "draw"];
 
 type Props = {
     result: GameResult;
@@ -49,9 +51,9 @@ type Props = {
 //ボタンは置かない。一定時間たつか、どこかをクリックすると次へ進む
 export function ResultPopup({ result, note, speaker, onNext }: Props) {
     const [isClosing, setIsClosing] = useState(false);
-    const isHeld = resultHoldIsOn();
-    const trial = useResultTrial(isHeld, result);
-    const shown = trial.shownResult;      //試作用。止めているときは↑↓キーで勝敗の種類を切り替えられる
+    const [shown, setShown] = useState(result);      //止めているときだけ、上のボタンで切り替わる
+    const isHeld = urlHas("hold=result");
+    const sayShape = urlHas("say=round") ? "say-round" : "";
     const sub = SUB_TEXTS[shown];
 
     useEffect(() => {
@@ -66,7 +68,7 @@ export function ResultPopup({ result, note, speaker, onNext }: Props) {
 
     return (
         <Overlay onClose={isHeld ? undefined : () => setIsClosing(true)}>
-            <div className={"game-result result-" + shown + " " + kanjiFont.variable + " " + latinFont.variable + " " + trial.className}>
+            <div className={"game-result result-" + shown + " " + kanjiFont.variable + " " + latinFont.variable + " " + sayShape}>
                 <div className="result-band">
                     <div className="result-latin">{RESULT_TEXTS[shown]}</div>
                     <div className="result-kanji">{KANJI_TEXTS[shown]}</div>
@@ -83,10 +85,7 @@ export function ResultPopup({ result, note, speaker, onNext }: Props) {
                 }
                 {isHeld &&
                     <div className="trial-bar">
-                        <button onClick={() => trial.move(-1)}>←</button>
-                        <span className="trial-name">{trial.label}</span>
-                        <button onClick={() => trial.move(1)}>→</button>
-                        <button onClick={() => trial.moveResult(1)}>{RESULT_TEXTS[shown]}</button>
+                        <button onClick={() => setShown(RESULTS[(RESULTS.indexOf(shown) + 1) % RESULTS.length])}>{RESULT_TEXTS[shown]}</button>
                         <button onClick={() => setIsClosing(true)}>次へ進む</button>
                     </div>
                 }
