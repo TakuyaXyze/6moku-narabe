@@ -1,0 +1,133 @@
+.game-result {
+    width: 100vw;
+    --kanji-font: var(--result-kanji-font), "Yu Mincho", "Hiragino Mincho ProN", serif;
+    --latin: var(--result-latin), "Times New Roman", serif;
+    --gold: #d8b871;
+    --night: 20, 16, 40;
+    --paper: 255, 252, 244;
+}
+
+/*宣言の帯：画面を横切る半透明の帯に、古い活字風の漢字（Zen Antique）。上下に金の二重線
+漢字と英字の書体は大きな文字（WIN・勝利など）だけに使い、案内と台詞は画面全体と同じArialにする*/
+.result-band {
+    position: relative;
+    padding: 18px 0 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    color: #fff;
+    background: linear-gradient(90deg, rgba(var(--night), 0) 0%, rgba(var(--night), 0.86) 22%, rgba(var(--night), 0.86) 78%, rgba(var(--night), 0) 100%);
+}
+
+.result-band::before,
+.result-band::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    right: 0;
+    height: 5px;
+    border-top: 1px solid var(--gold);
+    border-bottom: 1px solid var(--gold);
+    mask-image: linear-gradient(90deg, transparent 8%, #000 30%, #000 70%, transparent 92%);
+    -webkit-mask-image: linear-gradient(90deg, transparent 8%, #000 30%, #000 70%, transparent 92%);
+}
+
+.result-band::before {
+    top: 6px;
+}
+
+.result-band::after {
+    bottom: 6px;
+}
+
+.result-latin {
+    font-family: var(--latin);
+    font-size: clamp(14px, 2.2vw, 20px);
+    letter-spacing: 0.7em;
+    margin-right: -0.7em;
+    color: var(--gold);
+}
+
+.result-kanji {
+    font-family: var(--kanji-font);
+    font-weight: normal;
+    font-size: clamp(48px, 9vw, 88px);
+    line-height: 1.15;
+    letter-spacing: 0.18em;
+    margin-right: -0.18em;
+    text-shadow: 3px 3px 0 rgba(180, 180, 180, 0.45);
+}
+
+.result-rule {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin: 2px 0 6px;
+    font-size: 9px;
+    color: var(--gold);
+}
+
+.result-rule span {
+    width: clamp(60px, 14vw, 130px);
+    height: 1px;
+    background-color: var(--gold);
+}
+
+.result-note {
+    margin-top: 4px;
+    font-size: clamp(11px, 1.6vw, 13px);
+    white-space: pre;
+    text-align: center;
+    color: rgba(255, 255, 255, 0.75);
+}
+
+/*台詞の札：Tipsの帯のすぐ上に、斜めに傾けた紙の札。左に太い紺の縁、上下に細い紺の線。色は勝敗で変えない
+傾きは札だけにかけ、文字は逆に傾けて立たせる
+Tipsの帯の高さは横長の画面で画面の8%、縦長の画面で36px（Tips.css・Portrait.css）*/
+.result-say {
+    --tips-height: 8vh;
+    position: fixed;
+    left: 50%;
+    bottom: calc(var(--tips-height) + 10px);
+    width: min(560px, 92vw);
+    padding: 20px 12px 16px 36px;
+    color: #2a2440;
+    border-top: 2px solid rgb(var(--night));
+    border-bottom: 2px solid rgb(var(--night));
+    border-left: 10px solid rgb(var(--night));
+    background-color: rgba(var(--paper), 0.96);
+    box-shadow: 6px 6px 0 rgba(var(--night), 0.45);
+    transform: translateX(-50%) skewX(-14deg);
+}
+
+/*名前の札は金の地にして紺の縁と分け、縁の角から右へずらして影で浮かせる*/
+.result-say-name {
+    position: absolute;
+    top: -16px;
+    left: 10px;
+    padding: 2px 16px;
+    font-size: 13px;
+    font-weight: bold;
+    letter-spacing: 0.2em;
+    color: rgb(var(--night));
+    background-color: var(--gold);
+    box-shadow: 3px 3px 0 rgba(0, 0, 0, 0.35);
+}
+
+/*名前の札の形は札と一緒に傾けたまま、文字だけを立たせる*/
+.result-say-name span {
+    display: inline-block;
+    transform: skewX(14deg);
+}
+
+.result-say-text {
+    font-size: clamp(16px, 2.6vw, 21px);
+    font-weight: bold;
+    transform: skewX(14deg);
+}
+
+@media screen and (max-aspect-ratio: 1.1998/1) {
+    .result-say {
+        --tips-height: 36px;
+    }
+}

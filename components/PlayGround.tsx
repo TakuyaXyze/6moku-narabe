@@ -415,7 +415,7 @@ export function PlayGround({ playerIsBlack, computer, initialTime, timeIncrement
                 <RuleScreen onClose={() => setIsRuleOpen(false)} />
             }
             {resultIsShown &&
-                <ResultPopup result={gameResult} note={resultNote} onNext={onNext} />
+                <ResultPopup result={gameResult} note={resultNote} speaker={computer.name} onNext={onNext} />
             }
             {undoIsShown && undoConfirm !== null &&
                 <UndoDialog
