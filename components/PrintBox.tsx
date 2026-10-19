@@ -15,13 +15,11 @@ type Props = {
 
 export function PrintBox({ rowNo, columnNo, value, onBoxClick, isLastMove, winOrder, isCrossMove, bonusNo }: Props) {
     //1マス1マスを描画
-    const countNum: number = (rowNo) * 100 + (columnNo);
-    const boxKey: string = isCrossMove ? countNum + "-" + bonusNo : String(countNum);
     const winStyle = (winOrder === null) ? undefined
         : { "--win-delay": winOrder * WIN_GLOW_STEP + "ms" } as CSSProperties;
 
     return (
-        <div key={boxKey}
+        <div
             className={`
                 stone
                 ${value === "b" ? 'black' : ''}
@@ -29,10 +27,14 @@ export function PrintBox({ rowNo, columnNo, value, onBoxClick, isLastMove, winOr
                 ${value === null ? 'empty' : ''}
                 ${isLastMove === true ? 'last-move' : ''}
                 ${winOrder !== null ? 'win-move' : ''}
-                ${isCrossMove === true ? 'cross-move' : ''}
             `}
             style={winStyle}
         >
+            {/*十字ボーナスの点滅は石と分けて置く。ボーナスが続いたときは、この部品だけを作り直して点滅を最初から始める
+            石ごと作り直すと、勝ちの列の光も最初からやり直してしまう*/}
+            {isCrossMove &&
+                <div key={bonusNo} className="cross-glow" />
+            }
             <div onClick={onBoxClick}
                 className="box">
             </div>
