@@ -5,6 +5,7 @@ import { playSound } from "./Sounds";
 import { TimeBar } from "./TimeBar";
 import { SideBlock, BowlState } from "./SideBlock";
 import { ResultPopup, GameResult } from "./ResultPopup";
+import type { RoundSays } from "./SayData";
 import { UndoDialog, UndoKind } from "./UndoDialog";
 import { ComputingMessage } from "./ComputingMessage";
 import { PlayHeader } from "./PlayHeader";
@@ -42,6 +43,7 @@ type Props = {
     initialTime: number;
     timeIncrement: number;
     resultNote: string;
+    says: RoundSays;                    //勝敗画面で相手が言う台詞の候補
     resetPenalty: number;
     resetWarning: string | null;        //最初に戻すと持ち時間が尽きるときの注意。尽きないときはnull
     onGameEnd: (result: GameResult, restTime: number) => void;
@@ -51,7 +53,7 @@ type Props = {
     onToggleBgm: () => void;
 }
 
-export function PlayGround({ playerIsBlack, computer, initialTime, timeIncrement, resultNote, resetPenalty, resetWarning, onGameEnd, onNext, onReset, bgmIsOn, onToggleBgm }: Props) {
+export function PlayGround({ playerIsBlack, computer, initialTime, timeIncrement, resultNote, says, resetPenalty, resetWarning, onGameEnd, onNext, onReset, bgmIsOn, onToggleBgm }: Props) {
 
     const [history, setHistory] = useState([debugBoard() ?? Array(ROWS).fill(null).map(() => Array<(string | null)>(COLUMNS).fill(null))]);
     const [currentMove, setCurrentMove] = useState(0);
@@ -415,7 +417,7 @@ export function PlayGround({ playerIsBlack, computer, initialTime, timeIncrement
                 <RuleScreen onClose={() => setIsRuleOpen(false)} />
             }
             {resultIsShown &&
-                <ResultPopup result={gameResult} note={resultNote} speaker={computer.name} onNext={onNext} />
+                <ResultPopup result={gameResult} note={resultNote} speaker={computer.name} says={says} onNext={onNext} />
             }
             {undoIsShown && undoConfirm !== null &&
                 <UndoDialog

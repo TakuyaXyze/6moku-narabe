@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { Zen_Antique, Cormorant_Garamond } from "next/font/google";
 import { Overlay } from "./Overlay";
+import type { RoundSays } from "./SayData";
 import "../styles/ResultPopup.css";
 
 export type GameResult = "win" | "lose" | "timeup" | "draw";
@@ -25,13 +26,6 @@ const KANJI_TEXTS: Record<GameResult, string> = {
     draw: "引き分け",
 };
 
-const SUB_TEXTS: Record<GameResult, string> = {
-    win: "なかなかやるな",
-    lose: "まだまだだな",
-    timeup: "",
-    draw: "",
-};
-
 //デバッグ用。URLに hold=result を付けると、勝敗画面が自動では閉じず、上の「次へ進む」ボタンを押すまで止まる。上のボタンで勝敗の種類も切り替えられる
 //URLに say=round を付けると、台詞の札が角丸の矩形になる
 function urlHas(text: string): boolean {
@@ -44,17 +38,19 @@ type Props = {
     result: GameResult;
     note: string;
     speaker: string;    //台詞を言う相手の名前
+    says: RoundSays;    //台詞の候補。この中からランダムに1つ選ぶ
     onNext: () => void;
 }
 
 //中央の帯に判定と案内、画面の下の斜めの札に相手の台詞を出す
 //ボタンは置かない。一定時間たつか、どこかをクリックすると次へ進む
-export function ResultPopup({ result, note, speaker, onNext }: Props) {
+export function ResultPopup({ result, note, speaker, says, onNext }: Props) {
     const [isClosing, setIsClosing] = useState(false);
     const [shown, setShown] = useState(result);      //止めているときだけ、上のボタンで切り替わる
     const isHeld = urlHas("hold=result");
     const sayShape = urlHas("say=round") ? "say-round" : "";
-    const sub = SUB_TEXTS[shown];
+    const [pick] = useState(Math.random());     //表示中に台詞が変わらないよう、選ぶ位置は最初に1回だけ決める
+    const sub = says[shown][Math.floor(pick * says[shown].length)] ?? "";
 
     useEffect(() => {
         if (isClosing) {

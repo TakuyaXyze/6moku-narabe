@@ -6,6 +6,7 @@ import { Tips } from "./Tips";
 import { playSound, DEFAULT_VOLUME } from "./Sounds";
 import { RuleScreen } from "./RuleScreen";
 import { stageInfo, StageInfo } from "./StageData";
+import { findSays } from "./SayData";
 import { StageScreen } from "./StageScreen";
 import { ClearScreen } from "./ClearScreen";
 import { GameResult } from "./ResultPopup";
@@ -168,6 +169,7 @@ export function StageFlow() {
                         initialTime={initialTime}
                         timeIncrement={stage.timeIncrement}
                         resultNote={resultNote}
+                        says={findSays(stage.computer.name, roundNo)}
                         resetPenalty={resetPenalty}
                         resetWarning={resetWarning}
                         onGameEnd={handleGameEnd}
