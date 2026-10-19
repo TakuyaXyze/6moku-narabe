@@ -23,6 +23,7 @@ const TIME_PENALTY = 3000;
 const BOMB_MUTED_RATE = 0.3;
 const SCREEN_DARK_TIME = 350;
 const SCREEN_FADE_TIME = 800;
+const RESULT_FADE_RATE = 2;         //勝敗画面から次へ進むときは、帯を畳む動きに合わせて暗転をこの倍だけゆっくりにする
 const CLEAR_BGM: BgmTrack = { src: "/bgm/maou_loop_bgm_fantasy13.mp3", overlap: 0.06 };
 
 export function StageFlow() {
@@ -82,13 +83,13 @@ export function StageFlow() {
         return () => document.removeEventListener("keydown", handleEscapeKey);
     }, [isRuleOpen, phase])
 
-    const [isFading, setIsFading] = useState(false);
+    const [fadeTime, setFadeTime] = useState(0);      //暗転にかける時間。0なら暗転していない
 
     //一度暗転して、真っ暗な間に画面を入れ替える
-    function fadeScreen(changeScreen: () => void): void {
-        setIsFading(true);
-        setTimeout(changeScreen, SCREEN_DARK_TIME);
-        setTimeout(() => setIsFading(false), SCREEN_FADE_TIME);    //animationendはタブが裏にあると届かないので時間で消す
+    function fadeScreen(changeScreen: () => void, rate: number = 1): void {
+        setFadeTime(SCREEN_FADE_TIME * rate);
+        setTimeout(changeScreen, SCREEN_DARK_TIME * rate);
+        setTimeout(() => setFadeTime(0), SCREEN_FADE_TIME * rate);    //animationendはタブが裏にあると届かないので時間で消す
     }
 
     function startRound(): void {
@@ -96,8 +97,8 @@ export function StageFlow() {
         fadeScreen(() => setPhase("playing"));
     }
 
-    const screenFade = isFading &&
-        <div className="screen-fade" />;
+    const screenFade = fadeTime > 0 &&
+        <div className="screen-fade" style={{ animationDuration: fadeTime + "ms" }} />;
 
     function selectFirstMove(isBlack: boolean): void {
         setFirstRoundIsBlack(isBlack);
@@ -173,7 +174,7 @@ export function StageFlow() {
                         resetPenalty={resetPenalty}
                         resetWarning={resetWarning}
                         onGameEnd={handleGameEnd}
-                        onNext={() => fadeScreen(handleNext)}
+                        onNext={() => fadeScreen(handleNext, RESULT_FADE_RATE)}
                         onReset={handleReset}
                         bgmIsOn={bgmIsOn}
                         onToggleBgm={() => setBgmIsOn(!bgmIsOn)}

@@ -155,17 +155,274 @@ Tipsの帯の高さは横長の画面で画面の8%、縦長の画面で36px（T
         --tips-height: 36px;
     }
 }
-/*デバッグ用。hold=result で止めたときに上に並ぶボタン*/
-.trial-bar {
-    position: fixed;
-    top: 8px;
-    left: 50%;
-    transform: translateX(-50%);
-    display: flex;
-    gap: 8px;
-    white-space: nowrap;
+
+/*帯と台詞の札の出方：帯が中央から左右へ開き、英字は字間が詰まりながら、漢字は少し大きい所から現れる。札は左から少し寄りながら現れる
+札は傾きを transform で持っているので、動きは translate・scale の単独の指定で重ねる*/
+.result-band {
+    animation: band-wipe 0.4s ease-out both;
 }
 
-.overlay .trial-bar button {
-    min-width: 0;
+.result-latin {
+    animation: latin-spread 0.6s ease-out both;
+}
+
+.result-kanji {
+    animation: kanji-zoom-in 0.5s ease-out 0.1s both;
+}
+
+.result-say {
+    animation: say-fade-left 0.35s ease-out 0.35s both;
+}
+
+@keyframes band-wipe {
+    from {
+        clip-path: inset(0 50% 0 50%);
+    }
+
+    to {
+        clip-path: inset(0 0 0 0);
+    }
+}
+
+@keyframes latin-spread {
+    from {
+        opacity: 0;
+        letter-spacing: 1.6em;
+        margin-right: -1.6em;
+    }
+
+    to {
+        opacity: 1;
+        letter-spacing: 0.7em;
+        margin-right: -0.7em;
+    }
+}
+
+@keyframes kanji-zoom-in {
+    from {
+        opacity: 0;
+        scale: 1.25;
+    }
+
+    to {
+        opacity: 1;
+        scale: 1;
+    }
+}
+
+@keyframes say-fade-left {
+    from {
+        opacity: 0;
+        translate: -40px 0;
+    }
+
+    to {
+        opacity: 1;
+        translate: 0 0;
+    }
+}
+
+/*試作用。帯と台詞の札の出方の他の案。URLの anim=〇〇 で anim-〇〇 が付き、本番の出方を止めてから案の動きを付ける
+anim=none なら動きなし*/
+[class*="anim-"] .result-band,
+[class*="anim-"] .result-latin,
+[class*="anim-"] .result-kanji,
+[class*="anim-"] .result-say {
+    animation: none;
+}
+
+/*anim=slide：帯が左から、札が右から滑り込む。カットインの基本形*/
+.anim-slide .result-band {
+    animation: band-slide-in 0.35s cubic-bezier(0.2, 0.9, 0.3, 1) both;
+}
+
+.anim-slide .result-say {
+    animation: say-slide-in 0.35s cubic-bezier(0.2, 0.9, 0.3, 1) 0.3s both;
+}
+
+@keyframes band-slide-in {
+    from {
+        translate: -100vw 0;
+    }
+
+    to {
+        translate: 0 0;
+    }
+}
+
+@keyframes say-slide-in {
+    from {
+        translate: 100vw 0;
+    }
+
+    to {
+        translate: 0 0;
+    }
+}
+
+/*anim=stamp：帯が上下に開き、漢字が大きい所から判を押すように落ちて帯が揺れる。札は弾むように現れる*/
+.anim-stamp .result-band {
+    animation: band-open 0.2s ease-out both, band-shake 0.2s ease-out 0.4s;
+}
+
+.anim-stamp .result-kanji {
+    animation: kanji-stamp 0.35s cubic-bezier(0.3, 1.6, 0.5, 1) 0.15s both;
+}
+
+.anim-stamp .result-say {
+    animation: say-pop 0.3s cubic-bezier(0.3, 1.5, 0.5, 1) 0.5s both;
+}
+
+@keyframes band-open {
+    from {
+        scale: 1 0;
+    }
+
+    to {
+        scale: 1 1;
+    }
+}
+
+@keyframes band-shake {
+    30% {
+        translate: 0 4px;
+    }
+
+    to {
+        translate: 0 0;
+    }
+}
+
+@keyframes kanji-stamp {
+    from {
+        opacity: 0;
+        scale: 2.4;
+    }
+
+    60% {
+        opacity: 1;
+    }
+
+    to {
+        opacity: 1;
+        scale: 1;
+    }
+}
+
+@keyframes say-pop {
+    from {
+        opacity: 0;
+        scale: 0.7;
+    }
+
+    to {
+        opacity: 1;
+        scale: 1;
+    }
+}
+
+/*anim=fade：帯も札も、下から少し浮き上がりながらふわっと現れる。一番やわらかい*/
+.anim-fade .result-band {
+    animation: soft-rise 0.5s ease-out both;
+}
+
+.anim-fade .result-say {
+    animation: soft-rise 0.5s ease-out 0.3s both;
+}
+
+@keyframes soft-rise {
+    from {
+        opacity: 0;
+        translate: 0 12px;
+    }
+
+    to {
+        opacity: 1;
+        translate: 0 0;
+    }
+}
+
+/*anim=slash：細い線が画面を横に走り、そこから帯が上下に開いて文字が出る。札は左から斬り込む*/
+.anim-slash .result-band {
+    animation: band-slash 0.45s cubic-bezier(0.6, 0, 0.2, 1) both;
+}
+
+.anim-slash .result-band > * {
+    animation: band-content-in 0.25s ease-out 0.4s both;
+}
+
+.anim-slash .result-say {
+    animation: say-slash-in 0.3s cubic-bezier(0.2, 0.9, 0.3, 1) 0.55s both;
+}
+
+@keyframes band-slash {
+    0% {
+        scale: 0 0.04;
+    }
+
+    45% {
+        scale: 1 0.04;
+    }
+
+    100% {
+        scale: 1 1;
+    }
+}
+
+@keyframes band-content-in {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
+@keyframes say-slash-in {
+    from {
+        translate: -100vw 0;
+    }
+
+    to {
+        translate: 0 0;
+    }
+}
+
+/*閉じるときの動き：帯は中央へ畳み、札は左へ引きながら消える。畳み終わってから暗転が始まる(ResultPopup.tsxのRESULT_CLOSE_TIME)
+どの出方の案でも同じ閉じ方にするので、ファイルの最後に置く*/
+.result-closing .result-band {
+    animation: band-wipe-close 0.6s ease-in both;
+}
+
+.result-closing .result-band > *,
+.result-closing .result-latin,
+.result-closing .result-kanji {
+    animation: none;
+}
+
+.result-closing .result-say {
+    animation: say-fade-out 0.5s ease-in both;
+}
+
+@keyframes band-wipe-close {
+    from {
+        clip-path: inset(0 0 0 0);
+    }
+
+    to {
+        clip-path: inset(0 50% 0 50%);
+    }
+}
+
+@keyframes say-fade-out {
+    from {
+        opacity: 1;
+        translate: 0 0;
+    }
+
+    to {
+        opacity: 0;
+        translate: -40px 0;
+    }
 }
