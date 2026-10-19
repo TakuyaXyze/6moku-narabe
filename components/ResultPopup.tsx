@@ -48,7 +48,7 @@ type Props = {
 }
 
 //中央の帯に判定と案内、画面の下の斜めの札に相手の台詞を出す
-//ボタンは置かない。一定時間たつか、どこかをクリックすると次へ進む
+//ボタンは置かない。一定時間たつか、どこかをクリックするか、Enter・Spaceキーを押すと次へ進む
 export function ResultPopup({ result, note, speaker, says, onNext }: Props) {
     const [isClosing, setIsClosing] = useState(false);
     const sayShape = urlHas("say=round") ? "say-round" : "";
@@ -64,6 +64,18 @@ export function ResultPopup({ result, note, speaker, says, onNext }: Props) {
         const closeId = setTimeout(() => setIsClosing(true), RESULT_SHOW_TIME);
         return () => clearTimeout(closeId);
     }, [isClosing])
+
+    //畳んでいる途中も、画面が消えるまではキーを受け止めて後ろの画面に届けない
+    useEffect(() => {
+        function handleCloseKey(event: KeyboardEvent): void {
+            if (event.key !== "Enter" && event.key !== " ") return;
+            event.preventDefault();         //後ろの画面のボタンが押されたり、画面が動いたりしないようにする
+            if (event.repeat) return;       //押しっぱなしで次の画面まで進まないようにする
+            setIsClosing(true);
+        }
+        document.addEventListener("keydown", handleCloseKey);
+        return () => document.removeEventListener("keydown", handleCloseKey);
+    }, [])
 
     return (
         <Overlay onClose={() => setIsClosing(true)}>
