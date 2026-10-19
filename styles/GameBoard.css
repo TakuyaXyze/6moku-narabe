@@ -123,8 +123,10 @@
     color: #fafafa;
 }
 
+/*十字ボーナス：十字の5つの石に、緑の輪がパッと点いてパッと消えるのを2回。点くたびに波紋も走る
+点滅の回数と長さ(0.5秒×2回)を変えたら、PlayGround.tsxのBONUS_BLOCK_TIMEも合わせる*/
 .cross-glow {
-    animation: cross-glow 0.5s ease-in-out 3;
+    animation: cross-blink 0.5s steps(1, end) 2 both;
     position: absolute;
     inset: 0;
     border-radius: 50%;
@@ -132,12 +134,23 @@
     pointer-events: none;
 }
 
-@keyframes cross-glow {
-    0% {}
+.cross-glow::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border: 3px solid rgb(63, 185, 80);
+    border-radius: 50%;
+    opacity: 0;
+    animation: win-wave 0.5s ease-out 2 both;
+}
 
-    50% {
-        box-shadow: 0 0 12px 8px rgb(63, 185, 80);
+@keyframes cross-blink {
+    0% {
+        box-shadow: 0 0 0 3px rgb(63, 185, 80), 0 0 6px 4px rgba(63, 185, 80, 0.6);
     }
 
-    100% {}
+    50%,
+    100% {
+        box-shadow: none;
+    }
 }

@@ -32,8 +32,8 @@ const RESULT_DELAY = 400;
 const WIN_GLOW_TIME = 400;          //石1つが光るのにかかる時間。GameBoard.cssのwin-glowの長さと合わせる
 const RESULT_PAUSE = 50;            //勝ちの列が光り終わってから、勝敗の文字を出すまでの間
 const CROSS_BONUS = 3000;
-const BONUS_DISPLAY_TIME = 2600;
-const BONUS_BLOCK_TIME = 1800;      //ボーナス演出の開始から、勝敗演出を始めるまでの時間
+const BONUS_DISPLAY_TIME = 1600;    //「ボーナス」の文字と持ち時間の「+3」を出しておく時間。BonusEffect.css・GameInfo.cssの長さと合わせる
+const BONUS_BLOCK_TIME = 1300;      //ボーナス演出の開始から、勝敗演出を始めるまでの時間。十字の点滅(GameBoard.cssのcross-blink、1秒)が終わってから
 const UNDO_EXTRA_PENALTY = 1000;
 const RULE_TIME_RATE = 0.5;
 
@@ -434,8 +434,11 @@ export function PlayGround({ playerIsBlack, computer, initialTime, timeIncrement
 }
 
 //デバッグ用。URLの末尾に ?debug=win2 を付けると、黒があと1手でそろう盤面から始まる
+//?debug=cross を付けると、黒が1手で十字ボーナスを取れる盤面から始まる。ボーナスは持ち時間のあるステージ(見習い以降)でだけ出る
 function debugBoard(): (string | null)[][] | null {
-    if (typeof window === "undefined" || !window.location.search.includes("debug=win2")) return null;
+    if (typeof window === "undefined") return null;
+    if (window.location.search.includes("debug=cross")) return crossDebugBoard();
+    if (!window.location.search.includes("debug=win2")) return null;
     const boxes = Array(ROWS).fill(null).map(() => Array<(string | null)>(COLUMNS).fill(null));
     for (const k of [6, 7, 8, 10, 11]) {
         boxes[9][k] = "b";      //横。中央(9,9)が空き
@@ -443,6 +446,23 @@ function debugBoard(): (string | null)[][] | null {
     }
     for (const k of [2, 3, 4, 6, 7, 8]) boxes[15][k] = "b";     //横。(15,5)に置くと7連
     for (const k of [0, 1, 2, 4, 5]) boxes[1 + k][17 - k] = "b";    //左下がりの斜め。(4,14)が空き
+    return boxes;
+}
+
+//空いている真ん中に置くと十字がそろう形を4つ置く
+function crossDebugBoard(): (string | null)[][] {
+    const boxes = Array(ROWS).fill(null).map(() => Array<(string | null)>(COLUMNS).fill(null));
+    const plus: number[][] = [[-1, 0], [1, 0], [0, -1], [0, 1]];
+    const times: number[][] = [[-1, -1], [-1, 1], [1, -1], [1, 1]];
+    const shapes: [number, number, number[][]][] = [
+        [4, 4, plus],                   //左上：＋が1つ
+        [4, 13, [...plus, ...times]],   //右上：＋と×が同時に2つ
+        [13, 4, times],                 //左下：×が1つ
+        [13, 13, plus],                 //右下：＋が1つ。続けて取ったときの確認用
+    ];
+    for (const [rowNo, columnNo, offsets] of shapes) {
+        for (const [rowStep, columnStep] of offsets) boxes[rowNo + rowStep][columnNo + columnStep] = "b";
+    }
     return boxes;
 }
 

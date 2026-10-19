@@ -78,7 +78,7 @@
     font-weight: bold;
     color: #3fb950;
     pointer-events: none;
-    animation: time-bonus-rise 2.6s ease-out forwards;
+    animation: time-bonus-rise 1.6s ease-out forwards;
 }
 
 @keyframes time-bonus-rise {

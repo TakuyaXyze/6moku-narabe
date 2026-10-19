@@ -11,7 +11,7 @@
         1px 1px 0 #fff, -1px 1px 0 #fff, 1px -1px 0 #fff, -1px -1px 0 #fff;
     pointer-events: none;
     text-align: right;
-    animation: bonus-effect 2.6s ease-out forwards;
+    animation: bonus-effect 1.6s ease-out forwards;
 }
 
 @keyframes bonus-effect {
