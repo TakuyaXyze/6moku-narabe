@@ -94,9 +94,9 @@
     --field-image: url(/fields/hinoki.webp);
     --field-scale: 420px;
     --field-blur: 2.5px;
-    --field-dim: 0.8;
+    --field-dim: 0.92;
     --field-tint: linear-gradient(180deg, rgba(255, 186, 110, 0.16) 0%, rgba(26, 32, 66, 0.2) 100%);
-    --field-edge: radial-gradient(ellipse at 50% 44%, rgba(20, 26, 56, 0) 30%, rgba(20, 26, 56, 0.55) 80%);
+    --field-edge: radial-gradient(ellipse at 50% 44%, rgba(20, 26, 56, 0) 30%, rgba(20, 26, 56, 0.4) 80%);
     --band: rgba(16, 20, 44, 0.45);
     --ink: #f4f1ea;
     --ink-sub: #c9c2b4;
