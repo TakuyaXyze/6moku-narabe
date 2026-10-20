@@ -211,25 +211,86 @@
     outline-offset: -5px;
 }
 
+/*ルール説明の札：盤と同じ木の色に、ごく薄い碁盤の目と焦げ茶の二重線の縁。四隅に紺のかぎ形
+後ろの画面が透けないよう札に載せ、行の折り返しは文節の切れ目にする
+低い画面では札の中をスクロールできるようにする。飾りは背景なので、スクロールしても四隅から動かない*/
 .rule-panel {
-    max-width: 480px;
-    padding: 20px 28px;
-    border-radius: 10px;
+    --wood: linear-gradient(180deg, #f6d898 0%, #ecc276 100%);
+    --corner: rgb(20, 16, 40);
+    --grid: rgba(84, 56, 4, 0.08);
+    box-sizing: border-box;
+    width: min(580px, calc(100vw - 24px));
+    max-height: calc(100dvh - 24px);
+    overflow-y: auto;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(84, 56, 4, 0.5) transparent;
+    padding: 24px 36px 18px;
+    color: #2e1f0c;
+    word-break: auto-phrase;
+    border: 5px double var(--dark-brown);
+    border-radius: 6px;
+    background:
+        linear-gradient(var(--corner), var(--corner)) left 6px top 6px / 20px 2px no-repeat,
+        linear-gradient(var(--corner), var(--corner)) left 6px top 6px / 2px 20px no-repeat,
+        linear-gradient(var(--corner), var(--corner)) right 6px top 6px / 20px 2px no-repeat,
+        linear-gradient(var(--corner), var(--corner)) right 6px top 6px / 2px 20px no-repeat,
+        linear-gradient(var(--corner), var(--corner)) left 6px bottom 6px / 20px 2px no-repeat,
+        linear-gradient(var(--corner), var(--corner)) left 6px bottom 6px / 2px 20px no-repeat,
+        linear-gradient(var(--corner), var(--corner)) right 6px bottom 6px / 20px 2px no-repeat,
+        linear-gradient(var(--corner), var(--corner)) right 6px bottom 6px / 2px 20px no-repeat,
+        repeating-linear-gradient(90deg, var(--grid) 0 1px, transparent 1px 30px),
+        repeating-linear-gradient(180deg, var(--grid) 0 1px, transparent 1px 30px),
+        var(--wood);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
 }
 
 .rule-title {
+    margin-bottom: 8px;
+    padding-bottom: 4px;
     font-size: 22px;
     font-weight: bold;
-    margin-bottom: 8px;
+    color: var(--dark-brown);
+    border-bottom: 2px dotted rgba(84, 56, 4, 0.5);
+}
+
+/*2つめ以降の見出しは、上の項目との間を空ける*/
+.rule-panel ul + .rule-title {
+    margin-top: 20px;
 }
 
 .rule-panel li {
-    margin-bottom: 6px;
-    line-height: 1.5;
+    margin-bottom: 8px;
+    font-size: 17px;
+    line-height: 1.6;
+    list-style-type: "◆  ";
 }
 
-.rule-credit-title {
-    margin-top: 20px;
+.rule-panel li::marker {
+    font-size: 0.6em;
+    color: #b08a3e;
+}
+
+/*低い画面(スマホの横向きなど)では、余白と文字を詰めて札を画面に収める*/
+@media screen and (max-height: 600px) {
+    .rule-panel {
+        max-height: calc(100dvh - 12px);
+        padding: 16px 32px 8px;
+    }
+
+    .rule-title {
+        margin-bottom: 6px;
+        font-size: 18px;
+    }
+
+    .rule-panel ul + .rule-title {
+        margin-top: 12px;
+    }
+
+    .rule-panel li {
+        margin-bottom: 4px;
+        font-size: 15px;
+        line-height: 1.45;
+    }
 }
 
 .undo-panel {

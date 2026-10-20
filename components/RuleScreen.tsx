@@ -28,7 +28,7 @@ export function RuleScreen({ onClose }: Props) {
                 <ul>
                     {RULES.map((rule) => <li key={rule}>{rule}</li>)}
                 </ul>
-                <div className="rule-title rule-credit-title">使用素材</div>
+                <div className="rule-title">使用素材</div>
                 <ul>
                     {CREDITS.map((credit) => <li key={credit}>{credit}</li>)}
                 </ul>
