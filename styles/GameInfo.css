@@ -17,13 +17,15 @@
     gap: 8px;
 }
 
+/*地は濃い茶を薄めた色にし、内側に影を付けて彫った溝のように見せる*/
 .time-bar {
     flex-grow: 1;
     height: 14px;
-    border: 1px solid #8a8a8a;
+    border: 1px solid var(--dark-brown);
     border-radius: 7px;
-    overflow: visible;
-    background-color: #e0e0e0;
+    overflow: hidden;       /*色の付いた部分を、枠の角丸の内側に収める*/
+    background-color: rgba(84, 56, 4, 0.35);
+    box-shadow: inset 0 2px 3px rgba(40, 25, 0, 0.45);
 }
 
 .time-bar-fill {
