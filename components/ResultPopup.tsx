@@ -6,7 +6,7 @@ import "../styles/ResultPopup.css";
 
 export type GameResult = "win" | "lose" | "timeup" | "draw";
 
-const RESULT_SHOW_TIME = 2500;
+const RESULT_SHOW_TIME = 5000;     //台詞を読みきれるだけの長さ。クリックやEnter・Spaceキーで早く閉じられる
 const RESULT_CLOSE_TIME = 600;      //帯を畳むのにかかる時間。ResultPopup.cssのband-wipe-closeの長さと合わせる
 
 //日本語の書体は文字の範囲が広いので、先読みはしない
