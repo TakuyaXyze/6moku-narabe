@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import { PlayGround } from "./PlayGround";
 import { Tips } from "./Tips";
-import { playSound, DEFAULT_VOLUME } from "./Sounds";
+import { playSound, loadSounds } from "./Sounds";
 import { RuleScreen } from "./RuleScreen";
 import { stageInfo, StageInfo } from "./StageData";
 import { findSays } from "./SayData";
@@ -20,9 +20,9 @@ type Phase = "standby" | "playing";
 
 const TIME_CARRY_RATE = 0.2;
 const TIME_PENALTY = 3000;
-const BOMB_MUTED_RATE = 0.3;
 const SCREEN_DARK_TIME = 350;
 const SCREEN_FADE_TIME = 800;
+const SELECT_FADE_DELAY = 250;      //対局に入るときは、selectの音が聞こえてから暗転を始める
 const CLEAR_BGM: BgmTrack = { src: "/bgm/maou_loop_bgm_fantasy13.mp3", overlap: 0.06 };
 
 export function StageFlow() {
@@ -67,6 +67,10 @@ export function StageFlow() {
     useBgm(allCleared ? CLEAR_BGM : stage.bgm, bgmIsOn);
 
     useEffect(() => {
+        loadSounds();
+    }, [])
+
+    useEffect(() => {
         if (!allCleared) return;
         playSound("clapping");
     }, [allCleared])
@@ -83,21 +87,24 @@ export function StageFlow() {
     }, [isRuleOpen, phase])
 
     const [isFading, setIsFading] = useState(false);
+    const [fadeDelay, setFadeDelay] = useState(0);
 
     //一度暗転して、真っ暗な間に画面を入れ替える
-    function fadeScreen(changeScreen: () => void): void {
+    //暗転を遅らせる間も幕は先に置き、透明なまま画面を押せないようにする
+    function fadeScreen(changeScreen: () => void, delay: number = 0): void {
+        setFadeDelay(delay);
         setIsFading(true);
-        setTimeout(changeScreen, SCREEN_DARK_TIME);
-        setTimeout(() => setIsFading(false), SCREEN_FADE_TIME);    //animationendはタブが裏にあると届かないので時間で消す
+        setTimeout(changeScreen, delay + SCREEN_DARK_TIME);
+        setTimeout(() => setIsFading(false), delay + SCREEN_FADE_TIME);    //animationendはタブが裏にあると届かないので時間で消す
     }
 
     function startRound(): void {
         playSound("select");            //対局に入るボタンはすべてこの音
-        fadeScreen(() => setPhase("playing"));
+        fadeScreen(() => setPhase("playing"), SELECT_FADE_DELAY);
     }
 
     const screenFade = isFading &&
-        <div className="screen-fade" />;
+        <div className="screen-fade" style={{ animationDelay: fadeDelay + "ms" }} />;
 
     function selectFirstMove(isBlack: boolean): void {
         setFirstRoundIsBlack(isBlack);
@@ -139,7 +146,6 @@ export function StageFlow() {
             setPhase("standby");
             return;
         }
-        playSound("bomb", bgmIsOn ? DEFAULT_VOLUME : DEFAULT_VOLUME * BOMB_MUTED_RATE);     //相手を倒したときだけ鳴らす。BGMが切り替わるのと同時
         setStageNo(stageNo + 1);
         setRoundNo(1);
         setAttempt(0);
@@ -183,33 +189,33 @@ export function StageFlow() {
             ) : (
                 <div className="standby-screen">
 
-                {phase === "standby" && allCleared && (
-                    <ClearScreen onRestart={() => jumpToStage(1)} />
-                )}
+                    {phase === "standby" && allCleared && (
+                        <ClearScreen onRestart={() => jumpToStage(1)} />
+                    )}
 
-                {phase === "standby" && !allCleared && (
-                    <StageScreen
-                        opponentNames={opponentNames}
-                        stageNo={stageNo}
-                        opponentName={stage.computer.name}
-                        initialTime={initialTime}
-                        stageTimeLimit={stage.timeLimit}
-                        carriedTime={carriedTime}
-                        timePenalty={timePenalty}
-                        roundNo={roundNo}
-                        attempt={attempt}
-                        playerIsBlack={playerIsBlack}
-                        onSelectFirstMove={selectFirstMove}
-                        onStart={startRound}
-                        onOpenRule={() => setIsRuleOpen(true)}
-                    />
-                )}
+                    {phase === "standby" && !allCleared && (
+                        <StageScreen
+                            opponentNames={opponentNames}
+                            stageNo={stageNo}
+                            opponentName={stage.computer.name}
+                            initialTime={initialTime}
+                            stageTimeLimit={stage.timeLimit}
+                            carriedTime={carriedTime}
+                            timePenalty={timePenalty}
+                            roundNo={roundNo}
+                            attempt={attempt}
+                            playerIsBlack={playerIsBlack}
+                            onSelectFirstMove={selectFirstMove}
+                            onStart={startRound}
+                            onOpenRule={() => setIsRuleOpen(true)}
+                        />
+                    )}
 
-                {isRuleOpen &&
-                    <RuleScreen onClose={() => setIsRuleOpen(false)} />
-                }
+                    {isRuleOpen &&
+                        <RuleScreen onClose={() => setIsRuleOpen(false)} />
+                    }
 
-                <DemoTool stageNo={stageNo} stageCount={stageInfo.length} onJump={jumpToStage} />
+                    <DemoTool stageNo={stageNo} stageCount={stageInfo.length} onJump={jumpToStage} />
 
                 </div>
             )}

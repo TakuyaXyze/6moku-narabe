@@ -7,7 +7,7 @@ export type BgmTrack = {
     overlap: number;    //次の周を、前の周が鳴り終わるより何秒早く鳴らし始めるか。終わりの余韻が次の頭に重なる
 };
 
-const BGM_VOLUME = 0.3;
+const BGM_VOLUME = 0.03;       //SEより控えめに。耳で聞いて、0.3・0.1では大きかった
 const FADE_SECONDS = 1;
 const START_DELAY = 0.05;       //鳴らし始めを予約する余裕(秒)
 
