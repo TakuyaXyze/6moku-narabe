@@ -293,6 +293,27 @@
     }
 }
 
+/*さらに低い横長の画面では、横幅を広げて2段組みにする。見出しと項目は段をまたがない*/
+@media screen and (max-height: 440px) and (min-aspect-ratio: 1.2/1) {
+    .rule-panel {
+        width: min(780px, calc(100vw - 24px));
+        columns: 2;
+        column-gap: 36px;
+    }
+
+    .rule-title {
+        break-after: avoid;
+    }
+
+    .rule-panel ul {
+        break-inside: avoid;
+    }
+
+    .rule-panel ul + .rule-title {
+        margin-top: 8px;
+    }
+}
+
 .undo-panel {
     display: flex;
     flex-direction: column;

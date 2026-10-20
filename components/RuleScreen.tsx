@@ -7,6 +7,10 @@ const RULES: string[] = [
     "先に石を6つ縦・横・斜めいずれかの直線で並べた方が勝ち",
     "手番は1手・2手・2手・2手…と進む。先手の1手目だけ1つ、それ以降はどちらも2つずつ置く",
     "石は空いている交点ならどこにでも置ける。取ったり動かしたりはしない",
+];
+
+const TIME_RULES: string[] = [
+    "見習い以上の対戦では制限時間が存在する",
     "持ち時間は自分の手番でだけ減る。相手が考えている間は減らない",
     "石を1つ置くごとに持ち時間が少し増える",
 ];
@@ -27,6 +31,10 @@ export function RuleScreen({ onClose }: Props) {
                 <div className="rule-title">ルール</div>
                 <ul>
                     {RULES.map((rule) => <li key={rule}>{rule}</li>)}
+                </ul>
+                <div className="rule-title">持ち時間</div>
+                <ul>
+                    {TIME_RULES.map((rule) => <li key={rule}>{rule}</li>)}
                 </ul>
                 <div className="rule-title">使用素材</div>
                 <ul>
