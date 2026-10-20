@@ -5,7 +5,7 @@ import { useState, useRef, MouseEvent, PointerEvent } from "react";
 
 type SlideDirection = "next" | "prev";
 
-const TIP_DURATION = 10000;
+const TIP_DURATION = 7000;
 const DRAG_THRESHOLD = 5;      //これ以上動いたらクリックではなくドラッグとみなす(px)
 
 type Props = {
