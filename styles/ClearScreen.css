@@ -1,0 +1,140 @@
+.clear-screen {
+    --kanji-font: var(--clear-kanji-font), "Yu Mincho", "Hiragino Mincho ProN", serif;
+    --latin: var(--clear-latin), "Times New Roman", serif;
+    --night: 20, 16, 40;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 18px;
+}
+
+/*掛け軸：和紙の地に、上下に紺の軸。上から下へ開く*/
+.clear-scroll {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 22px 34px 26px;
+    background: linear-gradient(90deg, #f3ead6 0%, #fdf9ef 20%, #fdf9ef 80%, #f3ead6 100%);
+    border-left: 1px solid #d9ccae;
+    border-right: 1px solid #d9ccae;
+    box-shadow: 0 6px 14px rgba(0, 0, 0, 0.18);
+    animation: clear-unroll 0.9s ease-out both;
+}
+
+.clear-scroll::before,
+.clear-scroll::after {
+    content: "";
+    position: absolute;
+    left: -14px;
+    right: -14px;
+    height: 12px;
+    border-radius: 6px;
+    background: linear-gradient(180deg, #3b3560 0%, rgb(var(--night)) 100%);
+}
+
+.clear-scroll::before {
+    top: -6px;
+}
+
+.clear-scroll::after {
+    bottom: -6px;
+}
+
+/*英字は勝敗の帯と同じ書体と色で小さく残す*/
+.clear-latin {
+    white-space: nowrap;
+    font-family: var(--latin);
+    font-size: 14px;
+    font-weight: 600;
+    letter-spacing: 0.4em;
+    margin: 0 -0.4em 14px 0;
+    color: #b08a3e;
+}
+
+.clear-kanji {
+    writing-mode: vertical-rl;
+    font-family: var(--kanji-font);
+    font-size: clamp(44px, 8vh, 64px);
+    line-height: 1;
+    letter-spacing: 0.2em;
+    margin-bottom: -0.2em;
+    color: rgb(var(--night));
+}
+
+/*朱印は、掛け軸が開ききってから押す*/
+.clear-seal {
+    position: absolute;
+    left: 10px;
+    bottom: 18px;
+    padding: 6px 5px;
+    font-family: var(--kanji-font);
+    font-size: 13px;
+    line-height: 1;
+    writing-mode: vertical-rl;
+    color: #fff;
+    background-color: #c0392b;
+    border-radius: 4px;
+    box-shadow: inset 0 0 0 2px rgba(255, 255, 255, 0.5);
+    animation: clear-stamp 0.3s cubic-bezier(0.3, 1.5, 0.5, 1) 0.9s both;
+}
+
+.clear-message {
+    font-size: 18px;
+    font-weight: bold;
+    letter-spacing: 0.05em;
+    color: #2a2440;
+}
+
+.clear-button {
+    width: 160px;
+    padding: 6px 0;
+    font-size: 16px;
+    font-weight: bold;
+    color: var(--dark-brown);
+    border: 2px solid var(--dark-brown);
+    border-radius: 8px;
+    background-color: var(--light-brown);
+    cursor: pointer;
+}
+
+/*案内とボタンは、朱印を押したあとに続いて出す*/
+.clear-message,
+.clear-button {
+    animation: clear-fade-in 0.6s ease-out 1.2s both;
+}
+
+@keyframes clear-unroll {
+    from {
+        clip-path: inset(-10px -20px 100% -20px);
+    }
+
+    to {
+        clip-path: inset(-10px -20px -20px -20px);
+    }
+}
+
+@keyframes clear-stamp {
+    from {
+        opacity: 0;
+        scale: 2;
+    }
+
+    to {
+        opacity: 1;
+        scale: 1;
+    }
+}
+
+@keyframes clear-fade-in {
+    from {
+        opacity: 0;
+        translate: 0 8px;
+    }
+
+    to {
+        opacity: 1;
+        translate: 0 0;
+    }
+}
