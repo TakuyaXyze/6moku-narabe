@@ -38,53 +38,79 @@
     flex-direction: column;
 }
 
+/*名前の横に盤の上の石と同じ見た目の石を置き、名前の下に線を引いて先手・後手を添える
+CPU側は碁笥が上で石が名前の左、自分側は碁笥が下で石が名前の右*/
+/*石の列の幅は石の大きさに固定する。広げると、碁笥の幅に押されて石と名前の間が空く*/
 .side-block {
-    display: flex;
-    flex-direction: column;
+    --mark-size: 25px;
+    display: grid;
+    grid-template-columns: var(--mark-size) auto;
+    grid-template-areas: "bowl bowl" "mark name" "mark turn";
+    column-gap: 5px;
+    align-items: center;
+    justify-content: start;
 }
 
 .game-info .side-block {
     margin-top: auto;
+    grid-template-columns: auto var(--mark-size);
+    grid-template-areas: "name mark" "turn mark" "bowl bowl";
+    justify-content: end;
 }
 
+.goishi-box-image-com,
+.goishi-box-image-player {
+    grid-area: bowl;
+}
+
+/*線の色は先手・後手の文字と同じ*/
 .side-name {
+    grid-area: name;
     margin-top: 8px;
-    font-size: 16px;
+    padding-bottom: 4px;
+    font-size: 24px;
     font-weight: bold;
+    border-bottom: 1px solid currentColor;
 }
 
-.game-info .side-name {
+.game-info .side-name,
+.game-info .side-stone-row {
     text-align: right;
 }
 
 .side-stone-row {
-    margin-top: 4px;
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    gap: 6px;
-    font-size: 13px;
+    grid-area: turn;
+    margin-top: 6px;
+    font-size: 16px;
+    font-weight: bold;
     color: #5a5a5a;
 }
 
-.game-info .side-stone-row {
-    justify-content: flex-end;
-}
-
-.side-stone {
-    width: 14px;
-    height: 14px;
+/*石は名前の文字(24pxの文字で高さ23px)より2px大きくし、文字と上下の中央をそろえて上下に1pxずつはみ出させる
+文字だけの大きさにすると、丸のほうが小さく見えるため*/
+.side-block::before {
+    content: "";
+    grid-area: mark;
+    align-self: start;
+    width: var(--mark-size);
+    height: var(--mark-size);
+    margin-top: calc(26.5px - var(--mark-size) / 2);      /*石の中心を文字の中心(名前の行の上端から26.5px。上の余白8pxを含む)にそろえる*/
     border-radius: 50%;
-    border: 1px solid #8a8a8a;
-    box-sizing: border-box;
 }
 
-.side-black {
-    background-color: #0a0a0b;
+/*黒石は同じ大きさだと白石より小さく見えるので、1px大きくする*/
+.side-is-black {
+    --mark-size: 26px;
 }
 
-.side-white {
-    background-color: #fafafa;
+.side-is-black::before {
+    background: radial-gradient(circle at 34% 28%, #6b6b72 0%, #26262b 40%, #08080a 100%);
+    box-shadow: inset -1px -2px 3px rgba(0, 0, 0, 0.55), 0 2px 3px rgba(0, 0, 0, 0.45);
+}
+
+.side-is-white::before {
+    background: radial-gradient(circle at 34% 28%, #ffffff 0%, #f4f1ea 42%, #d5cec1 100%);
+    box-shadow: inset -1px -2px 3px rgba(90, 80, 60, 0.18), 0 2px 3px rgba(0, 0, 0, 0.35);
 }
 
 .board-area {

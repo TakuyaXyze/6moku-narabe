@@ -22,13 +22,10 @@ export function SideBlock({ side, name, isBlack, bowlState }: Props) {
     );
 
     return (
-        <div className="side-block">
+        <div className={"side-block " + (isBlack ? "side-is-black" : "side-is-white")}>
             {side === "com" && bowl}
             <div className="side-name">{name}</div>
-            <div className="side-stone-row">
-                <span className={"side-stone " + (isBlack ? "side-black" : "side-white")} />
-                {isBlack ? "先手" : "後手"}
-            </div>
+            <div className="side-stone-row">{isBlack ? "先手" : "後手"}</div>
             {side === "player" && bowl}
         </div>
     );

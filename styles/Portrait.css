@@ -49,19 +49,34 @@
         box-sizing: border-box;
     }
 
+    /*碁笥・石・名前を横に並べる。CPU側は碁笥が左、自分側は碁笥が右*/
     .side-block {
-        flex-direction: row;
-        align-items: center;
-        gap: 10px;
+        grid-template-columns: auto var(--mark-size) auto;
+        grid-template-areas: "bowl mark name" "bowl mark turn";
     }
 
     .game-info .side-block {
         margin-top: 0;
         margin-left: auto;
+        grid-template-columns: auto var(--mark-size) auto;
+        grid-template-areas: "name mark bowl" "turn mark bowl";
+    }
+
+    /*名前の上の余白がない分、石を上げる*/
+    .side-block::before {
+        margin-top: calc(18.5px - var(--mark-size) / 2);
+    }
+
+    /*碁笥と石の間は、石と名前の間より広く空ける*/
+    .goishi-box-image-com {
+        margin-right: 5px;
+    }
+
+    .goishi-box-image-player {
+        margin-left: 5px;
     }
 
     .side-name,
-    .side-stone-row,
     .goishi-box-image-player {
         margin-top: 0;
     }
