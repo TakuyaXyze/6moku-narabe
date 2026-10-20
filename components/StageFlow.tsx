@@ -98,7 +98,10 @@ export function StageFlow() {
         setTimeout(() => setIsFading(false), delay + SCREEN_FADE_TIME);    //animationendはタブが裏にあると届かないので時間で消す
     }
 
+    const [clockDelay, setClockDelay] = useState(0);
+
     function startRound(): void {
+        setClockDelay(SCREEN_FADE_TIME - SCREEN_DARK_TIME);     //暗転が明けきるまで、対局画面の時計を止めておく
         playSound("select");            //対局に入るボタンはすべてこの音
         fadeScreen(() => setPhase("playing"), SELECT_FADE_DELAY);
     }
@@ -124,6 +127,7 @@ export function StageFlow() {
             jumpToStage(fallbackStageNo);
             return;
         }
+        setClockDelay(0);               //暗転せずにその場でやり直すので、すぐ時計を動かす
         setCarriedTime(0);
         setTimePenalty(timePenalty + resetPenalty);
         setAttempt(attempt + 1);
@@ -178,6 +182,7 @@ export function StageFlow() {
                         says={findSays(stage.computer.name, roundNo)}
                         resetPenalty={resetPenalty}
                         resetWarning={resetWarning}
+                        clockDelay={clockDelay}
                         onGameEnd={handleGameEnd}
                         onNext={() => fadeScreen(handleNext)}
                         onReset={handleReset}

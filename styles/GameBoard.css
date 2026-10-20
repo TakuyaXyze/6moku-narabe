@@ -39,7 +39,7 @@
 }
 
 .stone.last-move {
-    animation: stone-blink 0.5s ease-in-out 3;
+    animation: stone-blink 0.4s ease-in-out 2;      /*PlayGround.tsxのBLINK_TIMEと合わせる*/
 }
 
 @keyframes stone-blink {

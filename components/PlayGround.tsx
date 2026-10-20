@@ -27,7 +27,7 @@ const TIMER_INTERVAL = 100;
 const COUNTDOWN_SECONDS = [10, 5, 4, 3, 2, 1];
 const COMPUTER_START_DELAY = 300;
 const COMPUTER_MIN_TIME = 1500;
-const BLINK_TIME = 1500;
+const BLINK_TIME = 800;             //相手の石が点滅してから置かれるまで。GameBoard.cssのstone-blinkの長さと合わせる
 const RESULT_DELAY = 400;
 const WIN_GLOW_TIME = 400;          //石1つが光るのにかかる時間。GameBoard.cssのwin-glowの長さと合わせる
 const RESULT_PAUSE = 50;            //勝ちの列が光り終わってから、勝敗の文字を出すまでの間
@@ -46,6 +46,7 @@ type Props = {
     says: RoundSays;                    //勝敗画面で相手が言う台詞の候補
     resetPenalty: number;
     resetWarning: string | null;        //最初に戻すと持ち時間が尽きるときの注意。尽きないときはnull
+    clockDelay: number;                 //画面が見えるようになるまでの時間。暗転が明けきってから時計を動かす
     onGameEnd: (result: GameResult, restTime: number) => void;
     onNext: () => void;
     onReset: () => void;
@@ -53,7 +54,7 @@ type Props = {
     onToggleBgm: () => void;
 }
 
-export function PlayGround({ playerIsBlack, computer, initialTime, timeIncrement, resultNote, says, resetPenalty, resetWarning, onGameEnd, onNext, onReset, bgmIsOn, onToggleBgm }: Props) {
+export function PlayGround({ playerIsBlack, computer, initialTime, timeIncrement, resultNote, says, resetPenalty, resetWarning, clockDelay, onGameEnd, onNext, onReset, bgmIsOn, onToggleBgm }: Props) {
 
     const [history, setHistory] = useState([debugBoard() ?? Array(ROWS).fill(null).map(() => Array<(string | null)>(COLUMNS).fill(null))]);
     const [currentMove, setCurrentMove] = useState(0);
@@ -183,8 +184,16 @@ export function PlayGround({ playerIsBlack, computer, initialTime, timeIncrement
     }, [bonusNo])
 
 
-    //先手のときは、最初の石を置くまで時計を動かさない
-    const playerIsThinking: boolean = continueGame && hasTimeLimit && !cpuIsSettling && currentMove > 0 && (checkBlackIsNext(currentMove) === playerIsBlack);
+    const [screenIsClear, setScreenIsClear] = useState(clockDelay <= 0);
+
+    useEffect(() => {
+        if (screenIsClear) return;
+        const clearId = setTimeout(() => setScreenIsClear(true), clockDelay);
+        return () => clearTimeout(clearId);
+    }, [])
+
+    //先手のときも、画面が見えたら時計を動かす
+    const playerIsThinking: boolean = continueGame && hasTimeLimit && !cpuIsSettling && screenIsClear && (checkBlackIsNext(currentMove) === playerIsBlack);
     const [isRuleOpen, setIsRuleOpen] = useState(false);
 
     useEffect(() => {

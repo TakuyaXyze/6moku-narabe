@@ -23,7 +23,7 @@ export const stageInfo: StageInfo[] = [
         ],
     },
     {
-        stageNo: 2, rounds: 2, timeLimit: 10000, timeIncrement: 5000, field: "noon",
+        stageNo: 2, rounds: 2, timeLimit: 13000, timeIncrement: 5000, field: "noon",
         bgm: { src: "/bgm/maou_bgm_orchestra25.mp3", overlap: 28.41 },
         computer: { name: "見習い", depth: 2, beamSize: 20, budget: 150000, sight: 3, defense: 0.7, orderDefense: 0.7, blunder: 0.45 },
         hints: [
