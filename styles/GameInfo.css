@@ -34,15 +34,15 @@
 }
 
 .time-bar-green {
-    background-color: #3fb950;
+    background-color: #37ad00;
 }
 
 .time-bar-yellow {
-    background-color: #e3b341;
+    background-color: #f5c400;
 }
 
 .time-bar-red {
-    background-color: #e5534b;
+    background-color: #fb0000;
 }
 
 .time-count {
@@ -54,7 +54,7 @@
 }
 
 .time-count-hurry {
-    color: #e5534b;
+    color: #fb0000;
     animation: time-count-blink 1s ease-in-out infinite;
 }
 
@@ -78,7 +78,7 @@
     bottom: 100%;
     font-size: 18px;
     font-weight: bold;
-    color: #3fb950;
+    color: #37ad00;
     pointer-events: none;
     animation: time-bonus-rise 1.6s ease-out forwards;
 }
@@ -337,7 +337,7 @@
 
 .undo-warning {
     font-weight: bold;
-    color: #ff8a80;
+    color: #fb0000;
 }
 
 .undo-buttons {
