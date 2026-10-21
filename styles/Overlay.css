@@ -10,6 +10,11 @@
     z-index: 10;
 }
 
+/*勝敗の帯は盤面の上に出るので、幕を薄くして勝ちの列が見えるようにする*/
+.overlay-result {
+    background-color: rgba(0, 0, 0, 0.35);
+}
+
 .overlay button {
     min-width: 96px;
     padding: 4px 16px;

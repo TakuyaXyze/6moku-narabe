@@ -78,7 +78,7 @@ export function ResultPopup({ result, note, speaker, says, onNext }: Props) {
     }, [])
 
     return (
-        <Overlay onClose={() => setIsClosing(true)}>
+        <Overlay className="overlay-result" onClose={() => setIsClosing(true)}>
             <div className={"game-result result-" + result + " " + kanjiFont.variable + " " + latinFont.variable + " " + sayShape + " " + animTrial() + (isClosing ? " result-closing" : "")}>
                 <div className="result-band">
                     <div className="result-latin">{RESULT_TEXTS[result]}</div>
