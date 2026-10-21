@@ -83,7 +83,7 @@ CPU側は碁笥が上で石が名前の左、自分側は碁笥が下で石が�
     margin-top: 6px;
     font-size: 16px;
     font-weight: bold;
-    color: #5a5a5a;
+    color: #726c6c;
 }
 
 /*石は名前の文字(24pxの文字で高さ23px)より2px大きくし、文字と上下の中央をそろえて上下に1pxずつはみ出させる
@@ -150,7 +150,7 @@ CPU側は碁笥が上で石が名前の左、自分側は碁笥が下で石が�
     padding: 10px 28px;
     border-radius: 8px;
     background-color: rgba(10, 10, 11, 0.55);
-    color: #fafafa;
+    color: var(--white);
     font-size: 24px;
     font-weight: bold;
     letter-spacing: 0.05em;

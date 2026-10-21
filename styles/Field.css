@@ -84,7 +84,7 @@
     --field-tint: linear-gradient(180deg, rgba(255, 168, 86, 0.2) 0%, rgba(122, 58, 74, 0.24) 100%);
     --field-edge: radial-gradient(ellipse at 50% 44%, rgba(70, 34, 44, 0) 30%, rgba(70, 34, 44, 0.5) 80%);
     --band: rgba(48, 26, 34, 0.42);
-    --ink: #fdf6ec;
+    --ink: var(--white);
     --ink-sub: #e8cdb4;
     --ink-shadow: 0 1px 3px rgba(0, 0, 0, 0.65);
     --board-shadow: 0 10px 30px rgba(0, 0, 0, 0.55);
@@ -98,7 +98,7 @@
     --field-tint: linear-gradient(180deg, rgba(255, 186, 110, 0.16) 0%, rgba(26, 32, 66, 0.2) 100%);
     --field-edge: radial-gradient(ellipse at 50% 44%, rgba(20, 26, 56, 0) 30%, rgba(20, 26, 56, 0.4) 80%);
     --band: rgba(16, 20, 44, 0.45);
-    --ink: #f4f1ea;
+    --ink: var(--white);
     --ink-sub: #c9c2b4;
     --ink-shadow: 0 1px 3px rgba(0, 0, 0, 0.75);
     --board-shadow: 0 12px 34px rgba(0, 0, 0, 0.65);
@@ -112,7 +112,7 @@
     --field-tint: linear-gradient(180deg, rgba(255, 226, 176, 0.2) 0%, rgba(150, 120, 86, 0.16) 100%);
     --field-edge: radial-gradient(ellipse at 50% 44%, rgba(74, 52, 30, 0) 32%, rgba(74, 52, 30, 0.44) 80%);
     --band: rgba(56, 40, 24, 0.34);
-    --ink: #fdf8ef;
+    --ink: var(--white);
     --ink-sub: #e2d2ba;
     --ink-shadow: 0 1px 3px rgba(0, 0, 0, 0.7);
     --board-shadow: 0 12px 32px rgba(0, 0, 0, 0.5);

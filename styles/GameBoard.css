@@ -120,7 +120,7 @@
 .black {
     background: radial-gradient(circle at 34% 28%, #6b6b72 0%, #26262b 40%, #08080a 100%);
     box-shadow: inset -1px -2px 3px rgba(0, 0, 0, 0.55), 0 2px 3px rgba(0, 0, 0, 0.45);
-    color: #fafafa;
+    color: var(--white);
 }
 
 /*十字ボーナス：十字の5つの石に、緑の輪がパッと点いてパッと消えるのを2回。点くたびに波紋も走る
