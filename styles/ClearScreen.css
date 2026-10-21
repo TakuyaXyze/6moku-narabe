@@ -31,7 +31,7 @@
     right: -14px;
     height: 12px;
     border-radius: 6px;
-    background: linear-gradient(180deg, #3b3560 0%, rgb(var(--night)) 100%);
+    background: rgb(var(--night));
 }
 
 .clear-scroll::before {
