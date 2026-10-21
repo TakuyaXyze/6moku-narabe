@@ -5,14 +5,14 @@
     align-items: center;
     justify-content: center;
     backdrop-filter: blur(2px);
-    background-color: rgba(0, 0, 0, 0.6);
+    background-color: rgba(10, 10, 11, 0.6);
     color: var(--white);
     z-index: 10;
 }
 
 /*勝敗の帯は盤面の上に出るので、幕を薄くして勝ちの列が見えるようにする*/
 .overlay-result {
-    background-color: rgba(0, 0, 0, 0.35);
+    background-color: rgba(10, 10, 11, 0.35);
 }
 
 .overlay button {

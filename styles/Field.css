@@ -9,7 +9,7 @@
     --ink: #0a0a0b;
     --ink-sub: #5a5a5a;
     --ink-shadow: none;
-    --board-shadow: 0 8px 26px rgba(0, 0, 0, 0.4);
+    --board-shadow: 0 8px 26px rgba(10, 10, 11, 0.4);
     display: flex;
     flex-direction: column;
     height: 100%;
@@ -59,10 +59,10 @@
     --field-scale: 280px;
     --field-dim: 1.04;
     --field-tint: linear-gradient(180deg, rgba(188, 216, 240, 0.36) 0%, rgba(255, 244, 214, 0.24) 100%);
-    --field-edge: radial-gradient(ellipse at 50% 44%, rgba(255, 255, 255, 0) 34%, rgba(255, 255, 255, 0.46) 80%);
+    --field-edge: radial-gradient(ellipse at 50% 44%, rgba(250, 250, 250, 0) 34%, rgba(250, 250, 250, 0.46) 80%);
     --band: rgba(252, 252, 250, 0.58);
     --ink-sub: #3f3f45;
-    --ink-shadow: 0 1px 2px rgba(255, 255, 255, 0.6);
+    --ink-shadow: 0 1px 2px rgba(250, 250, 250, 0.6);
 }
 
 .field-noon {
@@ -71,10 +71,10 @@
     --field-blur: 3.5px;
     --field-dim: 1.08;
     --field-tint: linear-gradient(180deg, rgba(255, 253, 244, 0.38) 0%, rgba(214, 231, 242, 0.3) 100%);
-    --field-edge: radial-gradient(ellipse at 50% 44%, rgba(255, 255, 255, 0) 34%, rgba(255, 255, 255, 0.5) 80%);
+    --field-edge: radial-gradient(ellipse at 50% 44%, rgba(250, 250, 250, 0) 34%, rgba(250, 250, 250, 0.5) 80%);
     --band: rgba(252, 252, 250, 0.6);
     --ink-sub: #3f3f45;
-    --ink-shadow: 0 1px 2px rgba(255, 255, 255, 0.6);
+    --ink-shadow: 0 1px 2px rgba(250, 250, 250, 0.6);
 }
 
 .field-sunset {
@@ -86,8 +86,8 @@
     --band: rgba(48, 26, 34, 0.42);
     --ink: var(--white);
     --ink-sub: #e8cdb4;
-    --ink-shadow: 0 1px 3px rgba(0, 0, 0, 0.65);
-    --board-shadow: 0 10px 30px rgba(0, 0, 0, 0.55);
+    --ink-shadow: 0 1px 3px rgba(10, 10, 11, 0.65);
+    --board-shadow: 0 10px 30px rgba(10, 10, 11, 0.55);
 }
 
 .field-dusk {
@@ -100,8 +100,8 @@
     --band: rgba(16, 20, 44, 0.45);
     --ink: var(--white);
     --ink-sub: #c9c2b4;
-    --ink-shadow: 0 1px 3px rgba(0, 0, 0, 0.75);
-    --board-shadow: 0 12px 34px rgba(0, 0, 0, 0.65);
+    --ink-shadow: 0 1px 3px rgba(10, 10, 11, 0.75);
+    --board-shadow: 0 12px 34px rgba(10, 10, 11, 0.65);
 }
 
 .field-hall {
@@ -114,6 +114,6 @@
     --band: rgba(56, 40, 24, 0.34);
     --ink: var(--white);
     --ink-sub: #e2d2ba;
-    --ink-shadow: 0 1px 3px rgba(0, 0, 0, 0.7);
-    --board-shadow: 0 12px 32px rgba(0, 0, 0, 0.5);
+    --ink-shadow: 0 1px 3px rgba(10, 10, 11, 0.7);
+    --board-shadow: 0 12px 32px rgba(10, 10, 11, 0.5);
 }

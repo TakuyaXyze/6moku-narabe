@@ -139,7 +139,7 @@ CPU側は碁笥が上で石が名前の左、自分側は碁笥が下で石が�
 
 .bowl-active img {
     transform: translateY(-4px);
-    filter: drop-shadow(0 6px 10px rgba(0, 0, 0, 0.3));
+    filter: drop-shadow(0 6px 10px rgba(10, 10, 11, 0.3));
 }
 
 .computing-message {

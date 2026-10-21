@@ -72,12 +72,12 @@
 .stage-screen-ladder li+li::before {
     content: "›";
     margin: 0 6px;
-    opacity: 0.4;
+    opacity: 0.5;
     font-weight: normal;
 }
 
 .ladder-cleared {
-    opacity: 0.6;
+    opacity: 0.75;
 }
 
 .ladder-current {

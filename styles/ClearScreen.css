@@ -19,7 +19,7 @@
     background: linear-gradient(90deg, #f3ead6 0%, #fdf9ef 20%, #fdf9ef 80%, #f3ead6 100%);
     border-left: 1px solid #d9ccae;
     border-right: 1px solid #d9ccae;
-    box-shadow: 0 6px 14px rgba(0, 0, 0, 0.18);
+    box-shadow: 0 6px 14px rgba(10, 10, 11, 0.18);
     animation: clear-unroll 0.9s ease-out both;
 }
 
@@ -76,7 +76,7 @@
     color: var(--white);
     background-color: #c0392b;
     border-radius: 4px;
-    box-shadow: inset 0 0 0 2px rgba(255, 255, 255, 0.5);
+    box-shadow: inset 0 0 0 2px rgba(250, 250, 250, 0.5);
     animation: clear-stamp 0.3s cubic-bezier(0.3, 1.5, 0.5, 1) 0.9s both;
 }
 

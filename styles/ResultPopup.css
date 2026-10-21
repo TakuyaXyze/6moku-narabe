@@ -78,7 +78,7 @@
     font-size: clamp(11px, 1.6vw, 13px);
     white-space: pre;
     text-align: center;
-    color: rgba(255, 255, 255, 0.75);
+    color: rgba(250, 250, 250, 0.75);
 }
 
 /*台詞の札：Tipsの帯のすぐ上に、斜めに傾けた紙の札。左に太い紺の縁、上下に細い紺の線。色は勝敗で変えない
@@ -111,7 +111,7 @@ Tipsの帯の高さは横長の画面で画面の8%、縦長の画面で36px（T
     letter-spacing: 0.2em;
     color: rgb(var(--night));
     background-color: var(--gold);
-    box-shadow: 3px 3px 0 rgba(0, 0, 0, 0.35);
+    box-shadow: 3px 3px 0 rgba(10, 10, 11, 0.35);
 }
 
 /*名前の札の形は札と一緒に傾けたまま、文字だけを立たせる*/
@@ -142,7 +142,7 @@ Tipsの帯の高さは横長の画面で画面の8%、縦長の画面で36px（T
     left: 24px;
     border: 2px solid rgb(var(--night));
     border-radius: 8px;
-    box-shadow: 0 2px 0 rgba(0, 0, 0, 0.3);
+    box-shadow: 0 2px 0 rgba(10, 10, 11, 0.3);
 }
 
 .say-round .result-say-name span,
