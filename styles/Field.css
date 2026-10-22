@@ -1,7 +1,7 @@
 .stage-field {
     --field-image: none;
     --field-scale: 320px;
-    --field-blur: 3px;
+    --field-blur: 1.5px;
     --field-dim: 1;
     --field-tint: none;
     --field-edge: none;
@@ -57,9 +57,9 @@
 .field-morning {
     --field-image: url(/fields/forest.webp);
     --field-scale: 280px;
-    --field-dim: 1.04;
-    --field-tint: linear-gradient(180deg, rgba(188, 216, 240, 0.36) 0%, rgba(255, 244, 214, 0.24) 100%);
-    --field-edge: radial-gradient(ellipse at 50% 44%, rgba(250, 250, 250, 0) 34%, rgba(250, 250, 250, 0.46) 80%);
+    --field-dim: 0.98;
+    --field-tint: linear-gradient(180deg, rgba(188, 216, 240, 0.16) 0%, rgba(255, 244, 214, 0.1) 100%);
+    --field-edge: radial-gradient(ellipse at 50% 44%, rgba(250, 250, 250, 0) 34%, rgba(250, 250, 250, 0.2) 80%);
     --band: rgba(252, 252, 250, 0.58);
     --ink-sub: #3f3f45;
     --ink-shadow: 0 1px 2px rgba(250, 250, 250, 0.6);
@@ -68,7 +68,7 @@
 .field-noon {
     --field-image: url(/fields/pebbles.webp);
     --field-scale: 260px;
-    --field-blur: 3.5px;
+    --field-blur: 1.75px;
     --field-dim: 1.08;
     --field-tint: linear-gradient(180deg, rgba(255, 253, 244, 0.38) 0%, rgba(214, 231, 242, 0.3) 100%);
     --field-edge: radial-gradient(ellipse at 50% 44%, rgba(250, 250, 250, 0) 34%, rgba(250, 250, 250, 0.5) 80%);
@@ -80,6 +80,7 @@
 .field-sunset {
     --field-image: url(/fields/cobblestone.webp);
     --field-scale: 300px;
+    --field-blur: 0.75px;
     --field-dim: 0.86;
     --field-tint: linear-gradient(180deg, rgba(255, 168, 86, 0.2) 0%, rgba(122, 58, 74, 0.24) 100%);
     --field-edge: radial-gradient(ellipse at 50% 44%, rgba(70, 34, 44, 0) 30%, rgba(70, 34, 44, 0.5) 80%);
@@ -93,7 +94,7 @@
 .field-dusk {
     --field-image: url(/fields/hinoki.webp);
     --field-scale: 420px;
-    --field-blur: 2.5px;
+    --field-blur: 0.6px;
     --field-dim: 0.92;
     --field-tint: linear-gradient(180deg, rgba(255, 186, 110, 0.16) 0%, rgba(26, 32, 66, 0.2) 100%);
     --field-edge: radial-gradient(ellipse at 50% 44%, rgba(20, 26, 56, 0) 30%, rgba(20, 26, 56, 0.4) 80%);
@@ -107,7 +108,7 @@
 .field-hall {
     --field-image: url(/fields/tatami.webp);
     --field-scale: 460px;
-    --field-blur: 2.5px;
+    --field-blur: 0.6px;
     --field-dim: 0.96;
     --field-tint: linear-gradient(180deg, rgba(255, 226, 176, 0.2) 0%, rgba(150, 120, 86, 0.16) 100%);
     --field-edge: radial-gradient(ellipse at 50% 44%, rgba(74, 52, 30, 0) 32%, rgba(74, 52, 30, 0.44) 80%);
