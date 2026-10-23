@@ -1,3 +1,4 @@
+/*幕は対局画面の中に置かれるので、ステージの文字の影を受け継がないよう切る*/
 .overlay {
     position: fixed;
     inset: 0;
@@ -7,6 +8,7 @@
     backdrop-filter: blur(2px);
     background-color: rgba(10, 10, 11, 0.6);
     color: var(--white);
+    text-shadow: none;
     z-index: 10;
 }
 
