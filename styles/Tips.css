@@ -10,7 +10,7 @@
 .tips-progress {
     display: flex;
     flex-direction: row;
-    gap: 4px;
+    gap: 8px;
     padding: 4px 8px 4px 0;
 }
 
