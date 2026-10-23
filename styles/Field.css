@@ -51,7 +51,6 @@
 
 .stage-field .tips-bar {
     background: var(--band);
-    border-top: 1px solid var(--band);
 }
 
 .field-morning {
@@ -59,7 +58,7 @@
     --field-scale: 280px;
     --field-dim: 0.98;
     --field-edge: radial-gradient(ellipse at 50% 44%, rgba(250, 250, 250, 0) 34%, rgba(250, 250, 250, 0.12) 80%);
-    --band: rgba(252, 252, 250, 0.58);
+    --band: rgba(46, 58, 32, 0.45);
     --ink-sub: #3f3f45;
     --ink-shadow: 0 1px 2px rgba(250, 250, 250, 0.6);
 }
@@ -71,7 +70,7 @@
     --field-dim: 1.08;
     --field-tint: linear-gradient(180deg, rgba(255, 253, 244, 0.19) 0%, rgba(214, 231, 242, 0.15) 100%);
     --field-edge: radial-gradient(ellipse at 50% 44%, rgba(250, 250, 250, 0) 34%, rgba(250, 250, 250, 0.16) 80%);
-    --band: rgba(252, 252, 250, 0.6);
+    --band: rgba(62, 60, 57, 0.45);
     --ink-sub: #3f3f45;
     --ink-shadow: 0 1px 2px rgba(250, 250, 250, 0.6);
 }
@@ -116,4 +115,11 @@
     --ink-sub: #e2d2ba;
     --ink-shadow: 0 1px 3px rgba(10, 10, 11, 0.7);
     --board-shadow: 0 12px 32px rgba(10, 10, 11, 0.5);
+}
+
+/*素人と見習いは帯を地面の色で暗くするので、Tips の文字だけ白にする*/
+.field-morning .tips-bar,
+.field-noon .tips-bar {
+    color: var(--white);
+    text-shadow: 0 1px 3px rgba(10, 10, 11, 0.65);
 }
