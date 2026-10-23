@@ -83,7 +83,6 @@ CPU側は碁笥が上で石が名前の左、自分側は碁笥が下で石が�
     margin-top: 6px;
     font-size: 16px;
     font-weight: bold;
-    color: #726c6c;
 }
 
 /*石は名前の文字(24pxの文字で高さ23px)より2px大きくし、文字と上下の中央をそろえて上下に1pxずつはみ出させる
