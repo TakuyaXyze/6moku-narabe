@@ -124,6 +124,11 @@
     text-shadow: 0 1px 3px rgba(10, 10, 11, 0.65);
 }
 
+/*見習いは帯の下の小石が明るく透けるので、影を濃くする*/
+.field-noon .tips-bar {
+    text-shadow: 0 1px 3px rgba(10, 10, 11, 0.9);
+}
+
 /*素人から門下生までは、Tips の進み具合のまだ来ていない区切りを白寄りにする*/
 .field-morning .tips-progress-segment,
 .field-noon .tips-progress-segment,
