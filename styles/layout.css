@@ -8,8 +8,6 @@
 
 html,
 body {
-    background: var(--background);
-    color: var(--foreground);
     font-family: "Noto Sans JP", sans-serif;
     padding: 0;
     margin: 0;
