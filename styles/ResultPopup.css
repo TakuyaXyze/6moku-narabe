@@ -8,7 +8,7 @@
 }
 
 /*宣言の帯：画面を横切る半透明の帯に、古い活字風の漢字（Zen Antique）。上下に金の二重線
-漢字と英字の書体は大きな文字（WIN・勝利など）だけに使い、案内と台詞は画面全体と同じArialにする*/
+漢字と英字の書体は大きな文字（WIN・勝利など）だけに使い、案内と台詞は画面全体と同じNoto Sans JPにする*/
 .result-band {
     position: relative;
     padding: 18px 0 20px;
