@@ -91,7 +91,7 @@ Tipsの帯の高さは横長の画面で画面の8%、縦長の画面で36px（T
     bottom: calc(var(--tips-height) + 10px);
     width: min(560px, 92vw);
     padding: 20px 12px 16px 36px;
-    color: #2a2440;
+    color: rgb(var(--night));
     border-top: 2px solid rgb(var(--night));
     border-bottom: 2px solid rgb(var(--night));
     border-left: 10px solid rgb(var(--night));

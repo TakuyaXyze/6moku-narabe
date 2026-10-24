@@ -84,7 +84,7 @@
     font-size: 18px;
     font-weight: bold;
     letter-spacing: 0.05em;
-    color: #2a2440;
+    color: rgb(var(--night));
 }
 
 .clear-button {
