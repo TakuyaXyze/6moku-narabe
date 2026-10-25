@@ -26,6 +26,7 @@
 
 .review-turn {
     min-width: 6em;
+    text-align: center;
     font-size: 16px;
     font-weight: bold;
     font-variant-numeric: tabular-nums;
