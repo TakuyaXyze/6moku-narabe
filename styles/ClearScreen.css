@@ -80,11 +80,19 @@
     animation: clear-stamp 0.3s cubic-bezier(0.3, 1.5, 0.5, 1) 0.9s both;
 }
 
+.clear-loss {
+    font-size: 16px;
+    font-weight: bold;
+    color: rgb(var(--night));
+}
+
 .clear-message {
     font-size: 18px;
     font-weight: bold;
     letter-spacing: 0.05em;
     color: rgb(var(--night));
+    text-align: center;
+    white-space: pre-line;
 }
 
 .clear-button {
@@ -100,6 +108,7 @@
 }
 
 /*案内とボタンは、朱印を押したあとに続いて出す*/
+.clear-loss,
 .clear-message,
 .clear-button {
     animation: clear-fade-in 0.6s ease-out 1.2s both;

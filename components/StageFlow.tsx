@@ -36,6 +36,7 @@ export function StageFlow() {
     const [carriedTime, setCarriedTime] = useState(0);
     const [timePenalty, setTimePenalty] = useState(0);
     const [isRuleOpen, setIsRuleOpen] = useState(false);
+    const [lossCount, setLossCount] = useState(0);      //負けと時間切れの回数。引き分けと、対局中に最初へ戻した回数は数えない
 
     const allCleared: boolean = stageNo > stageInfo.length;
     const lastWin: boolean = lastResult === "win";
@@ -119,6 +120,7 @@ export function StageFlow() {
     function handleGameEnd(result: GameResult, restTime: number): void {
         const playerWins: boolean = result === "win";
         setLastResult(result);
+        if (result === "lose" || result === "timeup") setLossCount((count) => count + 1);
         setCarriedTime((playerWins && Number.isFinite(restTime)) ? Math.floor(restTime * TIME_CARRY_RATE / 1000) * 1000 : 0);     //秒単位に切り捨て
         if (!playerWins && result !== "draw" && Number.isFinite(stage.timeLimit)) setTimePenalty(timePenalty + TIME_PENALTY);       //引き分けはペナルティなしでやり直し
     }
@@ -159,6 +161,11 @@ export function StageFlow() {
         setPhase("standby");
     }
 
+    function restartGame(): void {
+        setLossCount(0);
+        jumpToStage(1);
+    }
+
     function jumpToStage(nextStageNo: number): void {
         if (nextStageNo < 1 || nextStageNo > stageInfo.length + 1) return;
         setStageNo(nextStageNo);
@@ -197,7 +204,7 @@ export function StageFlow() {
                 <div className="standby-screen">
 
                     {phase === "standby" && allCleared && (
-                        <ClearScreen onRestart={() => jumpToStage(1)} />
+                        <ClearScreen lossCount={lossCount} onRestart={restartGame} />
                     )}
 
                     {phase === "standby" && !allCleared && (
