@@ -64,7 +64,9 @@ export function StageFlow() {
         : null;
 
     const [bgmIsOn, setBgmIsOn] = useState(true);
-    useBgm(allCleared ? CLEAR_BGM : stage.bgm, bgmIsOn);
+    const nextBgm: BgmTrack | null = allCleared ? null
+        : ((stageNo < stageInfo.length) ? stageInfo[stageNo].bgm : CLEAR_BGM);
+    useBgm(allCleared ? CLEAR_BGM : stage.bgm, bgmIsOn, nextBgm);
 
     useEffect(() => {
         loadSounds();
