@@ -6,11 +6,16 @@
 }
 
 /*盤は入れ物の高さに合わせて大きさが決まるので、画面に収まる正方形の入れ物を用意する*/
+/*入れ物は、対局中の盤と同じ計算(8px引いて、マス目の幅19pxの倍数に切り捨て)で盤と同じ大きさにし、盤を入れ物いっぱいに描く*/
 .review-board {
-    display: flex;
-    justify-content: center;
-    height: min(70vh, 90vw);
+    height: calc(min(70vh, 90vw) - 8px);
+    height: round(down, calc(min(70vh, 90vw) - 8px), 19px);
     aspect-ratio: 1/1;
+}
+
+.review-board .game-board {
+    width: 100%;
+    height: 100%;
 }
 
 .review-controls {

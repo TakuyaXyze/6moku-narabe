@@ -2,6 +2,7 @@
 
 import "../styles/GameInfo.css";
 import { Overlay } from "./Overlay";
+import { CloseButton } from "./CloseButton";
 
 const RULES: string[] = [
     "先に石を6つ縦・横・斜めいずれかの直線で並べた方が勝ち",
@@ -28,19 +29,22 @@ type Props = {
 export function RuleScreen({ onClose }: Props) {
     return (
         <Overlay onClose={onClose}>
-            <div className="rule-panel">
-                <div className="rule-title">ルール</div>
-                <ul>
-                    {RULES.map((rule) => <li key={rule}>{rule}</li>)}
-                </ul>
-                <div className="rule-title">持ち時間</div>
-                <ul>
-                    {TIME_RULES.map((rule) => <li key={rule}>{rule}</li>)}
-                </ul>
-                <div className="rule-title">使用素材</div>
-                <ul>
-                    {CREDITS.map((credit) => <li key={credit}>{credit}</li>)}
-                </ul>
+            <div className="overlay-frame">
+                <CloseButton onClose={onClose} />
+                <div className="rule-panel">
+                    <div className="rule-title">ルール</div>
+                    <ul>
+                        {RULES.map((rule) => <li key={rule}>{rule}</li>)}
+                    </ul>
+                    <div className="rule-title">持ち時間</div>
+                    <ul>
+                        {TIME_RULES.map((rule) => <li key={rule}>{rule}</li>)}
+                    </ul>
+                    <div className="rule-title">使用素材</div>
+                    <ul>
+                        {CREDITS.map((credit) => <li key={credit}>{credit}</li>)}
+                    </ul>
+                </div>
             </div>
         </Overlay>
     );

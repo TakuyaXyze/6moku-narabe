@@ -23,7 +23,8 @@
     height: 14px;
     border: 1px solid var(--dark-brown);
     border-radius: 7px;
-    overflow: hidden;       /*色の付いた部分を、枠の角丸の内側に収める*/
+    overflow: hidden;
+    /*色の付いた部分を、枠の角丸の内側に収める*/
     background-color: rgba(84, 56, 4, 0.5);
     box-shadow: inset 0 2px 3px rgba(40, 25, 0, 0.45);
 }
@@ -222,7 +223,8 @@
     --grid: rgba(84, 56, 4, 0.08);
     box-sizing: border-box;
     width: min(580px, calc(100vw - 24px));
-    max-height: calc(100dvh - 24px);
+    max-height: calc(100dvh - 48px);
+    /*上下の余白(12px ×2)と、札の上の閉じるボタンの行(24px)の分を空ける*/
     overflow-y: auto;
     scrollbar-width: thin;
     scrollbar-color: rgba(84, 56, 4, 0.5) transparent;
@@ -256,7 +258,7 @@
 }
 
 /*2つめ以降の見出しは、上の項目との間を空ける*/
-.rule-panel ul + .rule-title {
+.rule-panel ul+.rule-title {
     margin-top: 20px;
 }
 
@@ -275,7 +277,8 @@
 /*低い画面(スマホの横向きなど)では、余白と文字を詰めて札を画面に収める*/
 @media screen and (max-height: 600px) {
     .rule-panel {
-        max-height: calc(100dvh - 12px);
+        max-height: calc(100dvh - 36px);
+        /*上下の余白(6px ×2)と、閉じるボタンの行(24px)の分*/
         padding: 16px 32px 8px;
     }
 
@@ -284,7 +287,7 @@
         font-size: 18px;
     }
 
-    .rule-panel ul + .rule-title {
+    .rule-panel ul+.rule-title {
         margin-top: 12px;
     }
 
@@ -311,7 +314,7 @@
         break-inside: avoid;
     }
 
-    .rule-panel ul + .rule-title {
+    .rule-panel ul+.rule-title {
         margin-top: 8px;
     }
 }

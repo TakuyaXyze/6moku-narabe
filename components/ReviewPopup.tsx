@@ -4,6 +4,7 @@ import "../styles/ReviewPopup.css";
 import { useState } from "react";
 import { Overlay } from "./Overlay";
 import { GameBoard } from "./GameBoard";
+import { CloseButton } from "./CloseButton";
 
 type Props = {
     boards: (string | null)[][][];      //石を1つ置くごとの盤面。最初は空の盤
@@ -23,15 +24,18 @@ export function ReviewPopup({ boards, onClose }: Props) {
     //盤とボタンの周りに触っても閉じないよう、幕までクリックを届けない
     return (
         <Overlay onClose={onClose}>
-            <div className="review-panel" onClick={(event) => event.stopPropagation()}>
-                <div className="review-board">
-                    <GameBoard boxes={boards[turnEnds[turnNo]]} handleClick={() => { }} pointerColor={null}
-                        markedMoves={[]} winMoves={[]} crossMoves={[]} bonusText={null} bonusNo={0} />
-                </div>
-                <div className="review-controls">
-                    <button disabled={turnNo === 0} onClick={() => setTurnNo(turnNo - 1)}>前の手番へ</button>
-                    <div className="review-turn">{turnNo} / {turnCount} 手番</div>
-                    <button disabled={turnNo === turnCount} onClick={() => setTurnNo(turnNo + 1)}>次の手番へ</button>
+            <div className="overlay-frame">
+                <CloseButton onClose={onClose} />
+                <div className="review-panel" onClick={(event) => event.stopPropagation()}>
+                    <div className="review-board">
+                        <GameBoard boxes={boards[turnEnds[turnNo]]} handleClick={() => { }} pointerColor={null}
+                            markedMoves={[]} winMoves={[]} crossMoves={[]} bonusText={null} bonusNo={0} />
+                    </div>
+                    <div className="review-controls">
+                        <button disabled={turnNo === 0} onClick={() => setTurnNo(turnNo - 1)}>前の手番へ</button>
+                        <div className="review-turn">{turnNo} / {turnCount} 手番</div>
+                        <button disabled={turnNo === turnCount} onClick={() => setTurnNo(turnNo + 1)}>次の手番へ</button>
+                    </div>
                 </div>
             </div>
         </Overlay>
