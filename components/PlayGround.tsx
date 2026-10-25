@@ -20,6 +20,7 @@ import { detectWinLine } from "../computers/DetectWinLine";
 import { detectCross, crossKey, crossCells } from "../computers/DetectCross";
 import { MoveCoordinate } from "../computers/Evaluate"
 import { ComputerSetting } from "../computers/ComputerSetting";
+import { computerTurnRandom } from "../computers/PutRandom";
 import type { ComputerRequest, ComputerResponse } from "../computers/ComputerWorker";
 import { ROWS, COLUMNS, SEQUENCE_LENGTH, checkBlackIsNext } from "../computers/GameRule";
 
@@ -244,8 +245,14 @@ export function PlayGround({ playerIsBlack, computer, initialTime, timeIncrement
                     handleColor(result.firstRowNo, result.firstColumnNo, result.secondRowNo, result.secondColumnNo);
                 }, Math.max(COMPUTER_MIN_TIME - time, 0))
             };
+            //思考中にエラーが出たら、止まったままにせず候補の中からランダムに置く
             worker.onerror = (event: ErrorEvent) => {
                 console.error("CPU思考中にエラー: " + event.message);
+                const time = Date.now() - computingStartTime;
+                const [first, second] = randomMoves(history[currentMove], currentMove);
+                placeTimerId = setTimeout(() => {
+                    handleColor(first.rowNo, first.columnNo, second?.rowNo, second?.columnNo);
+                }, Math.max(COMPUTER_MIN_TIME - time, 0))
             };
             const request: ComputerRequest = { boxes: history[currentMove], currentMove: currentMove, computer: computer };
             worker.postMessage(request);
@@ -496,6 +503,17 @@ function printTimer(time: number): string {
     else if (millisec > 0) millisecString = "0" + String(millisec);
     else millisecString = "000"
     return minuteString + ":" + secString + "." + millisecString;
+}
+
+//CPUがエラーで手を返せなかったときの代わりの手。先手の1手目と、盤に空きが1つしかないときは1つだけ返す
+//2つ目は、1つ目を置いた盤から選び直して同じ交点を選ばないようにする
+function randomMoves(boxes: (string | null)[][], currentMove: number): MoveCoordinate[] {
+    const first = computerTurnRandom(boxes, currentMove);
+    if (currentMove === 0) return [first];
+    const nextBoxes: (string | null)[][] = JSON.parse(JSON.stringify(boxes));
+    nextBoxes[first.rowNo][first.columnNo] = checkBlackIsNext(currentMove) ? "b" : "w";
+    if (!nextBoxes.flat().includes(null)) return [first];
+    return [first, computerTurnRandom(nextBoxes, currentMove + 1)];
 }
 
 function detectStoneChange(before: (string | null)[][], after: (string | null)[][]): MoveCoordinate[] {
