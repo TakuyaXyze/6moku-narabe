@@ -14,7 +14,7 @@ export function SideBlock({ side, name, isBlack, bowlState }: Props) {
 
     const bowl = (
         <div className={bowlClass}>
-            <img src={isBlack ? "goke-black.png" : "goke-white.png"}
+            <img src={isBlack ? "goke-black.webp" : "goke-white.webp"}
                 alt={isBlack ? "black" : "white"}
                 width="96"
             />
