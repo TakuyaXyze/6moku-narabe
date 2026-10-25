@@ -156,12 +156,15 @@ export function PlayGround({ playerIsBlack, computer, initialTime, timeIncrement
         else setCpuIsSettling(true);
     }
 
+    const rewardedCrossKeys = useRef(new Set<string>());
+
     function rewardCross(nextBoxes: (string | null)[][], color: string): void {
         if (!hasTimeLimit) return;
         const beforeKeys = new Set(detectCross(history[currentMove], color).map((cross) => crossKey(cross)));
-        const newCrosses = detectCross(nextBoxes, color).filter((cross) => !beforeKeys.has(crossKey(cross)));
+        const newCrosses = detectCross(nextBoxes, color).filter((cross) => !beforeKeys.has(crossKey(cross)) && !rewardedCrossKeys.current.has(crossKey(cross)));
         const count = newCrosses.length;
         if (count <= 0) return;
+        for (const cross of newCrosses) rewardedCrossKeys.current.add(crossKey(cross));
         setRemainingTime((time) => time + CROSS_BONUS * count);
         setBonusTime(CROSS_BONUS * count);
         setCrossMoves(newCrosses.flatMap((cross) => crossCells(cross)));
