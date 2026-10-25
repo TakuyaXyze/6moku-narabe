@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { PlayGround } from "./PlayGround";
 import { Tips } from "./Tips";
 import { playSound, loadSounds } from "./Sounds";
@@ -95,19 +95,25 @@ export function StageFlow() {
 
     const [isFading, setIsFading] = useState(false);
     const [fadeDelay, setFadeDelay] = useState(0);
+    const fadingRef = useRef(false);        //幕はマウスしか止めないので、キーで押されたボタンはこれで止める
 
     //一度暗転して、真っ暗な間に画面を入れ替える
     //暗転を遅らせる間も幕は先に置き、透明なまま画面を押せないようにする
     function fadeScreen(changeScreen: () => void, delay: number = 0): void {
+        fadingRef.current = true;
         setFadeDelay(delay);
         setIsFading(true);
         setTimeout(changeScreen, delay + SCREEN_DARK_TIME);
-        setTimeout(() => setIsFading(false), delay + SCREEN_FADE_TIME);    //animationendはタブが裏にあると届かないので時間で消す
+        setTimeout(() => {      //animationendはタブが裏にあると届かないので時間で消す
+            fadingRef.current = false;
+            setIsFading(false);
+        }, delay + SCREEN_FADE_TIME);
     }
 
     const [clockDelay, setClockDelay] = useState(0);
 
     function startRound(): void {
+        if (fadingRef.current) return;      //暗転中にEnter・Spaceで押し直しても、もう一度は始めない
         setClockDelay(SCREEN_FADE_TIME - SCREEN_DARK_TIME);     //暗転が明けきるまで、対局画面の時計を止めておく
         playSound("select");            //対局に入るボタンはすべてこの音
         fadeScreen(() => setPhase("playing"), SELECT_FADE_DELAY);
@@ -117,6 +123,7 @@ export function StageFlow() {
         <div className="screen-fade" style={{ animationDelay: fadeDelay + "ms" }} />;
 
     function selectFirstMove(isBlack: boolean): void {
+        if (fadingRef.current) return;      //暗転中にTabで隣のボタンへ移って押しても、先手後手を変えない
         setFirstRoundIsBlack(isBlack);
         startRound();                   //選択直後に対局自動開始
     }
