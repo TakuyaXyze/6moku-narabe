@@ -80,6 +80,13 @@
     animation: clear-stamp 0.3s cubic-bezier(0.3, 1.5, 0.5, 1) 0.9s both;
 }
 
+.clear-result {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-top: 4px;
+}
+
 .clear-loss {
     font-size: 16px;
     font-weight: bold;
@@ -87,12 +94,15 @@
 }
 
 .clear-message {
-    font-size: 18px;
+    font-size: 16px;
     font-weight: bold;
     letter-spacing: 0.05em;
     color: rgb(var(--night));
-    text-align: center;
-    white-space: pre-line;
+}
+
+/*一度も負けずにクリアしたときは、掛け軸のすぐ下にボタンが来るので、間を広げる*/
+.clear-scroll+.clear-button {
+    margin-top: 12px;
 }
 
 .clear-button {
@@ -108,8 +118,7 @@
 }
 
 /*案内とボタンは、朱印を押したあとに続いて出す*/
-.clear-loss,
-.clear-message,
+.clear-result,
 .clear-button {
     animation: clear-fade-in 0.6s ease-out 1.2s both;
 }
