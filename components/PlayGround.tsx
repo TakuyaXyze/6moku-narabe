@@ -47,7 +47,7 @@ type Props = {
     resetPenalty: number;
     resetWarning: string | null;        //最初に戻すと持ち時間が尽きるときの注意。尽きないときはnull
     clockDelay: number;                 //画面が見えるようになるまでの時間。暗転が明けきってから時計を動かす
-    onGameEnd: (result: GameResult, restTime: number) => void;
+    onGameEnd: (result: GameResult, restTime: number, boards: (string | null)[][][]) => void;
     onNext: () => void;
     onReset: () => void;
     bgmIsOn: boolean;
@@ -94,7 +94,7 @@ export function PlayGround({ playerIsBlack, computer, initialTime, timeIncrement
         if (bonusIsBlocking) return;
         if (timeIsUp) playSound("timeup");
         else if (blackIsWinner || whiteIsWinner) playSound("win");
-        onGameEnd(gameResult, Math.max(remainingTime, 0));
+        onGameEnd(gameResult, Math.max(remainingTime, 0), history.slice(0, currentMove + 1));
     }, [continueGame, cpuIsSettling, bonusIsBlocking])
 
     const resultIsReady: boolean = !continueGame && !cpuIsSettling && !bonusIsBlocking;

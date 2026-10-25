@@ -14,9 +14,11 @@ type Props = {
     onSelectFirstMove: (isBlack: boolean) => void;
     onStart: () => void;
     onOpenRule: () => void;
+    canReview: boolean;
+    onOpenReview: () => void;
 }
 
-export function StageScreen({ opponentNames, stageNo, opponentName, initialTime, stageTimeLimit, carriedTime, timePenalty, roundNo, attempt, playerIsBlack, onSelectFirstMove, onStart, onOpenRule }: Props) {
+export function StageScreen({ opponentNames, stageNo, opponentName, initialTime, stageTimeLimit, carriedTime, timePenalty, roundNo, attempt, playerIsBlack, onSelectFirstMove, onStart, onOpenRule, canReview, onOpenReview }: Props) {
     const hasTimeDetail: boolean = Number.isFinite(initialTime) && (carriedTime > 0 || timePenalty > 0);
     const choosesFirstMove: boolean = roundNo === 1 && attempt === 0;
 
@@ -24,9 +26,16 @@ export function StageScreen({ opponentNames, stageNo, opponentName, initialTime,
         <div className="stage-screen">
             <div className="stage-screen-header">
                 <div className="stage-screen-title">六目並べ</div>
-                <button className="stage-screen-rule-button"
-                    onClick={() => onOpenRule()}
-                >ルール説明</button>
+                <div className="stage-screen-header-buttons">
+                    <button className="stage-screen-rule-button"
+                        onClick={() => onOpenRule()}
+                    >ルール説明</button>
+                    {canReview && (
+                        <button className="stage-screen-rule-button"
+                            onClick={() => onOpenReview()}
+                        >振り返り</button>
+                    )}
+                </div>
             </div>
             <div className="stage-screen-info">
                 <div className="stage-screen-label">

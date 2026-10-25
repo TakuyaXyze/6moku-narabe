@@ -1,0 +1,32 @@
+.review-panel {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 16px;
+}
+
+/*盤は入れ物の高さに合わせて大きさが決まるので、画面に収まる正方形の入れ物を用意する*/
+.review-board {
+    display: flex;
+    justify-content: center;
+    height: min(70vh, 90vw);
+    aspect-ratio: 1/1;
+}
+
+.review-controls {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+.review-turn {
+    min-width: 6em;
+    font-size: 16px;
+    font-weight: bold;
+    font-variant-numeric: tabular-nums;
+}
+
+.overlay .review-controls button:disabled {
+    opacity: 0.4;
+    cursor: default;
+}

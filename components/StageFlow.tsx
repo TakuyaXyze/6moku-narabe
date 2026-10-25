@@ -5,6 +5,7 @@ import { PlayGround } from "./PlayGround";
 import { Tips } from "./Tips";
 import { playSound, loadSounds } from "./Sounds";
 import { RuleScreen } from "./RuleScreen";
+import { ReviewPopup } from "./ReviewPopup";
 import { stageInfo, StageInfo } from "./StageData";
 import { findSays } from "./SayData";
 import { StageScreen } from "./StageScreen";
@@ -36,6 +37,8 @@ export function StageFlow() {
     const [carriedTime, setCarriedTime] = useState(0);
     const [timePenalty, setTimePenalty] = useState(0);
     const [isRuleOpen, setIsRuleOpen] = useState(false);
+    const [lastBoards, setLastBoards] = useState<(string | null)[][][] | null>(null);       //直前の対局の盤面。ステージが変わっても、次の対局が終わるまで残す
+    const [isReviewOpen, setIsReviewOpen] = useState(false);
     const [lossCount, setLossCount] = useState(0);      //負けと時間切れの回数。引き分けと、対局中に最初へ戻した回数は数えない
 
     const allCleared: boolean = stageNo > stageInfo.length;
@@ -80,14 +83,15 @@ export function StageFlow() {
 
     useEffect(() => {
         if (phase === "playing") return;
-        if (!isRuleOpen) return;
+        if (!isRuleOpen && !isReviewOpen) return;
         function handleEscapeKey(event: KeyboardEvent): void {
             if (event.key !== "Escape") return;
             setIsRuleOpen(false);
+            setIsReviewOpen(false);
         }
         document.addEventListener("keydown", handleEscapeKey);
         return () => document.removeEventListener("keydown", handleEscapeKey);
-    }, [isRuleOpen, phase])
+    }, [isRuleOpen, isReviewOpen, phase])
 
     const [isFading, setIsFading] = useState(false);
     const [fadeDelay, setFadeDelay] = useState(0);
@@ -117,7 +121,8 @@ export function StageFlow() {
         startRound();                   //選択直後に対局自動開始
     }
 
-    function handleGameEnd(result: GameResult, restTime: number): void {
+    function handleGameEnd(result: GameResult, restTime: number, boards: (string | null)[][][]): void {
+        setLastBoards(boards);
         const playerWins: boolean = result === "win";
         setLastResult(result);
         if (result === "lose" || result === "timeup") setLossCount((count) => count + 1);
@@ -222,11 +227,17 @@ export function StageFlow() {
                             onSelectFirstMove={selectFirstMove}
                             onStart={startRound}
                             onOpenRule={() => setIsRuleOpen(true)}
+                            canReview={lastBoards !== null}
+                            onOpenReview={() => setIsReviewOpen(true)}
                         />
                     )}
 
                     {isRuleOpen &&
                         <RuleScreen onClose={() => setIsRuleOpen(false)} />
+                    }
+
+                    {isReviewOpen && lastBoards !== null &&
+                        <ReviewPopup boards={lastBoards} onClose={() => setIsReviewOpen(false)} />
                     }
 
                     <DemoTool stageNo={stageNo} stageCount={stageInfo.length} onJump={jumpToStage} />

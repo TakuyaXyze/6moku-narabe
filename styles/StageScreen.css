@@ -35,6 +35,13 @@
     margin: 8px;
 }
 
+.stage-screen-header-buttons {
+    display: grid;
+    grid-auto-flow: column;
+    grid-auto-columns: 1fr;
+    gap: 8px;
+}
+
 .stage-screen-rule-button {
     border: none;
     border-radius: 8px;
