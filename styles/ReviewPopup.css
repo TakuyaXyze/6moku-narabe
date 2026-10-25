@@ -36,3 +36,16 @@
     opacity: 0.4;
     cursor: default;
 }
+
+/*縦長で幅の狭い画面では、ボタンの字を小さくして、ボタンと手番の表示を盤の幅に収める*/
+@media screen and (max-aspect-ratio: 1.1998/1) and (max-width: 420px) {
+    .review-controls {
+        gap: 12px;
+    }
+
+    .overlay .review-controls button {
+        min-width: 0;
+        padding: 4px 10px;
+        font-size: 13px;
+    }
+}
