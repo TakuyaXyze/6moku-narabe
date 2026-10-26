@@ -25,7 +25,7 @@ export const stageInfo: StageInfo[] = [
     {
         stageNo: 2, rounds: 2, timeLimit: 13000, timeIncrement: 5000, field: "noon",
         bgm: { src: "/bgm/maou_bgm_orchestra25.mp3", overlap: 28.41 },
-        computer: { name: "見習い", depth: 2, beamSize: 20, budget: 150000, sight: 3, defense: 0.7, orderDefense: 0.7, blunder: 0.45 },
+        computer: { name: "見習い", depth: 4, beamSize: 10, budget: 20000, sight: 3, defense: 1, orderDefense: 1.25, blunder: 0.45 },
         hints: [
             "持ち時間が設定される",
             "持ち時間は石を置くたびに追加",
@@ -35,7 +35,7 @@ export const stageInfo: StageInfo[] = [
     {
         stageNo: 3, rounds: 2, timeLimit: 5000, timeIncrement: 2000, field: "sunset",
         bgm: { src: "/bgm/maou_bgm_orchestra20.mp3", overlap: 0 },
-        computer: { name: "門下生", depth: 2, beamSize: 20, budget: 150000, sight: 3, defense: 0.7, orderDefense: 0.7, blunder: 0.45 },
+        computer: { name: "門下生", depth: 4, beamSize: 10, budget: 20000, sight: 3, defense: 1, orderDefense: 1.25, blunder: 0.45 },
         hints: [
             "強さは見習いと同じ。違うのは持ち時間の短さだけ",
             "石を十字やX形に並べると持ち時間が増える",
